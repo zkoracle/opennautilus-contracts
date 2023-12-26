@@ -1,3 +1,3 @@
-import { Erc20Contract } from './Erc20Contract.js';
+import { Erc20 } from './Erc20Token.js';
 
-export { Erc20Contract };
+export { Erc20 };
