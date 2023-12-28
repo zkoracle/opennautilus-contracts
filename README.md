@@ -48,7 +48,7 @@ TBD
 
 TBD
 
-# Contribute
+## Contribute
 
 OpenNautilus Contracts exists thanks to its contributors. There are many ways you can participate and help build high quality software. Check out the [contribution guide](CONTRIBUTING.md)!
 

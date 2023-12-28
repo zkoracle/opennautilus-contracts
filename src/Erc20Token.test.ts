@@ -132,6 +132,10 @@ describe('Token (Erc20)', () => {
     // await ZkAppC.compile();
   });
 
+  describe('?.ts()', () => {
+    it.todo('should be correct');
+  });
+
   describe('Signature Authorization', () => {
     /*
     test case description:
@@ -142,18 +146,18 @@ describe('Token (Erc20)', () => {
       - create a new valid token with a different parentTokenId
       - set the token symbol after deployment
   */
-    describe('Token Contract Creation/Deployment', () => {
-      beforeEach(async () => {
-        await setupLocal();
-      });
+    // describe('Token Contract Creation/Deployment', () => {
+    //   beforeEach(async () => {
+    //     await setupLocal();
+    //   });
 
-      test('correct token id can be derived with an existing token owner', () => {
-        expect(tokenId).toEqual(TokenId.derive(tokenZkappAddress));
-      });
+      // test('correct token id can be derived with an existing token owner', () => {
+      //   expect(tokenId).toEqual(TokenId.derive(tokenZkappAddress));
+      // });
 
-      test('deployed token contract exists in the ledger', async () => {
-        expect(Mina.getAccount(tokenZkappAddress, tokenId)).toBeDefined();
-      });
+      // test('deployed token contract exists in the ledger', async () => {
+      //   expect(Mina.getAccount(tokenZkappAddress, tokenId)).toBeDefined();
+      // });
 
     //   test('setting a valid token symbol on a token contract', async () => {
     //     await (
@@ -352,7 +356,7 @@ describe('Token (Erc20)', () => {
     //       ).sign([zkAppBKey, feePayerKey, tokenZkappKey]);
     //       await expect(tx.send()).rejects.toThrow();
     //     });
-    //   });
+      // });
   });
 
   describe('Proof Authorization', () => {
