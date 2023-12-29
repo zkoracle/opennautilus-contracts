@@ -7,7 +7,7 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  test:
+  test-coverage:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -20,7 +20,22 @@ jobs:
       - name: NPM ci, build, & test
         run: |
           npm install
-          npm run build --if-present
-          npm test
+          npm run coverage --if-present
+      - name: Create Coverage Badges
+        uses: jaywcjlove/coverage-badges-cli@main
+        with:
+          style: classic
+          source: contracts/coverage/coverage-summary.json
+          output: contracts/coverage/badges.svg
+          jsonPath: totals.percent_covered
+
+      # - name: Deploy Coverage
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   if: github.ref == 'refs/heads/main'
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: contracts/coverage
+      #     destination_dir: coverage
+
         env:
           CI: true

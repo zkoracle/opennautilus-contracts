@@ -132,10 +132,6 @@ describe('Token (Erc20)', () => {
     // await ZkAppC.compile();
   });
 
-  describe('?.ts()', () => {
-    it.todo('should be correct');
-  });
-
   describe('Signature Authorization', () => {
     /*
     test case description:
@@ -146,6 +142,12 @@ describe('Token (Erc20)', () => {
       - create a new valid token with a different parentTokenId
       - set the token symbol after deployment
   */
+
+      describe('?.ts()', () => {
+        it.todo('should be correct');
+      });
+
+      
     // describe('Token Contract Creation/Deployment', () => {
     //   beforeEach(async () => {
     //     await setupLocal();

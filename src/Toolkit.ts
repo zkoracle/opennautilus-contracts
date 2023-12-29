@@ -5,7 +5,7 @@ import { AccountUpdate, Lightnet, Mina, PrivateKey, SmartContract, fetchAccount 
 export class Toolkit {
     Toolkit(){ }
 
-    public static async getTxnUrl(
+    public static getTxnUrl(
         graphQlUrl: string, txnHash: string | undefined) 
     {
         console.log(graphQlUrl);
@@ -197,5 +197,5 @@ export class Toolkit {
 
         await this.processTx(config, sentTx, [zkAppKey, feePayerKey], tag);
     }
-    
+
 }
