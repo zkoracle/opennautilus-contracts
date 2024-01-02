@@ -31,6 +31,13 @@ pnpm run testw # watch mode
 pnpm run coverage
 ```
 
+### How to run docgen
+
+```sh
+pnpm run build
+pnpm run docgen
+```
+
 ### Local
 ```
 pnpm link --global
