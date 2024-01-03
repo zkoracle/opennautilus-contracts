@@ -63,8 +63,8 @@ export type Erc20 = {
  */
 export class Erc20Token extends SmartContract implements Erc20 {
   // constant supply
-  NAME = "ERC20"
-  SYMBOL = "C20"
+  NAME = 'ERC20';
+  SYMBOL = 'C20';
   SUPPLY = UInt64.from(10n ** 18n);
 
   deploy(args: DeployArgs) {
@@ -106,7 +106,7 @@ export class Erc20Token extends SmartContract implements Erc20 {
   name(): CircuitString {
     return CircuitString.fromString(this.NAME);
   }
-  
+
   symbol(): CircuitString {
     return CircuitString.fromString(this.SYMBOL);
   }
@@ -205,5 +205,4 @@ export class Erc20Token extends SmartContract implements Erc20 {
     let zkappUpdate = this.approve(callback, AccountUpdate.Layout.NoChildren);
     Int64.fromObject(zkappUpdate.body.balanceChange).assertEquals(UInt64.zero);
   }
-
 }

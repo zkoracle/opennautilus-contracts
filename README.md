@@ -54,7 +54,7 @@ OpenNautilus Contracts exists thanks to its contributors. There are many ways yo
 
 ## License
 
-OpenZeppelin Contracts is released under the [Apache-2.0](LICENSE)
+OpenNautilus Contracts is released under the [Apache-2.0](LICENSE)
 
 ## Legal
 

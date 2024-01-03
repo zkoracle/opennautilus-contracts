@@ -87,9 +87,9 @@ async function setupLocal() {
     });
     tokenZkapp.deploy({ zkappKey: tokenZkappKey });
   });
-  // let tx = await Mina.transaction({ 
-  //     sender: feePayerKey.toPublicKey(), 
-  //     fee: Number("0.1") * 1e9 
+  // let tx = await Mina.transaction({
+  //     sender: feePayerKey.toPublicKey(),
+  //     fee: Number("0.1") * 1e9
   //   }, () => {
   //   AccountUpdate.fundNewAccount(feePayerKey.toPublicKey());
   //   // tokenZkapp.deploy();
@@ -126,7 +126,6 @@ async function setupLocalProofs() {
 
 describe('Token (Erc20)', () => {
   beforeAll(async () => {
-
     await Erc20Token.compile();
     // await ZkAppB.compile();
     // await ZkAppC.compile();
@@ -143,23 +142,22 @@ describe('Token (Erc20)', () => {
       - set the token symbol after deployment
   */
 
-      describe('?.ts()', () => {
-        it.todo('should be correct');
-      });
+    describe('?.ts()', () => {
+      it.todo('should be correct');
+    });
 
-      
     // describe('Token Contract Creation/Deployment', () => {
     //   beforeEach(async () => {
     //     await setupLocal();
     //   });
 
-      // test('correct token id can be derived with an existing token owner', () => {
-      //   expect(tokenId).toEqual(TokenId.derive(tokenZkappAddress));
-      // });
+    // test('correct token id can be derived with an existing token owner', () => {
+    //   expect(tokenId).toEqual(TokenId.derive(tokenZkappAddress));
+    // });
 
-      // test('deployed token contract exists in the ledger', async () => {
-      //   expect(Mina.getAccount(tokenZkappAddress, tokenId)).toBeDefined();
-      // });
+    // test('deployed token contract exists in the ledger', async () => {
+    //   expect(Mina.getAccount(tokenZkappAddress, tokenId)).toBeDefined();
+    // });
 
     //   test('setting a valid token symbol on a token contract', async () => {
     //     await (
@@ -358,7 +356,7 @@ describe('Token (Erc20)', () => {
     //       ).sign([zkAppBKey, feePayerKey, tokenZkappKey]);
     //       await expect(tx.send()).rejects.toThrow();
     //     });
-      // });
+    // });
   });
 
   describe('Proof Authorization', () => {

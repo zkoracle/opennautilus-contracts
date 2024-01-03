@@ -22,7 +22,7 @@ let player1: PublicKey,
   zkAppPrivateKey: PrivateKey;
 
 let tokenId: Field;
-let zkApp: IBasicTokenContract;
+let zkApp: SmartContract & IBasicTokenContract;
 
 async function setupAccounts() {
   let Local = Mina.LocalBlockchain({

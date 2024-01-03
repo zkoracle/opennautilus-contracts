@@ -20,7 +20,7 @@ import {
  * This class is designed to provide a standardized way of interacting with token contracts,
  * ensuring consistency and interoperability across different implementations.
  */
-export abstract class IBasicTokenContract extends SmartContract {
+export abstract class IBasicTokenContract {
   /**
    * Deploys the token contract to the blockchain.
    *
@@ -83,7 +83,7 @@ export abstract class IBasicTokenContract extends SmartContract {
 export async function buildBasicTokenContract(
   address: PublicKey,
   symbol: string
-): Promise<IBasicTokenContract> {
+): Promise<SmartContract & IBasicTokenContract> {
   class BasicTokenContract
     extends SmartContract
     implements IBasicTokenContract
