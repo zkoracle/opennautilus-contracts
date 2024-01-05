@@ -142,7 +142,7 @@ export abstract class IERC20 {
  * const myToken = await buildERC20Contract(address, 'MyToken', 'MTK', 18);
  * // Interact with the token contract using the `myToken` instance
  * ```
- * 
+ *
  * @param address The address of the token contract on the blockchain.
  * @param name The name of the token.
  * @param symbol The symbol of the token.
@@ -155,7 +155,6 @@ export async function buildERC20Contract(
   symbol: string,
   decimals: number
 ): Promise<SmartContract & IERC20> {
-
   /**
    * Represents an ERC20 token contract implementation.
    *
@@ -317,7 +316,6 @@ export async function buildERC20Contract(
         value: UInt64,
       }),
     };
-
   }
 
   await Erc20Contract.compile(); // Compile

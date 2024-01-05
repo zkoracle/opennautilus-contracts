@@ -14,7 +14,6 @@ import {
 } from 'o1js';
 import { IERC20, buildERC20Contract } from './Erc20Token';
 
-
 let player1: PublicKey,
   player1Key: PrivateKey,
   //   player2: PublicKey,
@@ -40,11 +39,7 @@ async function setupAccounts() {
   zkAppPrivateKey = PrivateKey.random();
   zkAppAddress = zkAppPrivateKey.toPublicKey();
 
-  zkApp = await buildERC20Contract(zkAppAddress, 
-        "SomeCoin",
-        "SOM",
-        9
-      );
+  zkApp = await buildERC20Contract(zkAppAddress, 'SomeCoin', 'SOM', 9);
   tokenId = zkApp.token.id;
 }
 
@@ -76,6 +71,5 @@ describe('Erc20 TokenContract', () => {
     describe('?.ts()', () => {
       it.todo('should be correct');
     });
-
   });
 });
