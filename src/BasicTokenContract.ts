@@ -88,6 +88,14 @@ export async function buildBasicTokenContract(
     extends SmartContract
     implements IBasicTokenContract
   {
+    /**
+     * Stores the total amount of tokens in circulation.
+     *
+     * @type {State<UInt64>}
+     * @remarks
+     * This state variable is crucial for tracking the supply of tokens within the contract.
+     * It's updated during minting and potentially other token-related operations to ensure accurate accounting.
+     */
     @state(UInt64) totalAmountInCirculation = State<UInt64>();
 
     /**
