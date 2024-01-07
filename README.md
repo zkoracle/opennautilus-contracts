@@ -40,6 +40,17 @@ pnpm link --global opennautilus-contracts
 
 ```
 
+### Documentation
+```
+npm install -g @microsoft/api-extractor @microsoft/api-documenter
+api-extractor run --local --verbose 
+api-documenter yaml -i tmp/api -o tmp/api-yaml
+
+npm install -g api-documenter-yaml-to-antora-asciidoc
+api-documenter-yaml-to-antora-asciidoc asciidoc -i tmp/api-yaml
+
+```
+
 ## Learn More
 
 TBD
