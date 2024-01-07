@@ -1,0 +1,102 @@
+= package @zkoracle/opennautilus-contracts
+
+
+
+
+
+== Classes
+
+[%header,cols="1,2",caption=""]
+|===
+|Name |Summary
+
+s|xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]
+|Defines the basic interface for a token contract.
+
+All token contracts should inherit from this class and implement its methods.
+
+s|xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]
+|Represents a standard interface for fungible tokens, implementing the ERC20 standard.
+
+s|xref:zkoracle_opennautilus-contracts_Toolkit_class.adoc[Toolkit]
+|
+|===
+
+== Functions
+
+[id="zkoracle_opennautilus-contracts_buildBasicTokenContract_function_1"]
+=== buildBasicTokenContract(address, symbol)
+
+========
+
+Creates a basic token contract instance.
+
+This function handles the following steps: 1. Compiles the `BasicTokenContract` class. 2. Initializes the contract with the provided symbol. 3. Sets up necessary permissions for the contract. 4. Returns the newly created contract instance.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|address
+m|PublicKey
+|The address where the contract will be deployed
+
+m|symbol
+m|string
+|The symbol for the token (e.g., "MYTOKEN")
+
+s|Returns
+m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]&gt;
+|A promise that resolves to the created token contract instance
+|===
+
+.Signature
+[source,typescript]
+----
+export declare function buildBasicTokenContract(address: PublicKey, symbol: string): Promise<SmartContract & IBasicTokenContract>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_buildERC20Contract_function_1"]
+=== buildERC20Contract(address, name, symbol, decimals)
+
+========
+
+Constructs and deploys an ERC20 token contract.
+
+This function creates a new contract class that implements the `IERC20` interface, compiles it, and deploys it to the blockchain. The returned contract instance can be used to interact with the token's functionality.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|address
+m|PublicKey
+|The address of the token contract on the blockchain.
+
+m|name
+m|string
+|The name of the token.
+
+m|symbol
+m|string
+|The symbol of the token.
+
+m|decimals
+m|number
+|The number of decimals used to represent token amounts.
+
+s|Returns
+m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]&gt;
+|A promise that resolves to the deployed contract instance.
+|===
+
+.Signature
+[source,typescript]
+----
+export declare function buildERC20Contract(address: PublicKey, name: string, symbol: string, decimals: number): Promise<SmartContract & IERC20>;
+----
+
+========

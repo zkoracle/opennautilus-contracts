@@ -1,0 +1,5 @@
+.API documentation
+* xref:zkoracle_opennautilus-contracts.adoc[@zkoracle/opennautilus-contracts]
+** xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]
+** xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]
+** xref:zkoracle_opennautilus-contracts_Toolkit_class.adoc[Toolkit]
