@@ -1,0 +1,1299 @@
+{
+  "custom": {},
+  "modules": {
+    "@zkoracle/opennautilus-contracts": {
+      "classes": [
+        {
+          "data": {
+            "name": "IBasicTokenContract",
+            "abstract": true,
+            "constructor": {
+              "name": "IBasicTokenContract",
+              "description": null,
+              "see": [],
+              "static": false,
+              "private": false,
+              "examples": [],
+              "abstract": false,
+              "deprecated": false,
+              "parameters": [],
+              "returns": {
+                "type": "IBasicTokenContract",
+                "rawType": ["IBasicTokenContract"],
+                "description": null
+              },
+              "metadata": null,
+              "constructor": "new IBasicTokenContract"
+            },
+            "metadata": {
+              "name": "BasicTokenContract.ts",
+              "directory": ".",
+              "line": 23,
+              "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L23"
+            },
+            "deprecated": false,
+            "description": "Defines the basic interface for a token contract.\n\nAll token contracts should inherit from this class and implement its methods.",
+            "extends": null,
+            "implements": null,
+            "rawExtends": null,
+            "rawImplements": null,
+            "methods": [
+              {
+                "name": "deploy",
+                "description": "Deploys the token contract to the blockchain.",
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [],
+                "returns": {
+                  "type": "void",
+                  "rawType": ["void"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "BasicTokenContract.ts",
+                  "directory": ".",
+                  "line": 31,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L31"
+                }
+              },
+              {
+                "name": "init",
+                "description": "Initializes the token contract after deployment.",
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [],
+                "returns": {
+                  "type": "void",
+                  "rawType": ["void"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "BasicTokenContract.ts",
+                  "directory": ".",
+                  "line": 40,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L40"
+                }
+              },
+              {
+                "name": "mint",
+                "description": "Mints new tokens and assigns them to a receiver.",
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "receiverAddress",
+                    "description": "The address of the receiver who will receive the newly minted tokens",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "amount",
+                    "description": "The amount of tokens to mint",
+                    "optional": false,
+                    "default": null,
+                    "type": "UInt64",
+                    "rawType": ["UInt64"]
+                  },
+                  {
+                    "name": "adminSignature",
+                    "description": "A signature from an authorized administrator, required to approve the minting",
+                    "optional": false,
+                    "default": null,
+                    "type": "Signature",
+                    "rawType": ["Signature"]
+                  }
+                ],
+                "returns": {
+                  "type": "void",
+                  "rawType": ["void"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "BasicTokenContract.ts",
+                  "directory": ".",
+                  "line": 49,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L49"
+                }
+              },
+              {
+                "name": "sendTokens",
+                "description": "Sends tokens from one address to another.",
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "senderAddress",
+                    "description": "The address of the sender who is transferring the tokens",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "receiverAddress",
+                    "description": "The address of the receiver who will receive the tokens",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "amount",
+                    "description": "The amount of tokens to transfer",
+                    "optional": false,
+                    "default": null,
+                    "type": "UInt64",
+                    "rawType": ["UInt64"]
+                  }
+                ],
+                "returns": {
+                  "type": "void",
+                  "rawType": ["void"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "BasicTokenContract.ts",
+                  "directory": ".",
+                  "line": 62,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L62"
+                }
+              }
+            ],
+            "private": false,
+            "properties": [],
+            "see": []
+          },
+          "markdown": [
+            {
+              "name": "IBasicTokenContract",
+              "metadata": {
+                "name": "BasicTokenContract.ts",
+                "directory": ".",
+                "line": 23,
+                "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L23"
+              },
+              "content": "## IBasicTokenContract\nDefines the basic interface for a token contract.\n\nAll token contracts should inherit from this class and implement its methods.\n\n\n\n```typescript\nnew IBasicTokenContract()\n```\n\n\n\n\n## Methods\n### public deploy(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)\nDeploys the token contract to the blockchain.\n\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L31)\n### public init(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)\nInitializes the token contract after deployment.\n\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L40)\n### public mint(receiverAddress, amount, adminSignature): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)\nMints new tokens and assigns them to a receiver.\n\n\n\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| receiverAddress | PublicKey | ❌ | The address of the receiver who will receive the newly minted tokens |\n| amount | UInt64 | ❌ | The amount of tokens to mint |\n| adminSignature | Signature | ❌ | A signature from an authorized administrator, required to approve the minting |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L49)\n### public sendTokens(senderAddress, receiverAddress, amount): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)\nSends tokens from one address to another.\n\n\n\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| senderAddress | PublicKey | ❌ | The address of the sender who is transferring the tokens |\n| receiverAddress | PublicKey | ❌ | The address of the receiver who will receive the tokens |\n| amount | UInt64 | ❌ | The amount of tokens to transfer |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L62)"
+            }
+          ]
+        },
+        {
+          "data": {
+            "name": "IERC20",
+            "abstract": true,
+            "constructor": {
+              "name": "IERC20",
+              "description": null,
+              "see": [],
+              "static": false,
+              "private": false,
+              "examples": [],
+              "abstract": false,
+              "deprecated": false,
+              "parameters": [],
+              "returns": {
+                "type": "IERC20",
+                "rawType": ["IERC20"],
+                "description": null
+              },
+              "metadata": null,
+              "constructor": "new IERC20"
+            },
+            "metadata": {
+              "name": "Erc20Token.ts",
+              "directory": ".",
+              "line": 38,
+              "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L38"
+            },
+            "deprecated": false,
+            "description": "Represents a standard interface for fungible tokens, implementing the ERC20 standard.",
+            "extends": null,
+            "implements": null,
+            "rawExtends": null,
+            "rawImplements": null,
+            "methods": [
+              {
+                "name": "allowance",
+                "description": null,
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "owner",
+                    "description": "The address of the token owner.",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "spender",
+                    "description": "The address of the spender.",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  }
+                ],
+                "returns": {
+                  "type": "UInt64",
+                  "rawType": ["UInt64"],
+                  "description": "The amount of tokens approved for the spender to spend on behalf of the owner, as a UInt64."
+                },
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 69,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L69"
+                }
+              },
+              {
+                "name": "approveSpend",
+                "description": null,
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "spender",
+                    "description": "The address to approve as a spender.",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "value",
+                    "description": "The amount of tokens to approve.",
+                    "optional": false,
+                    "default": null,
+                    "type": "UInt64",
+                    "rawType": ["UInt64"]
+                  }
+                ],
+                "returns": {
+                  "type": "Bool",
+                  "rawType": ["Bool"],
+                  "description": "True if the approval was successful, false otherwise."
+                },
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 106,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L106"
+                }
+              },
+              {
+                "name": "balanceOf",
+                "description": null,
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "owner",
+                    "description": "The address of the token owner.",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  }
+                ],
+                "returns": {
+                  "type": "UInt64",
+                  "rawType": ["UInt64"],
+                  "description": "The balance of the owner, as a UInt64."
+                },
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 63,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L63"
+                }
+              },
+              {
+                "name": "totalSupply",
+                "description": null,
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [],
+                "returns": {
+                  "type": "UInt64",
+                  "rawType": ["UInt64"],
+                  "description": "The total token supply, as a UInt64."
+                },
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 58,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L58"
+                }
+              },
+              {
+                "name": "transfer",
+                "description": null,
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "to",
+                    "description": "The address to transfer tokens to.",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "value",
+                    "description": "The amount of tokens to transfer.",
+                    "optional": false,
+                    "default": null,
+                    "type": "UInt64",
+                    "rawType": ["UInt64"]
+                  }
+                ],
+                "returns": {
+                  "type": "Bool",
+                  "rawType": ["Bool"],
+                  "description": "True if the transfer was successful, false otherwise."
+                },
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 81,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L81"
+                }
+              },
+              {
+                "name": "transferFrom",
+                "description": null,
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": true,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "from",
+                    "description": "The address to transfer tokens from.",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "to",
+                    "description": "The address to transfer tokens to.",
+                    "optional": false,
+                    "default": null,
+                    "type": "PublicKey",
+                    "rawType": ["PublicKey"]
+                  },
+                  {
+                    "name": "value",
+                    "description": "The amount of tokens to transfer.",
+                    "optional": false,
+                    "default": null,
+                    "type": "UInt64",
+                    "rawType": ["UInt64"]
+                  }
+                ],
+                "returns": {
+                  "type": "Bool",
+                  "rawType": ["Bool"],
+                  "description": "True if the transfer was successful, false otherwise."
+                },
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 94,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L94"
+                }
+              }
+            ],
+            "private": false,
+            "properties": [
+              {
+                "abstract": true,
+                "default": null,
+                "deprecated": false,
+                "description": null,
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 54,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L54"
+                },
+                "name": "decimals",
+                "private": false,
+                "readonly": false,
+                "see": [],
+                "static": false,
+                "type": "(...args: unknown[]) => Field"
+              },
+              {
+                "abstract": false,
+                "default": null,
+                "deprecated": false,
+                "description": "Events emitted by the contract.",
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 111,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L111"
+                },
+                "name": "events",
+                "private": false,
+                "readonly": false,
+                "see": [],
+                "static": false,
+                "type": "{ Approval: ProvablePure<{ owner: PublicKey, spender: PublicKey, value: UInt64 }>, Transfer: ProvablePure<{ from: PublicKey, to: PublicKey, value: UInt64 }> }"
+              },
+              {
+                "abstract": true,
+                "default": null,
+                "deprecated": false,
+                "description": null,
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 43,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L43"
+                },
+                "name": "name",
+                "private": false,
+                "readonly": false,
+                "see": [],
+                "static": false,
+                "type": "(...args: unknown[]) => CircuitString"
+              },
+              {
+                "abstract": true,
+                "default": null,
+                "deprecated": false,
+                "description": null,
+                "metadata": {
+                  "name": "Erc20Token.ts",
+                  "directory": ".",
+                  "line": 48,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L48"
+                },
+                "name": "symbol",
+                "private": false,
+                "readonly": false,
+                "see": [],
+                "static": false,
+                "type": "(...args: unknown[]) => CircuitString"
+              }
+            ],
+            "see": []
+          },
+          "markdown": [
+            {
+              "name": "IERC20",
+              "metadata": {
+                "name": "Erc20Token.ts",
+                "directory": ".",
+                "line": 38,
+                "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L38"
+              },
+              "content": "## IERC20\nRepresents a standard interface for fungible tokens, implementing the ERC20 standard.\n\n\n\n```typescript\nnew IERC20()\n```\n\n\n## Properties\n### public decimals: any\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L54)\n### public events: any\nEvents emitted by the contract.\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L111)\n### public name: any\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L43)\n### public symbol: any\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L48)\n\n## Methods\n### public allowance(owner, spender): UInt64\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| owner | PublicKey | ❌ | The address of the token owner. |\n| spender | PublicKey | ❌ | The address of the spender. |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L69)\n### public approveSpend(spender, value): Bool\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| spender | PublicKey | ❌ | The address to approve as a spender. |\n| value | UInt64 | ❌ | The amount of tokens to approve. |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L106)\n### public balanceOf(owner): UInt64\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| owner | PublicKey | ❌ | The address of the token owner. |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L63)\n### public totalSupply(): UInt64\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L58)\n### public transfer(to, value): Bool\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| to | PublicKey | ❌ | The address to transfer tokens to. |\n| value | UInt64 | ❌ | The amount of tokens to transfer. |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L81)\n### public transferFrom(from, to, value): Bool\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| from | PublicKey | ❌ | The address to transfer tokens from. |\n| to | PublicKey | ❌ | The address to transfer tokens to. |\n| value | UInt64 | ❌ | The amount of tokens to transfer. |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L94)"
+            }
+          ]
+        },
+        {
+          "data": {
+            "name": "Toolkit",
+            "abstract": false,
+            "constructor": {
+              "name": "Toolkit",
+              "description": null,
+              "see": [],
+              "static": false,
+              "private": false,
+              "examples": [],
+              "abstract": false,
+              "deprecated": false,
+              "parameters": [],
+              "returns": {
+                "type": "Toolkit",
+                "rawType": ["Toolkit"],
+                "description": null
+              },
+              "metadata": null,
+              "constructor": "new Toolkit"
+            },
+            "metadata": {
+              "name": "Toolkit.ts",
+              "directory": ".",
+              "line": 11,
+              "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L11"
+            },
+            "deprecated": false,
+            "description": null,
+            "extends": null,
+            "implements": null,
+            "rawExtends": null,
+            "rawImplements": null,
+            "methods": [
+              {
+                "name": "Toolkit",
+                "description": null,
+                "see": [],
+                "static": false,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [],
+                "returns": {
+                  "type": "void",
+                  "rawType": ["void"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 12,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L12"
+                }
+              },
+              {
+                "name": "deploy",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "config",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "feePayerKey",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "PrivateKey",
+                    "rawType": ["PrivateKey"]
+                  },
+                  {
+                    "name": "zkAppKey",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "PrivateKey",
+                    "rawType": ["PrivateKey"]
+                  },
+                  {
+                    "name": "zkApp",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "SmartContract",
+                    "rawType": ["SmartContract"]
+                  },
+                  {
+                    "name": "tag",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<void>",
+                  "rawType": ["Promise", "<", "void", ">"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 196,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L196"
+                }
+              },
+              {
+                "name": "getTxnUrl",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "graphQlUrl",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  },
+                  {
+                    "name": "txnHash",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "undefined | string",
+                    "rawType": ["undefined", "string"]
+                  }
+                ],
+                "returns": {
+                  "type": "string",
+                  "rawType": ["string"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 14,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L14"
+                }
+              },
+              {
+                "name": "initialFeePayer",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "fs",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "network",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<{ privateKey: string, publicKey: string }>",
+                  "rawType": [
+                    "Promise",
+                    "<",
+                    "{",
+                    " ",
+                    "privateKey",
+                    ":",
+                    " ",
+                    "string",
+                    "; ",
+                    "publicKey",
+                    ":",
+                    " ",
+                    "string",
+                    ";",
+                    " ",
+                    "}",
+                    ">"
+                  ],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 77,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L77"
+                }
+              },
+              {
+                "name": "initialKey",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "fs",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "path",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  },
+                  {
+                    "name": "tag",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<{ privateKey: string, publicKey: string }>",
+                  "rawType": [
+                    "Promise",
+                    "<",
+                    "{",
+                    " ",
+                    "privateKey",
+                    ":",
+                    " ",
+                    "string",
+                    "; ",
+                    "publicKey",
+                    ":",
+                    " ",
+                    "string",
+                    ";",
+                    " ",
+                    "}",
+                    ">"
+                  ],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 175,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L175"
+                }
+              },
+              {
+                "name": "initialKeyPairFromLightnet",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "fs",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "path",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<{ privateKey: string, publicKey: string }>",
+                  "rawType": [
+                    "Promise",
+                    "<",
+                    "{",
+                    " ",
+                    "privateKey",
+                    ":",
+                    " ",
+                    "string",
+                    "; ",
+                    "publicKey",
+                    ":",
+                    " ",
+                    "string",
+                    ";",
+                    " ",
+                    "}",
+                    ">"
+                  ],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 158,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L158"
+                }
+              },
+              {
+                "name": "initialPlayers",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "fs",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "network",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<{ pk1: PrivateKey, pk2: PrivateKey }>",
+                  "rawType": [
+                    "Promise",
+                    "<",
+                    "{",
+                    " ",
+                    "pk1",
+                    ":",
+                    " ",
+                    "PrivateKey",
+                    "; ",
+                    "pk2",
+                    ":",
+                    " ",
+                    "PrivateKey",
+                    ";",
+                    " ",
+                    "}",
+                    ">"
+                  ],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 110,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L110"
+                }
+              },
+              {
+                "name": "initialZkAppKey",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "fs",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "path",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<{ privateKey: string, publicKey: string }>",
+                  "rawType": [
+                    "Promise",
+                    "<",
+                    "{",
+                    " ",
+                    "privateKey",
+                    ":",
+                    " ",
+                    "string",
+                    "; ",
+                    "publicKey",
+                    ":",
+                    " ",
+                    "string",
+                    ";",
+                    " ",
+                    "}",
+                    ">"
+                  ],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 192,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L192"
+                }
+              },
+              {
+                "name": "isFileExists",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "fs",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "f",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<boolean>",
+                  "rawType": ["Promise", "<", "boolean", ">"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 68,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L68"
+                }
+              },
+              {
+                "name": "processTx",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "config",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "sentTx",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "Transaction",
+                    "rawType": ["Transaction"]
+                  },
+                  {
+                    "name": "keys",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "Array<PrivateKey>",
+                    "rawType": ["Array", "<", "PrivateKey", ">"]
+                  },
+                  {
+                    "name": "tag",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<void>",
+                  "rawType": ["Promise", "<", "void", ">"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 29,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L29"
+                }
+              },
+              {
+                "name": "storePrivateKey",
+                "description": null,
+                "see": [],
+                "static": true,
+                "private": false,
+                "examples": [],
+                "abstract": false,
+                "deprecated": false,
+                "parameters": [
+                  {
+                    "name": "fs",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "any",
+                    "rawType": ["any"]
+                  },
+                  {
+                    "name": "path",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "string",
+                    "rawType": ["string"]
+                  },
+                  {
+                    "name": "key",
+                    "description": null,
+                    "optional": false,
+                    "default": null,
+                    "type": "PrivateKey",
+                    "rawType": ["PrivateKey"]
+                  }
+                ],
+                "returns": {
+                  "type": "Promise<void>",
+                  "rawType": ["Promise", "<", "void", ">"],
+                  "description": null
+                },
+                "metadata": {
+                  "name": "Toolkit.ts",
+                  "directory": ".",
+                  "line": 144,
+                  "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L144"
+                }
+              }
+            ],
+            "private": false,
+            "properties": [],
+            "see": []
+          },
+          "markdown": [
+            {
+              "name": "Toolkit",
+              "metadata": {
+                "name": "Toolkit.ts",
+                "directory": ".",
+                "line": 11,
+                "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L11"
+              },
+              "content": "## Toolkit\n\n\n```typescript\nnew Toolkit()\n```\n\n\n\n\n## Methods\n### public Toolkit(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L12)\n### public static deploy(config, feePayerKey, zkAppKey, zkApp, tag): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| config | any | ❌ |\n| feePayerKey | PrivateKey | ❌ |\n| zkAppKey | PrivateKey | ❌ |\n| zkApp | SmartContract | ❌ |\n| tag | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L196)\n### public static getTxnUrl(graphQlUrl, txnHash): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| graphQlUrl | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n| txnHash | undefined[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L14)\n### public static initialFeePayer(fs, network): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<\\{ privateKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); publicKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); }>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| fs | any | ❌ |\n| network | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L77)\n### public static initialKey(fs, path, tag): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<\\{ privateKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); publicKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); }>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| fs | any | ❌ |\n| path | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n| tag | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L175)\n### public static initialKeyPairFromLightnet(fs, path): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<\\{ privateKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); publicKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); }>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| fs | any | ❌ |\n| path | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L158)\n### public static initialPlayers(fs, network): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<\\{ pk1: PrivateKey; pk2: PrivateKey; }>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| fs | any | ❌ |\n| network | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L110)\n### public static initialZkAppKey(fs, path): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<\\{ privateKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); publicKey: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String); }>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| fs | any | ❌ |\n| path | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L192)\n### public static isFileExists(fs, f): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| fs | any | ❌ |\n| f | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L68)\n### public static processTx(config, sentTx, keys, tag): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| config | any | ❌ |\n| sentTx | Transaction | ❌ |\n| keys | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\\<PrivateKey> | ❌ |\n| tag | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L29)\n### public static storePrivateKey(fs, path, key): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<[void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)>\n| Parameter | Type | Optional |\n| ----------- | ----------- | ----------- |\n| fs | any | ❌ |\n| path | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |\n| key | PrivateKey | ❌ |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Toolkit.ts#L144)"
+            }
+          ]
+        }
+      ],
+      "functions": [
+        {
+          "data": {
+            "name": "buildBasicTokenContract",
+            "description": "Creates a basic token contract instance.",
+            "see": [],
+            "static": false,
+            "private": false,
+            "examples": [],
+            "abstract": false,
+            "deprecated": false,
+            "parameters": [
+              {
+                "name": "address",
+                "description": "The address where the contract will be deployed",
+                "optional": false,
+                "default": null,
+                "type": "PublicKey",
+                "rawType": ["PublicKey"]
+              },
+              {
+                "name": "symbol",
+                "description": "The symbol for the token (e.g., \"MYTOKEN\")",
+                "optional": false,
+                "default": null,
+                "type": "string",
+                "rawType": ["string"]
+              }
+            ],
+            "returns": {
+              "type": "Promise<SmartContract & IBasicTokenContract>",
+              "rawType": [
+                "Promise",
+                "<",
+                "SmartContract",
+                " & ",
+                "IBasicTokenContract",
+                ">"
+              ],
+              "description": "A promise that resolves to the created token contract instance"
+            },
+            "metadata": {
+              "name": "BasicTokenContract.ts",
+              "directory": ".",
+              "line": 83,
+              "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L83"
+            }
+          },
+          "markdown": [
+            {
+              "name": "buildBasicTokenContract",
+              "metadata": {
+                "name": "BasicTokenContract.ts",
+                "directory": ".",
+                "line": 83,
+                "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L83"
+              },
+              "content": "### buildBasicTokenContract(address, symbol): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<SmartContract & IBasicTokenContract>\nCreates a basic token contract instance.\n\n\n\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| address | PublicKey | ❌ | The address where the contract will be deployed |\n| symbol | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The symbol for the token (e.g., \"MYTOKEN\") |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/BasicTokenContract.ts#L83)"
+            }
+          ]
+        },
+        {
+          "data": {
+            "name": "buildERC20Contract",
+            "description": "Constructs and deploys an ERC20 token contract.",
+            "see": [],
+            "static": false,
+            "private": false,
+            "examples": [
+              "```typescript\nconst myToken = await buildERC20Contract(address, 'MyToken', 'MTK', 18);\n// Interact with the token contract using the `myToken` instance\n```"
+            ],
+            "abstract": false,
+            "deprecated": false,
+            "parameters": [
+              {
+                "name": "address",
+                "description": "The address of the token contract on the blockchain.",
+                "optional": false,
+                "default": null,
+                "type": "PublicKey",
+                "rawType": ["PublicKey"]
+              },
+              {
+                "name": "name",
+                "description": "The name of the token.",
+                "optional": false,
+                "default": null,
+                "type": "string",
+                "rawType": ["string"]
+              },
+              {
+                "name": "symbol",
+                "description": "The symbol of the token.",
+                "optional": false,
+                "default": null,
+                "type": "string",
+                "rawType": ["string"]
+              },
+              {
+                "name": "decimals",
+                "description": "The number of decimals used to represent token amounts.",
+                "optional": false,
+                "default": null,
+                "type": "number",
+                "rawType": ["number"]
+              }
+            ],
+            "returns": {
+              "type": "Promise<SmartContract & IERC20>",
+              "rawType": [
+                "Promise",
+                "<",
+                "SmartContract",
+                " & ",
+                "IERC20",
+                ">"
+              ],
+              "description": "A promise that resolves to the deployed contract instance."
+            },
+            "metadata": {
+              "name": "Erc20Token.ts",
+              "directory": ".",
+              "line": 152,
+              "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L152"
+            }
+          },
+          "markdown": [
+            {
+              "name": "buildERC20Contract",
+              "metadata": {
+                "name": "Erc20Token.ts",
+                "directory": ".",
+                "line": 152,
+                "url": "https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L152"
+              },
+              "content": "### buildERC20Contract(address, name, symbol, decimals): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)\\<SmartContract & IERC20>\nConstructs and deploys an ERC20 token contract.\n\n```typescript\nconst myToken = await buildERC20Contract(address, 'MyToken', 'MTK', 18);\n// Interact with the token contract using the `myToken` instance\n```\n\n| Parameter | Type | Optional | Description |\n| ----------- | ----------- | ----------- | ----------- |\n| address | PublicKey | ❌ | The address of the token contract on the blockchain. |\n| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The name of the token. |\n| symbol | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ | The symbol of the token. |\n| decimals | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ | The number of decimals used to represent token amounts. |\n\n\n- [Source](https://github.com/zkoracle/opennautilus-contacts/blob/bd62210/src/Erc20Token.ts#L152)"
+            }
+          ]
+        }
+      ],
+      "name": "@zkoracle/opennautilus-contracts",
+      "types": [],
+      "enum": [],
+      "variables": []
+    }
+  },
+  "metadata": { "generationMs": 857.1058330535889, "timestamp": 1704450134607 }
+}
