@@ -6,6 +6,7 @@ import {
   PublicKey,
   SmartContract,
   TokenId,
+  fetchAccount,
 } from 'o1js';
 import {
   IBasicTokenContract,
@@ -62,20 +63,48 @@ describe('BasicTokenContract', () => {
     //
   });
 
-  describe('Token Contract Creation/Deployment', () => {
-    beforeEach(async () => {
-      await setupAccounts();
-      await setupLocal();
+  describe('Signature Authorization', () => {
+    /*
+      test case description:
+      Check token contract can be deployed and initialized
+      tested cases:
+        - create a new token
+        - deploy a zkApp under a custom token
+        - create a new valid token with a different parentTokenId
+        - set the token symbol after deployment
+    */
+
+    describe('Token Contract Creation/Deployment', () => {
+      beforeEach(async () => {
+        await setupAccounts();
+        await setupLocal();
+      });
+
+      test('correct token id can be derived with an existing token owner', () => {
+        expect(tokenId).toEqual(TokenId.derive(zkAppAddress));
+      });
+
+      it.todo('deployed token contract exists in the ledger');
+      // test('deployed token contract exists in the ledger', async () => {
+      //   // getAccount: Could not find account for public key {} with the tokenId {}
+      //   //   await fetchAccount({publicKey: zkAppAddress});
+      //   //   expect(Mina.getAccount(zkAppAddress, tokenId)).toBeDefined();
+      // });
+
+      test('setting a valid token symbol on a token contract', async () => {
+        const symbol = Mina.getAccount(zkAppAddress).tokenSymbol;
+        expect(tokenSymbol).toBeDefined();
+        expect(symbol).toEqual(tokenSymbol);
+      });
     });
 
-    test('correct token id can be derived with an existing token owner', () => {
-      expect(tokenId).toEqual(TokenId.derive(zkAppAddress));
-    });
+    describe('Mint token', () => {
+      beforeEach(async () => {
+        await setupAccounts();
+        await setupLocal();
+      });
 
-    test('setting a valid token symbol on a token contract', async () => {
-      const symbol = Mina.getAccount(zkAppAddress).tokenSymbol;
-      expect(tokenSymbol).toBeDefined();
-      expect(symbol).toEqual(tokenSymbol);
+      it.todo('should be correct');
     });
   });
 });

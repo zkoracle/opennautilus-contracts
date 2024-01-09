@@ -3,12 +3,10 @@ import {
   state,
   State,
   method,
-  DeployArgs,
   Permissions,
   UInt64,
   PublicKey,
   Signature,
-  Field,
 } from 'o1js';
 
 /**

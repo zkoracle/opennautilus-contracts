@@ -25,8 +25,8 @@ jobs:
         uses: jaywcjlove/coverage-badges-cli@main
         with:
           style: classic
-          source: contracts/coverage/coverage-summary.json
-          output: contracts/coverage/badges.svg
+          source: coverage/coverage-summary.json
+          output: coverage/badges.svg
           jsonPath: totals.percent_covered
 
       # - name: Deploy Coverage

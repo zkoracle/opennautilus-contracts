@@ -3,22 +3,75 @@ import {
   Bool,
   CircuitString,
   provablePure,
-  DeployArgs,
   Field,
   method,
-  AccountUpdate,
   PublicKey,
   SmartContract,
   UInt64,
   Account,
-  Experimental,
   Permissions,
-  Mina,
-  Int64,
-  VerificationKey,
   State,
   state,
 } from 'o1js';
+
+/**
+ * Represents the events emitted by an ERC20 token contract.
+ *
+ * @remarks
+ * This type defines the structure of events that signal important state changes within the contract,
+ * allowing external observers to track token transfers and approvals.
+ */
+export type IERC20Events = {
+  /**
+   * Emitted when tokens are transferred.
+   *
+   * @param from The address of the sender.
+   * @param to The address of the recipient.
+   * @param value The amount of tokens transferred.
+   */
+  Transfer: ProvablePure<{
+    from: PublicKey;
+    to: PublicKey;
+    value: UInt64;
+  }>;
+  /**
+   * Emitted when an allowance is approved.
+   *
+   * @param owner The address of the token owner.
+   * @param spender The address of the spender who has been granted allowance.
+   * @param value The amount of tokens approved.
+   */
+  Approval: ProvablePure<{
+    owner: PublicKey;
+    spender: PublicKey;
+    value: UInt64;
+  }>;
+};
+
+/**
+ * An instance of the `IERC20Events` type, providing concrete event definitions for ERC20 token contracts.
+ *
+ * @remarks
+ * This object can be used to subscribe to and handle these events within your application.
+ */
+export const ERC20Events: IERC20Events = {
+  /**
+   * Emitted when tokens are transferred.
+   */
+  Transfer: provablePure({
+    from: PublicKey,
+    to: PublicKey,
+    value: UInt64,
+  }),
+  /**
+   * Emitted when an allowance is approved.
+   */
+  Approval: provablePure({
+    owner: PublicKey,
+    spender: PublicKey,
+    value: UInt64,
+  }),
+};
 
 /**
  * Represents a standard interface for fungible tokens, implementing the ERC20 standard.
@@ -108,24 +161,7 @@ export abstract class IERC20 {
   /**
    * Events emitted by the contract.
    */
-  events: {
-    /**
-     * Emitted when tokens are transferred.
-     */
-    Transfer: ProvablePure<{
-      from: PublicKey;
-      to: PublicKey;
-      value: UInt64;
-    }>;
-    /**
-     * Emitted when an allowance is approved.
-     */
-    Approval: ProvablePure<{
-      owner: PublicKey;
-      spender: PublicKey;
-      value: UInt64;
-    }>;
-  };
+  events: IERC20Events;
 }
 
 // NotFixed
@@ -189,6 +225,21 @@ export async function buildERC20Contract(
         send: permissionToEdit,
         receive: permissionToEdit,
       });
+    }
+
+    /**
+     * Initializes the contract after deployment.
+     *
+     * @remarks
+     * This method performs the following steps:
+     * 1. Calls the superclass's `init` method to handle any base initialization tasks.
+     * 2. Sets the token symbol for the contract.
+     * 3. Initializes the total amount of tokens in circulation to zero.
+     */
+    @method init() {
+      super.init();
+      this.account.tokenSymbol.set(symbol);
+      this.totalAmountInCirculation.set(UInt64.zero);
     }
 
     /**
@@ -297,25 +348,7 @@ export async function buildERC20Contract(
     /**
      * Events emitted by the contract to signal important state changes.
      */
-    events = {
-      /**
-       * Emitted when tokens are transferred.
-       */
-      Transfer: provablePure({
-        from: PublicKey,
-        to: PublicKey,
-        value: UInt64,
-      }),
-
-      /**
-       * Emitted when an allowance is approved.
-       */
-      Approval: provablePure({
-        owner: PublicKey,
-        spender: PublicKey,
-        value: UInt64,
-      }),
-    };
+    events = ERC20Events;
   }
 
   await Erc20Contract.compile(); // Compile
