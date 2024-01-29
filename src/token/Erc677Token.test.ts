@@ -85,8 +85,6 @@ describe('Erc677 TokenContract', () => {
       const symbol = Mina.getAccount(zkAppAddress).tokenSymbol;
       expect(tokenSymbol).toBeDefined();
       expect(symbol).toEqual(tokenSymbol);
-
-      zkApp.name;
     });
 
     it.todo('building a valid token name on a token contract');

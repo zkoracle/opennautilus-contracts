@@ -12,6 +12,8 @@ import {
   Permissions,
   State,
   state,
+  Experimental,
+  AccountUpdate,
 } from 'o1js';
 import { IERC20, IERC20Events, ERC20Events } from './Erc20Token';
 
@@ -108,7 +110,8 @@ export abstract class IERC677 extends IERC20 {
   abstract transferAndCall(
     to: PublicKey,
     value: UInt64,
-    data: CircuitString
+    data: CircuitString,
+    onTokenTransfer: Experimental.Callback<any>
   ): Bool; // emits "Transfer" event
   /**
    * The events emitted by the contract.
@@ -291,9 +294,29 @@ export async function buildERC677Contract(
      * @returns {Bool} - Returns `false` in the current implementation.
      * @emits TransferAndCall - Emitted when the transfer is successful.
      */
-    transferAndCall(to: PublicKey, value: UInt64, data: CircuitString): Bool {
+    transferAndCall(
+      to: PublicKey,
+      value: UInt64,
+      data: CircuitString,
+      onTokenTransfer: Experimental.Callback<any>
+    ): Bool {
       this.token.send({ from: this.sender, to, amount: value });
       this.emitEvent('TransferAndCall', { from: this.sender, to, value, data });
+
+      // let oracleAccountUpdate = this.approve(
+      //   onTokenTransfer,
+      //   AccountUpdate.Layout.AnyChildren
+      // );
+
+      // transaction(feePayer, () => {
+      //   let onTokenTransferCallback = Experimental.Callback.create(
+      //     zkAppOracle,
+      //     'onTokenTransfer',
+      //     []
+      //   );
+      //   // we call the token contract with the callback
+      //   tokenZkApp.transferAndCall(zkAppOracleAddress,10, "", onTokenTransferCallback);
+      // });
 
       // const oracleContract = new OracleContract(to);
       // oracleContract.onTokenTransfer(this.sender, value, data);

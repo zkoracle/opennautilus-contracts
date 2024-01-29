@@ -7,6 +7,8 @@ import {
   UInt64,
   PublicKey,
   Signature,
+  AccountUpdate,
+  VerificationKey,
 } from 'o1js';
 
 /**
@@ -38,17 +40,46 @@ export abstract class IBasicTokenContract {
   abstract init(): void;
 
   /**
-   * Mints new tokens and assigns them to a receiver.
+   * Mints new tokens with signature and assigns them to a receiver.
    *
    * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
    * @param amount - The amount of tokens to mint
    * @param adminSignature - A signature from an authorized administrator, required to approve the minting
    */
-  abstract mint(
+  abstract mintWithSignature(
     receiverAddress: PublicKey,
     amount: UInt64,
     adminSignature: Signature
   ): void;
+
+  /**
+   * Mints new tokens and assigns them to a receiver. (require signature)
+   *
+   * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
+   * @param amount - The amount of tokens to mint
+   */
+  abstract mint(receiverAddress: PublicKey, amount: UInt64): void;
+
+  /**
+   * Burning (destroying) tokens with signature, reducing the total supply.
+   *
+   * @param receiverAddress - The address of the token holder whose tokens will be burned
+   * @param amount - The amount of tokens to burn
+   * @param adminSignature - A signature from an authorized administrator, required to approve the burning
+   */
+  abstract burnWithSignature(
+    receiverAddress: PublicKey,
+    amount: UInt64,
+    adminSignature: Signature
+  ): void;
+
+  /**
+   * Burning (destroying) tokens, reducing the total supply. (require signature)
+   *
+   * @param receiverAddress - The address of the token holder whose tokens will be burned
+   * @param amount - The amount of tokens to burn
+   */
+  abstract burn(receiverAddress: PublicKey, amount: UInt64): void;
 
   /**
    * Sends tokens from one address to another.
@@ -124,6 +155,28 @@ export async function buildBasicTokenContract(
     }
 
     /**
+     * Deploys a zkApp (zero-knowledge application) account with standard permissions.
+     *
+     * @remarks
+     * This method performs the following steps:
+     * 1. Retrieves the token ID associated with the contract.
+     * 2. Creates a default account update instruction for the zkApp's address and token ID.
+     * 3. Approves the account update, authorizing the creation of the zkApp account.
+     * 4. Sets default permissions for the zkApp account.
+     * 5. Stores the provided verification key in the zkApp account's state.
+     *
+     * @param address - The address where the zkApp account will be deployed
+     * @param verificationKey - The verification key to be associated with the zkApp account
+     */
+    @method deployZkapp(address: PublicKey, verificationKey: VerificationKey) {
+      let tokenId = this.token.id;
+      let zkapp = AccountUpdate.defaultAccountUpdate(address, tokenId);
+      this.approve(zkapp);
+      zkapp.account.permissions.set(Permissions.default());
+      zkapp.account.verificationKey.set(verificationKey);
+    }
+
+    /**
      * Initializes the contract after deployment.
      *
      * @remarks
@@ -139,7 +192,7 @@ export async function buildBasicTokenContract(
     }
 
     /**
-     * Mints new tokens and assigns them to a receiver.
+     * Mints new tokens with signature and assigns them to a receiver.
      *
      * @remarks
      * This function performs the following steps:
@@ -153,7 +206,7 @@ export async function buildBasicTokenContract(
      * @param amount - The amount of tokens to mint
      * @param adminSignature - A signature from an authorized administrator, required to approve the minting
      */
-    @method mint(
+    @method mintWithSignature(
       receiverAddress: PublicKey,
       amount: UInt64,
       adminSignature: Signature
@@ -171,6 +224,105 @@ export async function buildBasicTokenContract(
         .assertTrue();
 
       this.token.mint({
+        address: receiverAddress,
+        amount,
+      });
+
+      this.totalAmountInCirculation.set(newTotalAmountInCirculation);
+    }
+
+    /**
+     * Mints new tokens and assigns them to a receiver.
+     *
+     * @remarks
+     * This method assumes that authorization checks for minting are handled elsewhere.
+     * It directly performs the following steps:
+     * 1. Retrieves the current total supply of tokens in circulation.
+     * 2. Asserts consistency of the retrieved state value.
+     * 3. Calculates the new total supply after minting.
+     * 4. Calls the underlying token module to mint the new tokens.
+     * 5. Updates the total token supply in the contract's state.
+     *
+     * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
+     * @param amount - The amount of tokens to mint
+     */
+    @method mint(receiverAddress: PublicKey, amount: UInt64) {
+      let totalAmountInCirculation = this.totalAmountInCirculation.get();
+      this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+
+      let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
+
+      this.token.mint({
+        address: receiverAddress,
+        amount,
+      });
+      this.totalAmountInCirculation.set(newTotalAmountInCirculation);
+    }
+
+    /**
+     * Burns (destroys) existing tokens with signature, reducing the total supply.
+     *
+     * @remarks
+     * This method performs the following steps:
+     * 1. Retrieves the current total supply of tokens in circulation.
+     * 2. Asserts consistency of the retrieved state value.
+     * 3. Verifies that the burning process is authorized by an administrator.
+     * 4. Calls the underlying token module to burn the specified amount of tokens.
+     * 5. Updates the total token supply in the contract's state to reflect the reduction.
+     *
+     * @param receiverAddress - The address of the token holder whose tokens will be burned
+     * @param amount - The amount of tokens to burn
+     * @param adminSignature - A signature from an authorized administrator, required to approve the burning
+     */
+    @method burnWithSignature(
+      receiverAddress: PublicKey,
+      amount: UInt64,
+      adminSignature: Signature
+    ) {
+      let totalAmountInCirculation = this.totalAmountInCirculation.get();
+      this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
+
+      adminSignature
+        .verify(
+          this.address,
+          amount.toFields().concat(receiverAddress.toFields())
+        )
+        .assertTrue();
+
+      this.token.burn({
+        address: receiverAddress,
+        amount,
+      });
+
+      this.totalAmountInCirculation.set(newTotalAmountInCirculation);
+    }
+
+    /**
+     * Burns (destroys) existing tokens, reducing the total supply.
+     *
+     * @remarks
+     * This method assumes that authorization checks for burning are handled elsewhere.
+     * It directly performs the following steps:
+     * 1. Retrieves the current total supply of tokens in circulation.
+     * 2. Asserts consistency of the retrieved state value.
+     * 3. Calculates the new total supply after burning.
+     * 4. Calls the underlying token module to burn the specified tokens.
+     * 5. Updates the total token supply in the contract's state.
+     *
+     * @param receiverAddress - The address of the token holder whose tokens will be burned
+     * @param amount - The amount of tokens to burn
+     *
+     * @warning This method does not explicitly check for authorization to burn tokens.
+     *          It's essential to ensure that appropriate authorization mechanisms are in place
+     *          to prevent unauthorized token burning.
+     */
+    @method burn(receiverAddress: PublicKey, amount: UInt64) {
+      let totalAmountInCirculation = this.totalAmountInCirculation.get();
+      this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
+
+      this.token.burn({
         address: receiverAddress,
         amount,
       });
