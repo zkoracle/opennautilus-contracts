@@ -1,6 +1,6 @@
 {
   "name": "@zkoracle/opennautilus-contracts",
-  "version": "0.4.3",
+  "version": "0.4.5",
   "description": "OpenNautilus Contracts is an open-source library designed to empower developers building smart contracts for zero-knowledge applications (zkApps).",
   "author": "ubinix-warun",
   "license": "Apache-2.0",
@@ -29,6 +29,9 @@
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-typescript": "^7.16.0",
+    "@bufbuild/buf": "^1.28.1",
+    "@bufbuild/protobuf": "^1.6.0",
+    "@bufbuild/protoc-gen-es": "^1.6.0",
     "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",

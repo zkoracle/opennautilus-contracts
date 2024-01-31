@@ -3,8 +3,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3 } from "@bufbuild/protobuf";
+import type {
+  BinaryReadOptions,
+  FieldList,
+  JsonReadOptions,
+  JsonValue,
+  PartialMessage,
+  PlainMessage,
+} from '@bufbuild/protobuf';
+import { Message, proto3 } from '@bufbuild/protobuf';
 
 /**
  * @generated from message oracle.OracleRequest
@@ -13,22 +20,22 @@ export class OracleRequest extends Message<OracleRequest> {
   /**
    * @generated from field: string protocol = 1;
    */
-  protocol = "";
+  protocol = '';
 
   /**
    * @generated from field: string method = 2;
    */
-  method = "";
+  method = '';
 
   /**
    * @generated from field: string url = 3;
    */
-  url = "";
+  url = '';
 
   /**
    * @generated from field: string path = 4;
    */
-  path = "";
+  path = '';
 
   constructor(data?: PartialMessage<OracleRequest>) {
     super();
@@ -36,28 +43,39 @@ export class OracleRequest extends Message<OracleRequest> {
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "oracle.OracleRequest";
+  static readonly typeName = 'oracle.OracleRequest';
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "protocol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "method", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "path", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: 'protocol', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: 'method', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: 'url', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: 'path', kind: 'scalar', T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OracleRequest {
+  static fromBinary(
+    bytes: Uint8Array,
+    options?: Partial<BinaryReadOptions>
+  ): OracleRequest {
     return new OracleRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OracleRequest {
+  static fromJson(
+    jsonValue: JsonValue,
+    options?: Partial<JsonReadOptions>
+  ): OracleRequest {
     return new OracleRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OracleRequest {
+  static fromJsonString(
+    jsonString: string,
+    options?: Partial<JsonReadOptions>
+  ): OracleRequest {
     return new OracleRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: OracleRequest | PlainMessage<OracleRequest> | undefined, b: OracleRequest | PlainMessage<OracleRequest> | undefined): boolean {
+  static equals(
+    a: OracleRequest | PlainMessage<OracleRequest> | undefined,
+    b: OracleRequest | PlainMessage<OracleRequest> | undefined
+  ): boolean {
     return proto3.util.equals(OracleRequest, a, b);
   }
 }
-
