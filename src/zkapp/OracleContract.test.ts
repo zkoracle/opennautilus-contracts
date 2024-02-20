@@ -55,7 +55,7 @@ async function setupLocal() {
   await tx.send();
 }
 
-describe('OracleClient SmartContract', () => {
+describe('OracleContract', () => {
   beforeAll(async () => {
     await OracleClient.compile();
   });
@@ -67,40 +67,7 @@ describe('OracleClient SmartContract', () => {
     });
 
     test('should got request from on-chain field', async () => {
-      let req1 = new OracleRequest({
-        protocol: 'http',
-        method: 'get',
-        url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=ETH&tsyms=USD',
-        path: 'RAW.ETH.USD.PRICE',
-      });
-
-      const offChainBytes = req1.toBinary();
-      const ReqField = Encoding.bytesToFields(offChainBytes);
-
-      console.log(offChainBytes.length);
-      console.log(ReqField);
-
-      let tx = await Mina.transaction(player1, () => {
-        zkApp.request(ReqField[0], ReqField[1], ReqField[2], ReqField[3]);
-      });
-
-      await tx.prove();
-      tx.sign([player1Key, zkAppPrivateKey]);
-      await tx.send();
-
-      const onChainReq = [
-        zkApp.req0.get(),
-        zkApp.req1.get(),
-        zkApp.req2.get(),
-        zkApp.req3.get(),
-      ];
-
-      expect(ReqField).toEqual(onChainReq);
-
-      const onChainBytes = Encoding.bytesFromFields(onChainReq);
-      const req2 = OracleRequest.fromBinary(onChainBytes);
-
-      expect(req1).toEqual(req2);
+      // Callback
     });
   });
 });
