@@ -4,11 +4,13 @@ import {
   Field,
   Mina,
   PrivateKey,
+  ProvablePure,
   PublicKey,
   SmartContract,
   UInt32,
+  provablePure,
 } from 'o1js';
-import { IOracleClient, OracleContract } from './OracleContract';
+import { IOracleClient, IOracleEvents, OracleContract } from './OracleContract';
 import { OracleRequest } from '../gen/oracle-request_pb';
 import {
   buildBasicRequestClient,
@@ -83,6 +85,16 @@ async function setupLocal() {
   await tx2.send();
 }
 
+async function displayEvents(contract: SmartContract) {
+  let events = await contract.fetchEvents();
+  console.log(
+    `events on ${contract.address.toBase58()}`,
+    events.map((e) => {
+      return { type: e.type, data: JSON.stringify(e.event) };
+    })
+  );
+}
+
 describe('BasicRequestClient SmartContract', () => {
   beforeAll(async () => {
     // await OracleClient.compile();
@@ -95,7 +107,8 @@ describe('BasicRequestClient SmartContract', () => {
       await setupLocal();
     });
 
-    test('should got request from on-chain field', async () => {
+    test('should got oracleRequest event from on-chain tx', async () => {
+      // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({
         protocol: 'http',
         method: 'get',
@@ -103,17 +116,48 @@ describe('BasicRequestClient SmartContract', () => {
         path: 'RAW.ETH.USD.PRICE',
       });
 
+      const offChainBytes = req1.toBinary();
+      const ReqField = Encoding.bytesToFields(offChainBytes);
+
       let tx = await buildOracleRequestTx(player1, zkAppClient, req1);
 
       await tx.prove();
       tx.sign([player1Key, zkAppClientPrivateKey]);
       await tx.send();
 
+      // Fetcher fetch Event and filter OracleRequest.
       const events = await zkAppOracle.fetchEvents(UInt32.from(0));
 
-      expect(events[0].type).toEqual('OracleRequest'); //
+      expect(events[0].type).toEqual('OracleRequest');
 
-      console.log(events[0].event.data);
+      // await displayEvents(zkAppOracle);
+
+      interface OracleData {
+        sender: string;
+        req0: string;
+        req1: string;
+        req2: string;
+        req3: string;
+      }
+
+      const r: OracleData = JSON.parse(JSON.stringify(events[0].event.data));
+
+      // const data = (events[0].event).data
+      // console.log(r.sender);
+      // console.log(r.req0);
+
+      const onOracleReq = [
+        Field.fromJSON(r.req0),
+        Field.fromJSON(r.req1),
+        Field.fromJSON(r.req2),
+        Field.fromJSON(r.req3),
+      ];
+
+      const onOracleDataBytes = Encoding.bytesFromFields(onOracleReq);
+      const req2 = OracleRequest.fromBinary(onOracleDataBytes);
+
+      expect(ReqField).toEqual(onOracleReq);
+      expect(req1).toEqual(req2);
     });
   });
 });
