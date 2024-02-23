@@ -10,6 +10,9 @@ import {
   UInt32,
   provablePure,
 } from 'o1js';
+
+import { JSONPath } from 'jsonpath-plus';
+
 import { IOracleClient, IOracleEvents, OracleContract } from './OracleContract';
 import { OracleRequest } from '../gen/oracle-request_pb';
 import {
@@ -125,7 +128,7 @@ describe('BasicRequestClient SmartContract', () => {
       tx.sign([player1Key, zkAppClientPrivateKey]);
       await tx.send();
 
-      // Fetcher fetch Event and filter OracleRequest.
+      // Fetcher got Event and filter OracleRequest.
       const events = await zkAppOracle.fetchEvents(UInt32.from(0));
 
       expect(events[0].type).toEqual('OracleRequest');
@@ -140,6 +143,7 @@ describe('BasicRequestClient SmartContract', () => {
         req3: string;
       }
 
+      // Reparse from jsonStringify (event.data)
       const r: OracleData = JSON.parse(JSON.stringify(events[0].event.data));
 
       // const data = (events[0].event).data
@@ -158,6 +162,13 @@ describe('BasicRequestClient SmartContract', () => {
 
       expect(ReqField).toEqual(onOracleReq);
       expect(req1).toEqual(req2);
+
+      const response = await fetch(req2.url);
+      const data = await response.json();
+      const result = JSONPath({ path: req2.path, json: data });
+
+      // console.log(JSON.stringify(data));
+      // console.log(result);
     });
   });
 });
