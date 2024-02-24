@@ -5,6 +5,7 @@ import {
   Field,
   ProvablePure,
   PublicKey,
+  Signature,
   SmartContract,
   State,
   UInt64,
@@ -41,10 +42,10 @@ export abstract class IOracleClient {
   /**
    * Handles the fulfillment of an Oracle request.
    *
-   * @param reply - The reply data from the Oracle.
+   * @param data0 - The data0 data from the Oracle.
    * @returns A boolean indicating success.
    */
-  abstract onFulfillRequest(reply: Field): Bool;
+  abstract onFulfillRequest(data0: Field): Bool;
 }
 
 /**
@@ -66,6 +67,21 @@ export abstract class IOracleContract {
     req2: Field,
     req3: Field
   ): Bool;
+
+  /**
+   * Fulfills an Oracle request, verifies a signature, and potentially sends a callback to the specified address.
+   *
+   * @param callbackAddress - The public key of the contract to send the callback to (optional).
+   * @param data0 - The first field of the data to be sent in the callback (optional).
+   * @param signature - The signature to be verified (associated with the request or data).
+   * @returns A boolean indicating success (always true in this implementation, potentially modify based on requirements).
+   */
+  abstract fulfillOracleRequest(
+    callbackAddress: PublicKey,
+    data0: Field,
+    signature: Signature
+  ): Bool;
+
   /**
    * Events emitted by the Oracle contract.
    */
@@ -165,8 +181,26 @@ export class OracleContract extends SmartContract implements IOracleContract {
     return Bool(true); // Always return true, potentially modify based on requirements
   }
 
+  /**
+   * Fulfills an Oracle request, verifies a signature, and potentially sends a callback to the specified address.
+   *
+   * @param callbackAddress - The public key of the contract to send the callback to (optional).
+   * @param data0 - The first field of the data to be sent in the callback (optional).
+   * @param signature - The signature to be verified (associated with the request or data).
+   * @returns A boolean indicating success (always true in this implementation, potentially modify based on requirements).
+   */
+  @method
+  fulfillOracleRequest(
+    callbackAddress: PublicKey,
+    data0: Field,
+    signature: Signature
+  ): Bool {
+    // const callbackContract = new BasicRequestClient(callbackAddress);
+
+    return Bool(true); // Always return true, potentially modify based on requirements
+  }
+
   // TODO
-  // ⬜ fulfillOracleRequest() - Called by the operator to fulfill requests.
   // ⬜ cancelOracleRequest - Allows requesters to cancel requests.
   // ⬜ setFulfillmentPermission() - Sets the fulfillment permission for a given operator.
   // function setFulfillmentPermission(address _node, bool _allowed)
