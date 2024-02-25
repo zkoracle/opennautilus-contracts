@@ -93,7 +93,7 @@ export async function buildBasicRequestClient(
      * @param reply - The reply data from the Oracle.
      * @returns A boolean indicating success (always true in this implementation, potentially requiring verification).
      */
-    @method onFulfillRequest(reply: Field): Bool {
+    @method onFulfillRequest(data0: Field): Bool {
       // verify from oracleContract
 
       return Bool(true);

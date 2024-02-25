@@ -6,8 +6,10 @@ import {
   PrivateKey,
   ProvablePure,
   PublicKey,
+  Signature,
   SmartContract,
   UInt32,
+  UInt64,
   provablePure,
 } from 'o1js';
 
@@ -167,6 +169,31 @@ describe('BasicRequestClient SmartContract', () => {
       const data = await response.json();
       const result = JSONPath({ path: req2.path, json: data });
 
+      // // Feed data
+      // const signatureFeed = Signature.create(zkAppOraclePrivateKey, [
+      //   Field(result),
+      // ]);
+
+      // const feedData = UInt64.from(result);
+      // const signatureFeed = Signature.create(
+      //   zkAppOraclePrivateKey,
+      //   [Field(1)]
+      // );
+        
+      // const txnFeed = await Mina.transaction(player1, () => {
+      //   zkAppOracle.fulfillOracleRequest(
+      //     zkAppClientAddress,
+      //     feedData.toFields()[0],
+      //     signatureFeed
+      //   );
+
+      //   // zkAppInstance.feed(
+      //   //   roundId,
+      //   //   Field(r100),
+      //   //   signatureFeed ?? fail('something is wrong with the signature')
+      //   // );
+      // });
+      
       // console.log(JSON.stringify(data));
       // console.log(result);
     });
