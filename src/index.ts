@@ -5,6 +5,8 @@ import {
 } from './token/BasicTokenContract.js';
 import { IERC677, buildERC677Contract } from './token/Erc677Token.js';
 import { Toolkit } from './Toolkit.js';
+import { OracleContract } from './zkapp/OracleContract.js';
+import { buildBasicRequestClient } from './zkapp/BasicRequestClient.js';
 
 export {
   Toolkit,
@@ -14,4 +16,6 @@ export {
   buildERC20Contract,
   IERC677,
   buildERC677Contract,
+  OracleContract,
+  buildBasicRequestClient
 };
