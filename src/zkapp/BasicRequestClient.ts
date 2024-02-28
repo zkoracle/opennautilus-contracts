@@ -21,14 +21,15 @@ import { OracleRequest } from '../gen/oracle-request_pb.js';
  * @returns A promise that resolves to a Mina transaction containing the Oracle request.
  */
 export async function buildOracleRequestTx(
-  sender: PublicKey,
+  sender: Mina.FeePayerSpec,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
 ): Promise<Mina.Transaction> {
   const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
-  return Mina.transaction(sender, () => {
+  return Mina.transaction(
+    sender, () => {
     zkApp.sendOracleRequest(reqField[0], reqField[1], reqField[2], reqField[3]);
   });
 }

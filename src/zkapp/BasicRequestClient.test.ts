@@ -124,7 +124,7 @@ describe('BasicRequestClient SmartContract', () => {
       const offChainBytes = req1.toBinary();
       const ReqField = Encoding.bytesToFields(offChainBytes);
 
-      let tx = await buildOracleRequestTx(player1, zkAppClient, req1);
+      let tx = await buildOracleRequestTx({ sender: player1 }, zkAppClient, req1);
 
       await tx.prove();
       tx.sign([player1Key, zkAppClientPrivateKey]);
