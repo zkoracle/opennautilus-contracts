@@ -9,7 +9,7 @@ import {
   state,
   Mina,
 } from 'o1js';
-import { OracleContract, IOracleClient } from './OracleContract';
+import { OracleContract, IOracleClient } from './OracleContract.js';
 import { OracleRequest } from '../gen/oracle-request_pb';
 
 /**

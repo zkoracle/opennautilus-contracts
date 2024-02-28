@@ -179,7 +179,7 @@ describe('BasicRequestClient SmartContract', () => {
       //   zkAppOraclePrivateKey,
       //   [Field(1)]
       // );
-        
+
       // const txnFeed = await Mina.transaction(player1, () => {
       //   zkAppOracle.fulfillOracleRequest(
       //     zkAppClientAddress,
@@ -193,7 +193,7 @@ describe('BasicRequestClient SmartContract', () => {
       //   //   signatureFeed ?? fail('something is wrong with the signature')
       //   // );
       // });
-      
+
       // console.log(JSON.stringify(data));
       // console.log(result);
     });

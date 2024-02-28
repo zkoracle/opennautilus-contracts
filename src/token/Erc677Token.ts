@@ -15,7 +15,7 @@ import {
   Experimental,
   AccountUpdate,
 } from 'o1js';
-import { IERC20, IERC20Events, ERC20Events } from './Erc20Token';
+import { IERC20, IERC20Events, ERC20Events } from './Erc20Token.js';
 
 /**
  * Represents the events emitted by an ERC677 token contract.
@@ -110,9 +110,9 @@ export abstract class IERC677 extends IERC20 {
   abstract transferAndCall(
     to: PublicKey,
     value: UInt64,
-    data: CircuitString,
-    onTokenTransfer: Experimental.Callback<any>
-  ): Bool; // emits "Transfer" event
+    data: CircuitString
+  ): // onTokenTransfer: Experimental.Callback<any>
+  Bool; // emits "Transfer" event
   /**
    * The events emitted by the contract.
    *
@@ -297,8 +297,8 @@ export async function buildERC677Contract(
     transferAndCall(
       to: PublicKey,
       value: UInt64,
-      data: CircuitString,
-      onTokenTransfer: Experimental.Callback<any>
+      data: CircuitString
+      // onTokenTransfer: Experimental.Callback<any>
     ): Bool {
       this.token.send({ from: this.sender, to, amount: value });
       this.emitEvent('TransferAndCall', { from: this.sender, to, value, data });
