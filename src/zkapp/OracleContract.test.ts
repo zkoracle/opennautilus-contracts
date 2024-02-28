@@ -7,8 +7,8 @@ import {
   PublicKey,
   SmartContract,
 } from 'o1js';
-import { OracleClient } from './ClientContract';
-import { OracleRequest } from '../gen/oracle-request_pb';
+import { OracleClient } from './ClientContract.js';
+import { OracleRequest } from '../gen/oracle-request_pb.js';
 
 let player1: PublicKey,
   player1Key: PrivateKey,

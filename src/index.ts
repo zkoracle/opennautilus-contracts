@@ -24,6 +24,7 @@ import {
   buildOracleRequestTx,
   buildBasicRequestClient,
 } from './zkapp/BasicRequestClient.js';
+import { OracleRequest } from './gen/oracle-request_pb.js';
 
 export {
   Toolkit,
@@ -42,4 +43,5 @@ export {
   OracleContract,
   buildOracleRequestTx,
   buildBasicRequestClient,
+  OracleRequest
 };

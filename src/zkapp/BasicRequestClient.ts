@@ -10,7 +10,7 @@ import {
   Mina,
 } from 'o1js';
 import { OracleContract, IOracleClient } from './OracleContract.js';
-import { OracleRequest } from '../gen/oracle-request_pb';
+import { OracleRequest } from '../gen/oracle-request_pb.js';
 
 /**
  * Builds a Mina transaction that sends an Oracle request to a designated zkApp.

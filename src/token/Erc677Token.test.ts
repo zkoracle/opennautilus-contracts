@@ -12,7 +12,7 @@ import {
   CircuitString,
   fetchAccount,
 } from 'o1js';
-import { IERC677, buildERC677Contract } from './Erc677Token';
+import { IERC677, buildERC677Contract } from './Erc677Token.js';
 
 const tokenSymbol = 'SOM';
 

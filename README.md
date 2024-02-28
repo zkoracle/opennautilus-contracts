@@ -36,7 +36,7 @@ pnpm run coverage
 pnpm link --global
 
 cd <project>
-pnpm link --global opennautilus-contracts
+pnpm link --global @zkoracle/opennautilus-contracts
 
 ```
 

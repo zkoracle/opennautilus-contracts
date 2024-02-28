@@ -15,12 +15,12 @@ import {
 
 import { JSONPath } from 'jsonpath-plus';
 
-import { IOracleClient, IOracleEvents, OracleContract } from './OracleContract';
-import { OracleRequest } from '../gen/oracle-request_pb';
+import { IOracleClient, IOracleEvents, OracleContract } from './OracleContract.js';
+import { OracleRequest } from '../gen/oracle-request_pb.js';
 import {
   buildBasicRequestClient,
   buildOracleRequestTx,
-} from './BasicRequestClient';
+} from './BasicRequestClient.js';
 
 let player1: PublicKey,
   player1Key: PrivateKey,
