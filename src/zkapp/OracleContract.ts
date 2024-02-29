@@ -12,11 +12,16 @@ import {
   method,
   provablePure,
 } from 'o1js';
+import { BasicRequestClient } from './BasicRequestClient.js';
 
 /**
  * Abstract class representing an Oracle client.
  */
 export abstract class IOracleClient {
+
+  oracleAddress = State<PublicKey>();
+  data0 = State<Field>();
+
   /**
    * Sets the Oracle contract address.
    *
@@ -27,12 +32,21 @@ export abstract class IOracleClient {
   /**
    * Sends an Oracle request.
    *
+   * @param oracleAddress - The public key of the Oracle contract.
    * @param req0 - The first field of the request data.
    * @param req1 - The second field of the request data.
    * @param req2 - The third field of the request data.
    * @param req3 - The fourth field of the request data.
    * @returns A boolean indicating success.
    */
+  abstract sendOracleRequestWithAddr(
+    oracleAddress: PublicKey,
+    req0: Field,
+    req1: Field,
+    req2: Field,
+    req3: Field
+  ): Bool;
+
   abstract sendOracleRequest(
     req0: Field,
     req1: Field,
@@ -46,6 +60,36 @@ export abstract class IOracleClient {
    * @returns A boolean indicating success.
    */
   abstract onFulfillRequest(data0: Field): Bool;
+}
+
+/**
+ * Represents the data structure for an Oracle request.
+ */
+export interface IOracleData {
+  /**
+   * The public key of the sender who initiated the Oracle request.
+   */
+  sender: string; // Consider using PublicKey type if available
+
+  /**
+   * The first field of the request data (converted to string).
+   */
+  req0: string;
+
+  /**
+   * The second field of the request data (converted to string).
+   */
+  req1: string;
+
+  /**
+   * The third field of the request data (converted to string).
+   */
+  req2: string;
+
+  /**
+   * The fourth field of the request data (converted to string).
+   */
+  req3: string;
 }
 
 /**
@@ -195,12 +239,18 @@ export class OracleContract extends SmartContract implements IOracleContract {
     data0: Field,
     signature: Signature
   ): Bool {
-    // const callbackContract = new BasicRequestClient(callbackAddress);
+
+    const validSignature = signature.verify(this.address, [
+      data0
+    ]);
+    validSignature.assertTrue();
+
+    const callbackContract = new BasicRequestClient(callbackAddress);
+    callbackContract.onFulfillRequest(data0);
 
     return Bool(true); // Always return true, potentially modify based on requirements
   }
 
-  // TODO
   // ⬜ cancelOracleRequest - Allows requesters to cancel requests.
   // ⬜ setFulfillmentPermission() - Sets the fulfillment permission for a given operator.
   // function setFulfillmentPermission(address _node, bool _allowed)

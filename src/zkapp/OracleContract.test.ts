@@ -7,7 +7,7 @@ import {
   PublicKey,
   SmartContract,
 } from 'o1js';
-import { OracleClient } from './ClientContract.js';
+// import { OracleClient } from './ClientContract.js';
 import { OracleRequest } from '../gen/oracle-request_pb.js';
 
 let player1: PublicKey,
@@ -18,7 +18,7 @@ let player1: PublicKey,
   zkAppPrivateKey: PrivateKey;
 
 let tokenId: Field;
-let zkApp: OracleClient; //& OracleClient;
+// let zkApp: OracleClient; //& OracleClient;
 
 async function setupAccounts() {
   let Local = Mina.LocalBlockchain({
@@ -35,29 +35,29 @@ async function setupAccounts() {
   zkAppPrivateKey = PrivateKey.random();
   zkAppAddress = zkAppPrivateKey.toPublicKey();
 
-  zkApp = new OracleClient(zkAppAddress);
+  // zkApp = new OracleClient(zkAppAddress);
 
   //   zkApp = await buildERC677Contract(zkAppAddress, 'SomeCoin', tokenSymbol, 9);
   //   tokenId = zkApp.token.id;
 }
 
 async function setupLocal() {
-  let tx = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: zkAppAddress,
-      amount: Mina.accountCreationFee(),
-    });
-    zkApp.deploy();
-  });
-  await tx.prove();
-  tx.sign([zkAppPrivateKey, player1Key]);
-  await tx.send();
+  // let tx = await Mina.transaction(player1, () => {
+  //   let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
+  //   feePayerUpdate.send({
+  //     to: zkAppAddress,
+  //     amount: Mina.accountCreationFee(),
+  //   });
+  //   zkApp.deploy();
+  // });
+  // await tx.prove();
+  // tx.sign([zkAppPrivateKey, player1Key]);
+  // await tx.send();
 }
 
 describe('OracleContract', () => {
   beforeAll(async () => {
-    await OracleClient.compile();
+    // await OracleClient.compile();
   });
 
   describe(' Requst processing ', () => {

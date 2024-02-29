@@ -15,10 +15,16 @@ import {
 
 import { JSONPath } from 'jsonpath-plus';
 
-import { IOracleClient, IOracleEvents, OracleContract } from './OracleContract.js';
+import {
+  IOracleClient,
+  IOracleEvents,
+  OracleContract,
+} from './OracleContract.js';
 import { OracleRequest } from '../gen/oracle-request_pb.js';
 import {
-  buildBasicRequestClient,
+  BasicRequestClient,
+  buildOracleRequestTxWithAddr,
+  // buildBasicRequestClient,
   buildOracleRequestTx,
 } from './BasicRequestClient.js';
 
@@ -55,13 +61,13 @@ async function setupAccounts() {
   zkAppClientPrivateKey = PrivateKey.random();
   zkAppClientAddress = zkAppClientPrivateKey.toPublicKey();
 
-  zkAppClient = await buildBasicRequestClient(
-    zkAppClientAddress,
-    zkAppOracleAddress
-  );
+  // zkAppClient = await buildBasicRequestClient(
+  //   zkAppClientAddress,
+  //   zkAppOracleAddress
+  // );
 
-  //   zkApp = await buildERC677Contract(zkAppAddress, 'SomeCoin', tokenSymbol, 9);
-  //   tokenId = zkApp.token.id;
+  zkAppClient = new BasicRequestClient(zkAppClientAddress);
+
 }
 
 async function setupLocal() {
@@ -90,19 +96,9 @@ async function setupLocal() {
   await tx2.send();
 }
 
-async function displayEvents(contract: SmartContract) {
-  let events = await contract.fetchEvents();
-  console.log(
-    `events on ${contract.address.toBase58()}`,
-    events.map((e) => {
-      return { type: e.type, data: JSON.stringify(e.event) };
-    })
-  );
-}
-
 describe('BasicRequestClient SmartContract', () => {
   beforeAll(async () => {
-    // await OracleClient.compile();
+    await BasicRequestClient.compile();
     await OracleContract.compile();
   });
 
@@ -112,7 +108,8 @@ describe('BasicRequestClient SmartContract', () => {
       await setupLocal();
     });
 
-    test('should got oracleRequest event from on-chain tx', async () => {
+    test('should got oracleRequestWithAddr event from on-chain tx, then fetch ETH price and fulfillOracle', async () => {
+      
       // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({
         protocol: 'http',
@@ -124,7 +121,13 @@ describe('BasicRequestClient SmartContract', () => {
       const offChainBytes = req1.toBinary();
       const ReqField = Encoding.bytesToFields(offChainBytes);
 
-      let tx = await buildOracleRequestTx({ sender: player1 }, zkAppClient, req1);
+      // Pass oracleAddr to buildOracleRequestTx
+      let tx = await buildOracleRequestTxWithAddr(
+        { sender: player1 },
+        zkAppOracleAddress,
+        zkAppClient,
+        req1
+      );
 
       await tx.prove();
       tx.sign([player1Key, zkAppClientPrivateKey]);
@@ -148,9 +151,104 @@ describe('BasicRequestClient SmartContract', () => {
       // Reparse from jsonStringify (event.data)
       const r: OracleData = JSON.parse(JSON.stringify(events[0].event.data));
 
-      // const data = (events[0].event).data
-      // console.log(r.sender);
-      // console.log(r.req0);
+      const onOracleReq = [
+        Field.fromJSON(r.req0),
+        Field.fromJSON(r.req1),
+        Field.fromJSON(r.req2),
+        Field.fromJSON(r.req3),
+      ];
+
+      const onOracleDataBytes = Encoding.bytesFromFields(onOracleReq);
+      const req2 = OracleRequest.fromBinary(onOracleDataBytes);
+
+      expect(ReqField).toEqual(onOracleReq);
+      expect(req1).toEqual(req2);
+
+      // Off chain processing
+      const response = await fetch(req2.url);
+      const data = await response.json();
+      const result = JSONPath({ path: req2.path, json: data });
+
+      // Scale float value to int
+      const r10000 = Math.floor((result[0] * 10000) as number);
+
+      // Sign FeedData
+      const signatureFeed = Signature.create(zkAppOraclePrivateKey, [Field(r10000)]);
+
+      // Send fulfillOracleRequest()
+      const txnFeed = await Mina.transaction(player1, () => {
+        zkAppOracle.fulfillOracleRequest(
+          zkAppClientAddress,
+          Field(r10000),
+          signatureFeed
+        );
+      });
+
+      await txnFeed.prove();
+      txnFeed.sign([player1Key, zkAppOraclePrivateKey]);
+      await txnFeed.send();
+
+      const feedData = await zkAppClient.data0.get();
+      expect(feedData).toEqual(Field(r10000));
+
+      console.log(`request ${req2.url}
+       - offchain-value '${req2.path}' = ${r10000 / 10000}
+       - onchain-value '${req2.path}' = ${Number(feedData.toBigInt()) / 10000}`);
+
+    });
+
+    test('should got oracleRequest event from on-chain tx, then fetch MINA price and fulfillOracle', async () => {
+      
+      // Set OracleContract on Client
+      const txnSet = await Mina.transaction(player1, () => {
+        zkAppClient.setOracleContract(zkAppOracleAddress)
+      });
+
+      await txnSet.prove();
+      txnSet.sign([player1Key, zkAppClientPrivateKey]);
+      await txnSet.send();
+
+      const oracleAddr = await zkAppClient.oracleAddress.get();
+      expect(oracleAddr).toEqual(zkAppOracleAddress);
+
+      // BasicRequest from Client to Oracle 'OracleRequest'
+      let req1 = new OracleRequest({
+        protocol: 'http',
+        method: 'get',
+        url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=MINA&tsyms=USD',
+        path: 'RAW.MINA.USD.PRICE',
+      });
+
+      const offChainBytes = req1.toBinary();
+      const ReqField = Encoding.bytesToFields(offChainBytes);
+
+      let tx = await buildOracleRequestTx(
+        { sender: player1 },
+        zkAppClient,
+        req1
+      );
+
+      await tx.prove();
+      tx.sign([player1Key, zkAppClientPrivateKey]);
+      await tx.send();
+
+      // Fetcher got Event and filter OracleRequest.
+      const events = await zkAppOracle.fetchEvents(UInt32.from(0));
+
+      expect(events[0].type).toEqual('OracleRequest');
+
+      // await displayEvents(zkAppOracle);
+
+      interface OracleData {
+        sender: string;
+        req0: string;
+        req1: string;
+        req2: string;
+        req3: string;
+      }
+
+      // Reparse from jsonStringify (event.data)
+      const r: OracleData = JSON.parse(JSON.stringify(events[0].event.data));
 
       const onOracleReq = [
         Field.fromJSON(r.req0),
@@ -165,37 +263,39 @@ describe('BasicRequestClient SmartContract', () => {
       expect(ReqField).toEqual(onOracleReq);
       expect(req1).toEqual(req2);
 
+      // Off chain processing
       const response = await fetch(req2.url);
       const data = await response.json();
       const result = JSONPath({ path: req2.path, json: data });
 
-      // // Feed data
-      // const signatureFeed = Signature.create(zkAppOraclePrivateKey, [
-      //   Field(result),
-      // ]);
+      // Scale float value to int
+      const r10000 = Math.floor((result[0] * 10000) as number);
 
-      // const feedData = UInt64.from(result);
-      // const signatureFeed = Signature.create(
-      //   zkAppOraclePrivateKey,
-      //   [Field(1)]
-      // );
+      // Sign FeedData
+      const signatureFeed = Signature.create(zkAppOraclePrivateKey, [Field(r10000)]);
 
-      // const txnFeed = await Mina.transaction(player1, () => {
-      //   zkAppOracle.fulfillOracleRequest(
-      //     zkAppClientAddress,
-      //     feedData.toFields()[0],
-      //     signatureFeed
-      //   );
+      // Send fulfillOracleRequest()
+      const txnFeed = await Mina.transaction(player1, () => {
+        zkAppOracle.fulfillOracleRequest(
+          zkAppClientAddress,
+          Field(r10000),
+          signatureFeed
+        );
+      });
 
-      //   // zkAppInstance.feed(
-      //   //   roundId,
-      //   //   Field(r100),
-      //   //   signatureFeed ?? fail('something is wrong with the signature')
-      //   // );
-      // });
+      await txnFeed.prove();
+      txnFeed.sign([player1Key, zkAppOraclePrivateKey]);
+      await txnFeed.send();
 
-      // console.log(JSON.stringify(data));
-      // console.log(result);
+      // Test onChain on Client
+      const feedData = await zkAppClient.data0.get();
+      expect(feedData).toEqual(Field(r10000));
+
+      console.log(`request ${req2.url}
+      - offchain-value '${req2.path}' = ${r10000 / 10000}
+      - onchain-value '${req2.path}' = ${Number(feedData.toBigInt()) / 10000}`);
+
     });
+
   });
 });

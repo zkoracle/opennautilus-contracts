@@ -18,11 +18,13 @@ import { Toolkit } from './Toolkit.js';
 import {
   IOracleClient,
   IOracleEvents,
+  IOracleData,
   OracleContract,
 } from './zkapp/OracleContract.js';
 import {
   buildOracleRequestTx,
-  buildBasicRequestClient,
+  BasicRequestClient,
+  // buildBasicRequestClient,
 } from './zkapp/BasicRequestClient.js';
 import { OracleRequest } from './gen/oracle-request_pb.js';
 
@@ -40,8 +42,10 @@ export {
   buildERC677Contract,
   IOracleClient,
   IOracleEvents,
+  IOracleData,
   OracleContract,
+  BasicRequestClient,
   buildOracleRequestTx,
-  buildBasicRequestClient,
-  OracleRequest
+  // buildBasicRequestClient,
+  OracleRequest,
 };

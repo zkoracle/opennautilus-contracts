@@ -5,6 +5,7 @@ import {
   Mina,
   PrivateKey,
   SmartContract,
+  UInt32,
   fetchAccount,
 } from 'o1js';
 
@@ -74,13 +75,13 @@ export class Toolkit {
     }
   }
 
-  public static async initialFeePayer(fs: any, network: string) {
+  public static async initialFeePayer(fs: any, network: string, tag: string) {
     let feePayerBase58;
 
     if (network !== 'lightnet') {
       feePayerBase58 = await this.initialKey(
         fs,
-        'keys/tictactoe-feePayer.key',
+        `keys/${tag}-feePayer.key`,
         'feePayerPrivateKey'
       );
       const feePayerPrivateKey = PrivateKey.fromBase58(
@@ -100,28 +101,28 @@ export class Toolkit {
     } else {
       feePayerBase58 = await this.initialKeyPairFromLightnet(
         fs,
-        'keys/tictactoe-acquireFeePayer.key'
+        `keys/${tag}-acquireFeePayer.key`
       );
     }
 
     return feePayerBase58;
   }
 
-  public static async initialPlayers(fs: any, network: string) {
+  public static async initialPlayers(fs: any, network: string, tag: string) {
     let player1PrivateKey;
     let player2PrivateKey;
 
     if (network !== 'lightnet') {
       const player1Keys = await this.initialKey(
         fs,
-        'keys/tictactoe-player1.key',
+        `keys/${tag}-player1.key`,
         'player1PrivateKey'
       );
       player1PrivateKey = PrivateKey.fromBase58(player1Keys.privateKey);
       console.log(`Load player1PrivateKey ... `);
       const player2Keys = await this.initialKey(
         fs,
-        'keys/tictactoe-player2.key',
+        `keys/${tag}-player2.key`,
         'playerPrivateKey'
       );
       player2PrivateKey = PrivateKey.fromBase58(player2Keys.privateKey);
@@ -191,6 +192,20 @@ export class Toolkit {
 
   public static async initialZkAppKey(fs: any, path: string) {
     return this.initialKey(fs, path, 'zkAppPrivateKey');
+  }
+
+  public static async displayEvents(
+    contract: SmartContract,
+    start?: UInt32,
+    end?: UInt32
+  ) {
+    let events = await contract.fetchEvents(start, end);
+    console.log(
+      `events on ${contract.address.toBase58()}`,
+      events.map((e) => {
+        return { type: e.type, data: JSON.stringify(e.event) };
+      })
+    );
   }
 
   public static async deploy(
