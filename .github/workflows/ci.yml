@@ -9,7 +9,7 @@ on: [push, pull_request]
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30 
     steps:
       - name: Set up NodeJS
         uses: actions/setup-node@v4
@@ -29,13 +29,13 @@ jobs:
           output: coverage/badges.svg
           jsonPath: totals.percent_covered
 
-      # - name: Deploy Coverage
-      #   uses: peaceiris/actions-gh-pages@v3
-      #   if: github.ref == 'refs/heads/main'
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: contracts/coverage
-      #     destination_dir: coverage
+      - name: Deploy Coverage
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: contracts/coverage
+          destination_dir: coverage
 
         env:
           CI: true
