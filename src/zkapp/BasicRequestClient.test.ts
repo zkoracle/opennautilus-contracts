@@ -67,7 +67,6 @@ async function setupAccounts() {
   // );
 
   zkAppClient = new BasicRequestClient(zkAppClientAddress);
-
 }
 
 async function setupLocal() {
@@ -109,7 +108,6 @@ describe('BasicRequestClient SmartContract', () => {
     });
 
     test('should got oracleRequestWithAddr event from on-chain tx, then fetch ETH price and fulfillOracle', async () => {
-      
       // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({
         protocol: 'http',
@@ -173,7 +171,9 @@ describe('BasicRequestClient SmartContract', () => {
       const r10000 = Math.floor((result[0] * 10000) as number);
 
       // Sign FeedData
-      const signatureFeed = Signature.create(zkAppOraclePrivateKey, [Field(r10000)]);
+      const signatureFeed = Signature.create(zkAppOraclePrivateKey, [
+        Field(r10000),
+      ]);
 
       // Send fulfillOracleRequest()
       const txnFeed = await Mina.transaction(player1, () => {
@@ -193,15 +193,15 @@ describe('BasicRequestClient SmartContract', () => {
 
       console.log(`request ${req2.url}
        - offchain-value '${req2.path}' = ${r10000 / 10000}
-       - onchain-value '${req2.path}' = ${Number(feedData.toBigInt()) / 10000}`);
-
+       - onchain-value '${req2.path}' = ${
+        Number(feedData.toBigInt()) / 10000
+      }`);
     });
 
     test('should got oracleRequest event from on-chain tx, then fetch MINA price and fulfillOracle', async () => {
-      
       // Set OracleContract on Client
       const txnSet = await Mina.transaction(player1, () => {
-        zkAppClient.setOracleContract(zkAppOracleAddress)
+        zkAppClient.setOracleContract(zkAppOracleAddress);
       });
 
       await txnSet.prove();
@@ -272,7 +272,9 @@ describe('BasicRequestClient SmartContract', () => {
       const r10000 = Math.floor((result[0] * 10000) as number);
 
       // Sign FeedData
-      const signatureFeed = Signature.create(zkAppOraclePrivateKey, [Field(r10000)]);
+      const signatureFeed = Signature.create(zkAppOraclePrivateKey, [
+        Field(r10000),
+      ]);
 
       // Send fulfillOracleRequest()
       const txnFeed = await Mina.transaction(player1, () => {
@@ -294,8 +296,6 @@ describe('BasicRequestClient SmartContract', () => {
       console.log(`request ${req2.url}
       - offchain-value '${req2.path}' = ${r10000 / 10000}
       - onchain-value '${req2.path}' = ${Number(feedData.toBigInt()) / 10000}`);
-
     });
-
   });
 });

@@ -18,7 +18,6 @@ import { BasicRequestClient } from './BasicRequestClient.js';
  * Abstract class representing an Oracle client.
  */
 export abstract class IOracleClient {
-
   oracleAddress = State<PublicKey>();
   data0 = State<Field>();
 
@@ -214,6 +213,9 @@ export class OracleContract extends SmartContract implements IOracleContract {
   oracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool {
     // Publish Event for Operator
 
+    // Assert Erc677Token from Sender
+    // ? CallbackAddr
+
     this.emitEvent('OracleRequest', {
       sender: this.sender,
       req0,
@@ -239,10 +241,7 @@ export class OracleContract extends SmartContract implements IOracleContract {
     data0: Field,
     signature: Signature
   ): Bool {
-
-    const validSignature = signature.verify(this.address, [
-      data0
-    ]);
+    const validSignature = signature.verify(this.address, [data0]);
     validSignature.assertTrue();
 
     const callbackContract = new BasicRequestClient(callbackAddress);

@@ -16,6 +16,7 @@ import {
   AccountUpdate,
 } from 'o1js';
 import { IERC20, IERC20Events, ERC20Events } from './Erc20Token.js';
+import { OracleContract } from '../zkapp/OracleContract.js';
 
 /**
  * Represents the events emitted by an ERC677 token contract.
@@ -103,16 +104,21 @@ export abstract class IERC677 extends IERC20 {
    *
    * @param {PublicKey} to - The address of the recipient.
    * @param {UInt64} value - The amount of tokens to transfer.
-   * @param {CircuitString} data - Additional data to be passed to the contract method.
+   * @param {Field} data0 - The first additional field to be passed to the contract method, if applicable.
+   * @param {Field} data1 - The second additional field to be passed to the contract method, if applicable.
+   * @param {Field} data2 - The third additional field to be passed to the contract method, if applicable.
+   * @param {Field} data3 - The fourth additional field to be passed to the contract method, if applicable.
    * @returns {Bool} - True if the transfer and call were successful, false otherwise.
    * @emits Transfer - Emitted when the transfer is successful.
    */
   abstract transferAndCall(
     to: PublicKey,
     value: UInt64,
-    data: CircuitString
-  ): // onTokenTransfer: Experimental.Callback<any>
-  Bool; // emits "Transfer" event
+    data0: Field,
+    data1: Field,
+    data2: Field,
+    data3: Field
+  ): Bool; // emits "Transfer" event
   /**
    * The events emitted by the contract.
    *
@@ -290,36 +296,35 @@ export async function buildERC677Contract(
      *
      * @param {PublicKey} to - The address of the recipient.
      * @param {UInt64} value - The amount of tokens to transfer.
-     * @param {CircuitString} data - Additional data to be passed to the contract method, if applicable.
+     * @param data0 - The first additional field to be passed to the contract method, if applicable.
+     * @param data1 - The second additional field to be passed to the contract method, if applicable.
+     * @param data2 - The third additional field to be passed to the contract method, if applicable.
+     * @param data3 - The fourth additional field to be passed to the contract method, if applicable.
      * @returns {Bool} - Returns `false` in the current implementation.
      * @emits TransferAndCall - Emitted when the transfer is successful.
      */
     transferAndCall(
       to: PublicKey,
       value: UInt64,
-      data: CircuitString
-      // onTokenTransfer: Experimental.Callback<any>
+      data0: Field,
+      data1: Field,
+      data2: Field,
+      data3: Field
+      // onTokenTransfer: Experimental.accountUpdateFromCallback<any>
     ): Bool {
       this.token.send({ from: this.sender, to, amount: value });
-      this.emitEvent('TransferAndCall', { from: this.sender, to, value, data });
+      this.emitEvent('TransferAndCall', {
+        from: this.sender,
+        to,
+        value,
+        data0,
+        data1,
+        data2,
+        data3,
+      });
 
-      // let oracleAccountUpdate = this.approve(
-      //   onTokenTransfer,
-      //   AccountUpdate.Layout.AnyChildren
-      // );
-
-      // transaction(feePayer, () => {
-      //   let onTokenTransferCallback = Experimental.Callback.create(
-      //     zkAppOracle,
-      //     'onTokenTransfer',
-      //     []
-      //   );
-      //   // we call the token contract with the callback
-      //   tokenZkApp.transferAndCall(zkAppOracleAddress,10, "", onTokenTransferCallback);
-      // });
-
-      // const oracleContract = new OracleContract(to);
-      // oracleContract.onTokenTransfer(this.sender, value, data);
+      const oracleContract = new OracleContract(to);
+      oracleContract.oracleRequest(data0, data1, data2, data3);
 
       // we don't have to check the balance of the sender -- this is done by the zkApp protocol
 

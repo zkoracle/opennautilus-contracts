@@ -23,7 +23,7 @@ import { OracleRequest } from '../gen/oracle-request_pb.js';
  */
 export async function buildOracleRequestTxWithAddr(
   sender: Mina.FeePayerSpec,
-  oracleAddress:PublicKey,
+  oracleAddress: PublicKey,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
 ): Promise<Mina.Transaction> {
@@ -31,7 +31,13 @@ export async function buildOracleRequestTxWithAddr(
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
   return Mina.transaction(sender, () => {
-    zkApp.sendOracleRequestWithAddr(oracleAddress, reqField[0], reqField[1], reqField[2], reqField[3]);
+    zkApp.sendOracleRequestWithAddr(
+      oracleAddress,
+      reqField[0],
+      reqField[1],
+      reqField[2],
+      reqField[3]
+    );
   });
 }
 
@@ -56,12 +62,10 @@ export async function buildOracleRequestTx(
   });
 }
 
-
 /**
  * A basic request client contract that implements the `IOracleClient` interface.
  */
 export class BasicRequestClient extends SmartContract implements IOracleClient {
-
   @state(PublicKey) oracleAddress = State<PublicKey>(); // State variable storing the Oracle's address
   @state(Field) data0 = State<Field>();
 
@@ -100,14 +104,13 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
     req2: Field,
     req3: Field
   ): Bool {
-
     // const oraclePublicKey = this.oraclePublicKey.get();
     // this.oraclePublicKey.assertEquals(oraclePublicKey);
-    
+
     const oracleContract = new OracleContract(oracleAddress); // Instantiate Oracle contract
     return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
   }
-  
+
   /**
    * Sends an Oracle request to the stored Oracle contract.
    *
@@ -117,11 +120,15 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    * @param req3 - The fourth field of the request data.
    * @returns A boolean indicating success (determined by the Oracle contract).
    */
-  @method sendOracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool {
-
+  @method sendOracleRequest(
+    req0: Field,
+    req1: Field,
+    req2: Field,
+    req3: Field
+  ): Bool {
     const oraclePublicKey = this.oracleAddress.get();
     this.oracleAddress.requireEquals(this.oracleAddress.get());
-    
+
     const oracleContract = new OracleContract(oraclePublicKey); // Instantiate Oracle contract
     return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
     return Bool(true);
@@ -139,6 +146,4 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
 
     return Bool(true);
   }
-
 }
-
