@@ -67,6 +67,7 @@ export async function buildOracleRequestTx(
  */
 export class BasicRequestClient extends SmartContract implements IOracleClient {
   @state(PublicKey) oracleAddress = State<PublicKey>(); // State variable storing the Oracle's address
+  @state(PublicKey) tokenAddress = State<PublicKey>(); // State variable storing the Token's address
   @state(Field) data0 = State<Field>();
 
   init() {
@@ -84,6 +85,17 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    */
   @method setOracleContract(oracleAddress: PublicKey): Bool {
     this.oracleAddress.set(oracleAddress);
+    return Bool(true);
+  }
+
+  /**
+   * Updates the stored ERC-677 token address associated with this client.
+   *
+   * @param tokenAddress - The new PublicKey of the ERC-677 token.
+   * @returns True to indicate successful execution.
+   */
+  @method setErc677Token(tokenAddress: PublicKey): Bool {
+    this.tokenAddress.set(tokenAddress);
     return Bool(true);
   }
 
@@ -131,7 +143,6 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
 
     const oracleContract = new OracleContract(oraclePublicKey); // Instantiate Oracle contract
     return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
-    return Bool(true);
   }
 
   /**

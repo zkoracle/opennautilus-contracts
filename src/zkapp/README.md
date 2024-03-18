@@ -1,4 +1,3 @@
-
 ```
 > @zkoracle/opennautilus-contracts@0.6.6 test /Users/warun/HackathonProjects/opennautilus-contacts
 > node --experimental-vm-modules node_modules/jest/bin/jest.js "src/zkapp/BasicRequestClient.test.ts"

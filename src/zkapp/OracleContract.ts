@@ -11,6 +11,7 @@ import {
   UInt64,
   method,
   provablePure,
+  state,
 } from 'o1js';
 import { BasicRequestClient } from './BasicRequestClient.js';
 
@@ -18,7 +19,8 @@ import { BasicRequestClient } from './BasicRequestClient.js';
  * Abstract class representing an Oracle client.
  */
 export abstract class IOracleClient {
-  oracleAddress = State<PublicKey>();
+  oracleAddress = State<PublicKey>(); // State variable storing the Oracle's address
+  tokenAddress = State<PublicKey>(); // State variable storing the Token's address
   data0 = State<Field>();
 
   /**
@@ -95,6 +97,9 @@ export interface IOracleData {
  * Abstract class representing an Oracle contract.
  */
 export abstract class IOracleContract {
+  
+  tokenAddress = State<PublicKey>(); // State variable storing the Token's address
+  
   /**
    * Makes an Oracle request.
    *
@@ -196,8 +201,25 @@ export const OracleEvents: IOracleEvents = {
  * An Oracle contract implementing the `IOracleContract` interface.
  */
 export class OracleContract extends SmartContract implements IOracleContract {
+  /**
+   * Stores the address of a token associated with the oracle contract. This 
+   * token might be used for payment of oracle services or other interactions.
+   */
+  @state(PublicKey) tokenAddress = State<PublicKey>(); 
+
   init() {
     super.init();
+  }
+
+  /**
+   * Updates the stored ERC-677 token address associated with this oracle contract.
+   * 
+   * @param tokenAddress - The new PublicKey of the ERC-677 token.
+   * @returns True to indicate successful execution. 
+   */
+  @method setErc677Token(tokenAddress: PublicKey): Bool {
+    this.tokenAddress.set(tokenAddress);
+    return Bool(true);
   }
 
   /**

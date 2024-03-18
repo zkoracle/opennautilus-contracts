@@ -310,7 +310,6 @@ export async function buildERC677Contract(
       data1: Field,
       data2: Field,
       data3: Field
-      // onTokenTransfer: Experimental.accountUpdateFromCallback<any>
     ): Bool {
       this.token.send({ from: this.sender, to, amount: value });
       this.emitEvent('TransferAndCall', {
