@@ -1,5 +1,9 @@
 # OpenNautilus | contracts
 
+| Develop | Berkeley | 
+| ------- | -------- |
+| [![CI](https://github.com/zkoracle/opennautilus-contacts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zkoracle/opennautilus-contacts/actions/workflows/ci.yml)<br/>[![Coverage](https://raw.githubusercontent.com/zkoracle/opennautilus-contacts/gh-pages/coverage/badges.svg)](https://zkoracle.github.io/opennautilus-contacts/lcov-report)  | 🔥🔥🔥 | 
+
 OpenNautilus Contracts is an open-source library designed to empower developers building smart contracts for zero-knowledge applications (zkApps). 
 
 It provides a set of tools and abstractions that simplify the development process, enabling you to focus on the core logic of your zkApp without getting bogged down in low-level complexities.

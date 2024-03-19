@@ -60,8 +60,9 @@ async function setupLocal() {
 }
 
 describe('Erc20 TokenContract', () => {
-  beforeAll(async () => {
-    //
+  beforeEach(async () => {
+    await setupAccounts();
+    await setupLocal();
   });
 
   describe('Signature Authorization', () => {
@@ -76,21 +77,12 @@ describe('Erc20 TokenContract', () => {
     */
 
     describe('Erc20 Contract Creation/Deployment', () => {
-      beforeEach(async () => {
-        await setupAccounts();
-        await setupLocal();
-      });
 
       test('correct token id can be derived with an existing token owner', () => {
         expect(tokenId).toEqual(TokenId.derive(zkAppAddress));
       });
 
-      it.todo('deployed token contract exists in the ledger');
-      // test('deployed token contract exists in the ledger', async () => {
-      //   // getAccount: Could not find account for public key {} with the tokenId {}
-      //   //   await fetchAccount({publicKey: zkAppAddress});
-      //   //   expect(Mina.getAccount(zkAppAddress, tokenId)).toBeDefined();
-      // });
+      // it.todo('deployed token contract exists in the ledger');
 
       test('setting a valid token symbol on a token contract', async () => {
         const symbol = Mina.getAccount(zkAppAddress).tokenSymbol;
@@ -100,19 +92,8 @@ describe('Erc20 TokenContract', () => {
         zkApp.name;
       });
 
-      it.todo('building a valid token name on a token contract');
-      // test('building a valid token name on a token contract', async () => {
-      //   // expect("Some").toEqual(zkApp.name?);
-      // });
+      // it.todo('building a valid token name on a token contract');
     });
 
-    describe('Mint token', () => {
-      beforeEach(async () => {
-        await setupAccounts();
-        await setupLocal();
-      });
-
-      it.todo('should be correct');
-    });
   });
 });

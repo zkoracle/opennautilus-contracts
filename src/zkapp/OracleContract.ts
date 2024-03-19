@@ -31,6 +31,14 @@ export abstract class IOracleClient {
    */
   abstract setOracleContract(oracleAddress: PublicKey): Bool;
   /**
+   * Updates the stored ERC-677 token address associated with this oracle contract.
+   *
+   * @param tokenAddress - The new PublicKey of the ERC-677 token.
+   * @returns True to indicate successful execution.
+   */
+  abstract setErc677Token(tokenAddress: PublicKey): Bool;
+
+  /**
    * Sends an Oracle request.
    *
    * @param oracleAddress - The public key of the Oracle contract.
@@ -97,9 +105,8 @@ export interface IOracleData {
  * Abstract class representing an Oracle contract.
  */
 export abstract class IOracleContract {
-  
   tokenAddress = State<PublicKey>(); // State variable storing the Token's address
-  
+
   /**
    * Makes an Oracle request.
    *
@@ -202,10 +209,10 @@ export const OracleEvents: IOracleEvents = {
  */
 export class OracleContract extends SmartContract implements IOracleContract {
   /**
-   * Stores the address of a token associated with the oracle contract. This 
+   * Stores the address of a token associated with the oracle contract. This
    * token might be used for payment of oracle services or other interactions.
    */
-  @state(PublicKey) tokenAddress = State<PublicKey>(); 
+  @state(PublicKey) tokenAddress = State<PublicKey>();
 
   init() {
     super.init();
@@ -213,9 +220,9 @@ export class OracleContract extends SmartContract implements IOracleContract {
 
   /**
    * Updates the stored ERC-677 token address associated with this oracle contract.
-   * 
+   *
    * @param tokenAddress - The new PublicKey of the ERC-677 token.
-   * @returns True to indicate successful execution. 
+   * @returns True to indicate successful execution.
    */
   @method setErc677Token(tokenAddress: PublicKey): Bool {
     this.tokenAddress.set(tokenAddress);
@@ -237,6 +244,7 @@ export class OracleContract extends SmartContract implements IOracleContract {
 
     // Assert Erc677Token from Sender
     // ? CallbackAddr
+    // const validSignature = signature.verify(tokenAddress, [roundId]);
 
     this.emitEvent('OracleRequest', {
       sender: this.sender,

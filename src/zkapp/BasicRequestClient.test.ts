@@ -27,6 +27,7 @@ import {
   // buildBasicRequestClient,
   buildOracleRequestTx,
 } from './BasicRequestClient.js';
+import { IERC677, buildERC677Contract } from '../token/Erc677Token.js';
 
 let player1: PublicKey,
   player1Key: PrivateKey,
@@ -35,9 +36,13 @@ let player1: PublicKey,
   zkAppClientAddress: PublicKey,
   zkAppClientPrivateKey: PrivateKey,
   zkAppOracleAddress: PublicKey,
-  zkAppOraclePrivateKey: PrivateKey;
+  zkAppOraclePrivateKey: PrivateKey,
+  erc677TokenAddress: PublicKey,
+  erc677TokenPrivateKey: PrivateKey;
 
 let tokenId: Field;
+let tokenErc677Id: Field;
+let zkAppErc677: SmartContract & IERC677;
 let zkAppClient: SmartContract & IOracleClient;
 let zkAppOracle: OracleContract;
 
@@ -52,6 +57,19 @@ async function setupAccounts() {
 
   // player2Key = Local.testAccounts[1].privateKey;
   // player2 = Local.testAccounts[1].publicKey;
+
+  erc677TokenPrivateKey = PrivateKey.random();
+  erc677TokenAddress = erc677TokenPrivateKey.toPublicKey();
+
+  zkAppErc677 = await buildERC677Contract(
+    erc677TokenAddress,
+    'SomeCoin',
+    'PZZ',
+    9
+  );
+  tokenErc677Id = zkAppErc677.token.id;
+
+  zkAppOracle = new OracleContract(zkAppOracleAddress);
 
   zkAppOraclePrivateKey = PrivateKey.random();
   zkAppOracleAddress = zkAppOraclePrivateKey.toPublicKey();
@@ -74,7 +92,7 @@ async function setupLocal() {
     let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
     feePayerUpdate.send({
       to: zkAppClientAddress,
-      amount: Mina.accountCreationFee(),
+      amount: Mina.getNetworkConstants().accountCreationFee,
     });
     zkAppClient.deploy();
   });
@@ -86,7 +104,7 @@ async function setupLocal() {
     let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
     feePayerUpdate.send({
       to: zkAppOracleAddress,
-      amount: Mina.accountCreationFee(),
+      amount: Mina.getNetworkConstants().accountCreationFee,
     });
     zkAppOracle.deploy();
   });
@@ -201,6 +219,7 @@ describe('BasicRequestClient SmartContract', () => {
     test('should got oracleRequest event from on-chain tx, then fetch MINA price and fulfillOracle', async () => {
       // Set OracleContract on Client
       const txnSet = await Mina.transaction(player1, () => {
+        zkAppClient.setErc677Token(erc677TokenAddress);
         zkAppClient.setOracleContract(zkAppOracleAddress);
       });
 
