@@ -111,6 +111,18 @@ async function setupLocal() {
   await tx2.prove();
   tx2.sign([zkAppOraclePrivateKey, player1Key]);
   await tx2.send();
+
+  let tx3 = await Mina.transaction(player1, () => {
+    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
+    feePayerUpdate.send({
+      to: erc677TokenAddress,
+      amount: Mina.getNetworkConstants().accountCreationFee,
+    });
+    zkAppErc677.deploy();
+  });
+  await tx3.prove();
+  tx3.sign([erc677TokenPrivateKey, player1Key]);
+  await tx3.send();
 }
 
 describe('BasicRequestClient SmartContract', () => {
@@ -317,4 +329,47 @@ describe('BasicRequestClient SmartContract', () => {
       - onchain-value '${req2.path}' = ${Number(feedData.toBigInt()) / 10000}`);
     });
   });
+
+  // describe("Send TransferAndCall to 'OracleRequest()'", () => {
+  //   beforeEach(async () => {
+  //     await setupAccounts();
+  //     await setupLocal();
+  //   });
+
+  //   test('should got oracleRequest event from on-chain tx, then fetch MINA price and fulfillOracle', async () => {
+  //     // Set OracleContract on Client
+  //     const txnSet = await Mina.transaction(player1, () => {
+  //       zkAppClient.setErc677Token(erc677TokenAddress);
+  //       zkAppClient.setOracleContract(zkAppOracleAddress);
+  //     });
+
+  //     await txnSet.prove();
+  //     txnSet.sign([player1Key, zkAppClientPrivateKey]);
+  //     await txnSet.send();
+
+  //     const oracleAddr = await zkAppClient.oracleAddress.get();
+  //     expect(oracleAddr).toEqual(zkAppOracleAddress);
+
+  //     // BasicRequest from Client to Oracle 'OracleRequest'
+  //     let req1 = new OracleRequest({
+  //       protocol: 'http',
+  //       method: 'get',
+  //       url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=MINA&tsyms=USD',
+  //       path: 'RAW.MINA.USD.PRICE',
+  //     });
+
+  //     let tx = await buildOracleRequestTx(
+  //       { sender: player1 },
+  //       zkAppClient,
+  //       req1
+  //     );
+
+  //     await tx.prove();
+  //     tx.sign([player1Key, zkAppClientPrivateKey]);
+  //     await tx.send();
+      
+  //   });
+
+  // });
+
 });

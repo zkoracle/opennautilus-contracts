@@ -11,6 +11,7 @@ import {
 } from 'o1js';
 import { OracleContract, IOracleClient } from './OracleContract.js';
 import { OracleRequest } from '../gen/oracle-request_pb.js';
+import { buildERC677Contract } from '../token/Erc677Token.js';
 
 /**
  * Builds a Mina transaction that sends an Oracle request to a designated zkApp with Addr.
@@ -62,10 +63,25 @@ export async function buildOracleRequestTx(
   });
 }
 
+export async function buildTransferAndCallTx(
+  sender: Mina.FeePayerSpec,
+  zkApp: SmartContract & IOracleClient,
+  oracleRequest: OracleRequest
+): Promise<Mina.Transaction> {
+  const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
+  const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
+
+  return Mina.transaction(sender, () => {
+    // zkApp.sendErc677RequestTo(reqField[0], reqField[1], reqField[2], reqField[3]);
+  });
+}
+
+
 /**
  * A basic request client contract that implements the `IOracleClient` interface.
  */
 export class BasicRequestClient extends SmartContract implements IOracleClient {
+
   @state(PublicKey) oracleAddress = State<PublicKey>(); // State variable storing the Oracle's address
   @state(PublicKey) tokenAddress = State<PublicKey>(); // State variable storing the Token's address
   @state(Field) data0 = State<Field>();
@@ -143,6 +159,25 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
 
     const oracleContract = new OracleContract(oraclePublicKey); // Instantiate Oracle contract
     return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
+  }
+
+  /**
+   * Sends an Erc677 TransferAndCall request to the stored Oracle contract.
+   *
+   * @param req0 - The first field of the request data.
+   * @param req1 - The second field of the request data.
+   * @param req2 - The third field of the request data.
+   * @param req3 - The fourth field of the request data.
+   * @returns A boolean indicating success (determined by the Oracle contract).
+   */
+  @method sendErc677RequestTo(req0: Field, req1: Field, req2: Field, req3: Field): Bool {
+    const tokenAddressPublicKey = this.tokenAddress.get();
+    this.tokenAddress.requireEquals(this.tokenAddress.get());
+
+    // const oracleContract =  buildERC677Contract(oraclePublicKey, "","",9); // Instantiate Oracle contract
+    // return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
+  
+    return Bool(true);
   }
 
   /**

@@ -39,7 +39,7 @@ export abstract class IOracleClient {
   abstract setErc677Token(tokenAddress: PublicKey): Bool;
 
   /**
-   * Sends an Oracle request.
+   * Sends an Oracle request with Address.
    *
    * @param oracleAddress - The public key of the Oracle contract.
    * @param req0 - The first field of the request data.
@@ -56,12 +56,38 @@ export abstract class IOracleClient {
     req3: Field
   ): Bool;
 
+  /**
+   * Sends an Oracle request.
+   *
+   * @param req0 - The first field of the request data.
+   * @param req1 - The second field of the request data.
+   * @param req2 - The third field of the request data.
+   * @param req3 - The fourth field of the request data.
+   * @returns A boolean indicating success.
+   */
   abstract sendOracleRequest(
     req0: Field,
     req1: Field,
     req2: Field,
     req3: Field
   ): Bool;
+
+  /** 
+   * Sends an Erc677 TransferAndCall request.
+   *
+   * @param req0 - The first field of the request data.
+   * @param req1 - The second field of the request data.
+   * @param req2 - The third field of the request data.
+   * @param req3 - The fourth field of the request data.
+   * @returns A boolean indicating success.
+   */
+  abstract sendErc677RequestTo(
+    req0: Field,
+    req1: Field,
+    req2: Field,
+    req3: Field
+  ): Bool;
+
   /**
    * Handles the fulfillment of an Oracle request.
    *
