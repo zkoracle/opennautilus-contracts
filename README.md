@@ -16,31 +16,40 @@ TBD
 
 ### Usage
 
-### How to build
+### Building the Project
+
+Use the following command to build the project:
 
 ```sh
-pnpm run build
+npm run build
 ```
 
-### How to run tests
+### Running Tests
+
+Execute the following commands to run tests:
 
 ```sh
-pnpm run test
-pnpm run testw # watch mode
+npm run test
+npm run testw # watch mode
 ```
 
-### How to run coverage
+### Code Coverage
+
+To run a code coverage report:
 
 ```sh
-pnpm run coverage
+npm run coverage
 ```
 
-### Local
-```
-pnpm link --global
+### Local Setup
+
+Here's how to set up the project locally:
+
+```sh
+npm link --global
 
 cd <project>
-pnpm link --global @zkoracle/opennautilus-contracts
+npm link --global @zkoracle/opennautilus-contracts
 
 ```
 

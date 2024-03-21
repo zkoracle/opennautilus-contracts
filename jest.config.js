@@ -15,6 +15,7 @@ export default {
   },
   resolver: '<rootDir>/jest-resolver.cjs',
   transformIgnorePatterns: [
+    '<rootDir>/node_modules/(?!(tslib|o1js/node_modules/tslib))',
     '<rootDir>/node_modules/.pnpm/(?!(tslib|o1js/node_modules/tslib))',
   ],
   modulePathIgnorePatterns: ['<rootDir>/build/'],

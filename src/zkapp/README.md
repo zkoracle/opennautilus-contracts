@@ -1,3 +1,11 @@
+# @zkoracle/opennautilus-contracts
+This repository houses the opennautilus contracts.
+
+## Testing
+The folder contains various test scripts to ensure the reliable functionality of the developed contracts. In the `/src/zkapp` directory, `BasicRequestClient.test.ts` is one of these test scripts.
+
+When you run the test, using the following command: 
+
 ```
 > @zkoracle/opennautilus-contracts@0.6.6 test /Users/warun/HackathonProjects/opennautilus-contacts
 > node --experimental-vm-modules node_modules/jest/bin/jest.js "src/zkapp/BasicRequestClient.test.ts"

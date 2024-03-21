@@ -12,7 +12,7 @@ import {
   CircuitString,
   fetchAccount,
 } from 'o1js';
-import { IERC20, buildERC20Contract } from './Erc20Token.js';
+import { IERC20, buildERC20Contract, IERC20META, buildERC20MetaContract } from './Erc20Token.js';
 
 const tokenSymbol = 'SOM';
 
@@ -21,10 +21,13 @@ let player1: PublicKey,
   //   player2: PublicKey,
   //   player2Key: PrivateKey,
   zkAppAddress: PublicKey,
-  zkAppPrivateKey: PrivateKey;
+  zkAppPrivateKey: PrivateKey,
+  zkAppMetaAddress: PublicKey,
+  zkAppMetaPrivateKey: PrivateKey;
 
 let tokenId: Field;
-let zkApp: SmartContract & IERC20;
+let zkApp: SmartContract & IERC20 & IERC20META;
+let zkAppMeta: SmartContract & IERC20META;
 
 async function setupAccounts() {
   let Local = Mina.LocalBlockchain({
@@ -41,12 +44,18 @@ async function setupAccounts() {
   zkAppPrivateKey = PrivateKey.random();
   zkAppAddress = zkAppPrivateKey.toPublicKey();
 
+  zkAppMetaPrivateKey = PrivateKey.random();
+  zkAppMetaAddress = zkAppMetaPrivateKey.toPublicKey();
+
   zkApp = await buildERC20Contract(zkAppAddress, 'SomeCoin', tokenSymbol, 9);
   tokenId = zkApp.token.id;
+
+  zkAppMeta = await buildERC20MetaContract(zkAppMetaAddress, 'SomeCoin', tokenSymbol, 9);
+
 }
 
 async function setupLocal() {
-  let tx = await Mina.transaction(player1, () => {
+  let tx1 = await Mina.transaction(player1, () => {
     let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
     feePayerUpdate.send({
       to: zkAppAddress,
@@ -54,9 +63,22 @@ async function setupLocal() {
     });
     zkApp.deploy();
   });
-  await tx.prove();
-  tx.sign([zkAppPrivateKey, player1Key]);
-  await tx.send();
+  await tx1.prove();
+  tx1.sign([zkAppPrivateKey, player1Key]);
+  await tx1.send();
+
+  let tx2 = await Mina.transaction(player1, () => {
+    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
+    feePayerUpdate.send({
+      to: zkAppMetaAddress,
+      amount: Mina.accountCreationFee(),
+    });
+    zkAppMeta.deploy();
+  });
+  await tx2.prove();
+  tx2.sign([zkAppMetaPrivateKey, player1Key]);
+  await tx2.send();
+
 }
 
 describe('Erc20 TokenContract', () => {
@@ -77,7 +99,6 @@ describe('Erc20 TokenContract', () => {
     */
 
     describe('Erc20 Contract Creation/Deployment', () => {
-
       test('correct token id can be derived with an existing token owner', () => {
         expect(tokenId).toEqual(TokenId.derive(zkAppAddress));
       });
@@ -89,11 +110,9 @@ describe('Erc20 TokenContract', () => {
         expect(tokenSymbol).toBeDefined();
         expect(symbol).toEqual(tokenSymbol);
 
-        zkApp.name;
       });
 
       // it.todo('building a valid token name on a token contract');
     });
-
   });
 });
