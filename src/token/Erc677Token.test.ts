@@ -66,7 +66,6 @@ describe('Erc20 TokenContract', () => {
   });
 
   describe('Signature Authorization', () => {
-
     test('correct token id can be derived with an existing token owner', () => {
       expect(tokenId).toEqual(TokenId.derive(zkAppAddress));
     });

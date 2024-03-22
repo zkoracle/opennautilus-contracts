@@ -116,3 +116,41 @@ describe('Erc20 TokenContract', () => {
     });
   });
 });
+
+
+describe('Erc20Meta TokenContract', () => {
+  beforeEach(async () => {
+    await setupAccounts();
+    await setupLocal();
+  });
+
+  describe('Signature Authorization', () => {
+    /*
+      test case description:
+      Check token contract can be deployed and initialized
+      tested cases:
+        - create a new token
+        - deploy a zkApp under a custom token
+        - create a new valid token with a different parentTokenId
+        - set the token symbol after deployment
+    */
+
+    describe('Erc20 Meta Contract Creation/Deployment', () => {
+      test('correct token id can be derived with an existing token owner', () => {
+        expect(tokenId).toEqual(TokenId.derive(zkAppMetaAddress));
+      });
+
+      // it.todo('deployed token contract exists in the ledger');
+
+      test('setting a valid token symbol on a token contract', async () => {
+        const symbol = Mina.getAccount(zkAppMetaAddress).tokenSymbol;
+        expect(tokenSymbol).toBeDefined();
+        expect(symbol).toEqual(tokenSymbol);
+
+      });
+
+      // it.todo('building a valid token name on a token contract');
+    });
+  });
+});
+

@@ -367,9 +367,8 @@ describe('BasicRequestClient SmartContract', () => {
   //     await tx.prove();
   //     tx.sign([player1Key, zkAppClientPrivateKey]);
   //     await tx.send();
-      
+
   //   });
 
   // });
-
 });

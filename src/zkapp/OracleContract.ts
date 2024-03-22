@@ -72,7 +72,7 @@ export abstract class IOracleClient {
     req3: Field
   ): Bool;
 
-  /** 
+  /**
    * Sends an Erc677 TransferAndCall request.
    *
    * @param req0 - The first field of the request data.
