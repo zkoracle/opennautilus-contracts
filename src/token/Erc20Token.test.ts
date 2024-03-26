@@ -12,7 +12,7 @@ import {
   CircuitString,
   fetchAccount,
 } from 'o1js';
-import { IERC20, buildERC20Contract, IERC20META, buildERC20MetaContract } from './Erc20Token.js';
+import { IERC20, buildERC20Contract, IERC20META, buildERC20MetaContract, Erc20MetaContract } from './Erc20Token.js';
 
 const tokenSymbol = 'SOM';
 
@@ -23,11 +23,14 @@ let player1: PublicKey,
   zkAppAddress: PublicKey,
   zkAppPrivateKey: PrivateKey,
   zkAppMetaAddress: PublicKey,
-  zkAppMetaPrivateKey: PrivateKey;
+  zkAppMetaPrivateKey: PrivateKey,
+  zkAppStaticMetaAddress: PublicKey,
+  zkAppStaticMetaPrivateKey: PrivateKey;
 
 let tokenId: Field;
 let zkApp: SmartContract & IERC20 & IERC20META;
 let zkAppMeta: SmartContract & IERC20META;
+let zkAppStaticMeta: Erc20MetaContract;
 
 async function setupAccounts() {
   let Local = Mina.LocalBlockchain({
@@ -47,10 +50,23 @@ async function setupAccounts() {
   zkAppMetaPrivateKey = PrivateKey.random();
   zkAppMetaAddress = zkAppMetaPrivateKey.toPublicKey();
 
+  zkAppStaticMetaPrivateKey = PrivateKey.random();
+  zkAppStaticMetaAddress = zkAppStaticMetaPrivateKey.toPublicKey();
+
   zkApp = await buildERC20Contract(zkAppAddress, 'SomeCoin', tokenSymbol, 9);
   tokenId = zkApp.token.id;
 
   zkAppMeta = await buildERC20MetaContract(zkAppMetaAddress, 'SomeCoin', tokenSymbol, 9);
+
+  Erc20MetaContract.initname = "SomeCoin"
+  Erc20MetaContract.initsymbol = tokenSymbol
+  Erc20MetaContract.initdecimals = 9
+
+  zkAppStaticMeta = new Erc20MetaContract(zkAppStaticMetaAddress);
+
+  await Erc20MetaContract.compile()
+
+  // New
 
 }
 
@@ -78,6 +94,18 @@ async function setupLocal() {
   await tx2.prove();
   tx2.sign([zkAppMetaPrivateKey, player1Key]);
   await tx2.send();
+
+  let tx3 = await Mina.transaction(player1, () => {
+    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
+    feePayerUpdate.send({
+      to: zkAppStaticMetaAddress,
+      amount: Mina.accountCreationFee(),
+    });
+    zkAppStaticMeta.deploy();
+  });
+  await tx3.prove();
+  tx3.sign([zkAppStaticMetaPrivateKey, player1Key]);
+  await tx3.send();
 
 }
 
@@ -143,11 +171,19 @@ describe('Erc20Meta TokenContract', () => {
       // it.todo('deployed token contract exists in the ledger');
 
       test('setting a valid token symbol on a token contract', async () => {
-        const symbol = Mina.getAccount(zkAppMetaAddress).tokenSymbol;
+        // const symbol = Mina.getAccount(zkAppMetaAddress).tokenSymbol;
+        const symbol = Mina.getAccount(zkAppStaticMetaAddress).tokenSymbol;
         expect(tokenSymbol).toBeDefined();
         expect(symbol).toEqual(tokenSymbol);
 
       });
+
+      // test('setting a valid token symbol on a token (static) contract', async () => {
+      //   const symbol = Mina.getAccount(zkAppStaticMetaAddress).tokenSymbol;
+      //   expect(tokenSymbol).toBeDefined();
+      //   expect(symbol).toEqual(tokenSymbol);
+      //
+      // });
 
       // it.todo('building a valid token name on a token contract');
     });

@@ -13,6 +13,7 @@ import {
   State,
   state,
 } from 'o1js';
+import { OracleContract } from '../zkapp/OracleContract';
 
 /**
  * Represents the events emitted by an ERC20 token contract.
@@ -452,4 +453,47 @@ export async function buildERC20MetaContract(
   await Erc20MetaContract.compile(); // Compile
 
   return new Erc20MetaContract(address);
+}
+
+export class Erc20MetaContract extends SmartContract implements IERC20META {
+  static initsymbol = ""
+  static initname = ""
+  static initdecimals = 0
+
+  @state(UInt64) totalAmountInCirculation = State<UInt64>();
+
+  public deploy() {
+    super.deploy();
+    const permissionToEdit = Permissions.proof();
+    this.account.permissions.set({
+      ...Permissions.default(),
+      editState: permissionToEdit,
+      setTokenSymbol: permissionToEdit,
+      send: permissionToEdit,
+      receive: permissionToEdit,
+    });
+
+  }
+
+  @method init() {
+    super.init();
+    this.account.tokenSymbol.set(Erc20MetaContract.initsymbol);
+    this.totalAmountInCirculation.set(UInt64.zero);
+  }
+
+  name(): CircuitString {
+    return CircuitString.fromString(Erc20MetaContract.initname);
+  }
+
+  symbol(): CircuitString {
+    return CircuitString.fromString(Erc20MetaContract.initname);
+  }
+
+  decimals(): Field {
+    return Field(Erc20MetaContract.initdecimals);
+  }
+
+  totalSupply(): UInt64 {
+    return this.totalAmountInCirculation.get();
+  }
 }
