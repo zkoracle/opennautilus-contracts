@@ -12,7 +12,7 @@ import {
   CircuitString,
   fetchAccount,
 } from 'o1js';
-import { IERC20, buildERC20Contract, IERC20META, buildERC20MetaContract, Erc20MetaContract } from './Erc20Token.js';
+import { IERC20, buildERC20Contract, SErc20Contract } from './Erc20Token.js';
 
 const tokenSymbol = 'SOM';
 
@@ -22,15 +22,12 @@ let player1: PublicKey,
   //   player2Key: PrivateKey,
   zkAppAddress: PublicKey,
   zkAppPrivateKey: PrivateKey,
-  zkAppMetaAddress: PublicKey,
-  zkAppMetaPrivateKey: PrivateKey,
-  zkAppStaticMetaAddress: PublicKey,
-  zkAppStaticMetaPrivateKey: PrivateKey;
+  zkAppStaticAddress: PublicKey,
+  zkAppStaticPrivateKey: PrivateKey;
 
 let tokenId: Field;
-let zkApp: SmartContract & IERC20 & IERC20META;
-let zkAppMeta: SmartContract & IERC20META;
-let zkAppStaticMeta: Erc20MetaContract;
+let zkApp: SmartContract & IERC20;
+let zkAppStaticMeta: SErc20Contract;
 
 async function setupAccounts() {
   let Local = Mina.LocalBlockchain({
@@ -47,27 +44,19 @@ async function setupAccounts() {
   zkAppPrivateKey = PrivateKey.random();
   zkAppAddress = zkAppPrivateKey.toPublicKey();
 
-  zkAppMetaPrivateKey = PrivateKey.random();
-  zkAppMetaAddress = zkAppMetaPrivateKey.toPublicKey();
-
-  zkAppStaticMetaPrivateKey = PrivateKey.random();
-  zkAppStaticMetaAddress = zkAppStaticMetaPrivateKey.toPublicKey();
+  zkAppStaticPrivateKey = PrivateKey.random();
+  zkAppStaticAddress = zkAppStaticPrivateKey.toPublicKey();
 
   zkApp = await buildERC20Contract(zkAppAddress, 'SomeCoin', tokenSymbol, 9);
   tokenId = zkApp.token.id;
 
-  zkAppMeta = await buildERC20MetaContract(zkAppMetaAddress, 'SomeCoin', tokenSymbol, 9);
+  SErc20Contract.staticName = 'SomeCoin';
+  SErc20Contract.staticSymbol = tokenSymbol;
+  SErc20Contract.staticDecimals = 9;
 
-  Erc20MetaContract.initname = "SomeCoin"
-  Erc20MetaContract.initsymbol = tokenSymbol
-  Erc20MetaContract.initdecimals = 9
+  zkAppStaticMeta = new SErc20Contract(zkAppStaticAddress);
 
-  zkAppStaticMeta = new Erc20MetaContract(zkAppStaticMetaAddress);
-
-  await Erc20MetaContract.compile()
-
-  // New
-
+  await SErc20Contract.compile();
 }
 
 async function setupLocal() {
@@ -83,30 +72,17 @@ async function setupLocal() {
   tx1.sign([zkAppPrivateKey, player1Key]);
   await tx1.send();
 
-  let tx2 = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: zkAppMetaAddress,
-      amount: Mina.accountCreationFee(),
-    });
-    zkAppMeta.deploy();
-  });
-  await tx2.prove();
-  tx2.sign([zkAppMetaPrivateKey, player1Key]);
-  await tx2.send();
-
   let tx3 = await Mina.transaction(player1, () => {
     let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
     feePayerUpdate.send({
-      to: zkAppStaticMetaAddress,
+      to: zkAppStaticAddress,
       amount: Mina.accountCreationFee(),
     });
     zkAppStaticMeta.deploy();
   });
   await tx3.prove();
-  tx3.sign([zkAppStaticMetaPrivateKey, player1Key]);
+  tx3.sign([zkAppStaticPrivateKey, player1Key]);
   await tx3.send();
-
 }
 
 describe('Erc20 TokenContract', () => {
@@ -137,7 +113,6 @@ describe('Erc20 TokenContract', () => {
         const symbol = Mina.getAccount(zkAppAddress).tokenSymbol;
         expect(tokenSymbol).toBeDefined();
         expect(symbol).toEqual(tokenSymbol);
-
       });
 
       // it.todo('building a valid token name on a token contract');
@@ -145,48 +120,38 @@ describe('Erc20 TokenContract', () => {
   });
 });
 
-
-describe('Erc20Meta TokenContract', () => {
-  beforeEach(async () => {
-    await setupAccounts();
-    await setupLocal();
-  });
-
-  describe('Signature Authorization', () => {
-    /*
-      test case description:
-      Check token contract can be deployed and initialized
-      tested cases:
-        - create a new token
-        - deploy a zkApp under a custom token
-        - create a new valid token with a different parentTokenId
-        - set the token symbol after deployment
-    */
-
-    describe('Erc20 Meta Contract Creation/Deployment', () => {
-      test('correct token id can be derived with an existing token owner', () => {
-        expect(tokenId).toEqual(TokenId.derive(zkAppMetaAddress));
-      });
-
-      // it.todo('deployed token contract exists in the ledger');
-
-      test('setting a valid token symbol on a token contract', async () => {
-        // const symbol = Mina.getAccount(zkAppMetaAddress).tokenSymbol;
-        const symbol = Mina.getAccount(zkAppStaticMetaAddress).tokenSymbol;
-        expect(tokenSymbol).toBeDefined();
-        expect(symbol).toEqual(tokenSymbol);
-
-      });
-
-      // test('setting a valid token symbol on a token (static) contract', async () => {
-      //   const symbol = Mina.getAccount(zkAppStaticMetaAddress).tokenSymbol;
-      //   expect(tokenSymbol).toBeDefined();
-      //   expect(symbol).toEqual(tokenSymbol);
-      //
-      // });
-
-      // it.todo('building a valid token name on a token contract');
-    });
-  });
-});
-
+// describe('Erc20 (Static) TokenContract', () => {
+//   beforeEach(async () => {
+//     await setupAccounts();
+//     await setupLocal();
+//   });
+//
+//   describe('Signature Authorization', () => {
+//     /*
+//       test case description:
+//       Check token contract can be deployed and initialized
+//       tested cases:
+//         - create a new token
+//         - deploy a zkApp under a custom token
+//         - create a new valid token with a different parentTokenId
+//         - set the token symbol after deployment
+//     */
+//
+//     describe('Erc20 (static) Contract Creation/Deployment', () => {
+//       test('correct token id can be derived with an existing token (static) owner', () => {
+//         expect(tokenId).toEqual(TokenId.derive(zkAppStaticAddress));
+//       });
+//
+//       // it.todo('deployed token contract exists in the ledger');
+//
+//       test('setting a valid token symbol on a token (static) contract', async () => {
+//         const symbol = Mina.getAccount(zkAppStaticAddress).tokenSymbol;
+//         expect(tokenSymbol).toBeDefined();
+//         expect(symbol).toEqual(tokenSymbol);
+//
+//       });
+//
+//       // it.todo('building a valid token name on a token contract');
+//     });
+//   });
+// });

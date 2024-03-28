@@ -13,7 +13,6 @@ import {
   State,
   state,
 } from 'o1js';
-import { OracleContract } from '../zkapp/OracleContract';
 
 /**
  * Represents the events emitted by an ERC20 token contract.
@@ -74,7 +73,22 @@ export const ERC20Events: IERC20Events = {
   }),
 };
 
-export abstract class IERC20META {
+/**
+ * Represents a standard interface for fungible tokens, implementing the ERC20 standard.
+ *
+ * @remarks
+ * This abstract class defines a set of functions that tokens must implement to be compatible with
+ * the ERC20 standard. It provides basic functionality for tracking token balances, transfers, and
+ * approvals.
+ *
+ * @example
+ * ```typescript
+ * class MyToken implements IERC20 {
+ *   // Implementation of IERC20 methods
+ * }
+ *
+ */
+export abstract class IERC20 {
   /**
    * @optional
    * @returns The name of the token, as a CircuitString.
@@ -95,25 +109,6 @@ export abstract class IERC20META {
    * @returns The total token supply, as a UInt64.
    */
   abstract totalSupply(): UInt64;
-
-}
-
-/**
- * Represents a standard interface for fungible tokens, implementing the ERC20 standard.
- *
- * @remarks
- * This abstract class defines a set of functions that tokens must implement to be compatible with
- * the ERC20 standard. It provides basic functionality for tracking token balances, transfers, and
- * approvals.
- *
- * @example
- * ```typescript
- * class MyToken implements IERC20 {
- *   // Implementation of IERC20 methods
- * }
- *
- */
-export abstract class IERC20 {
 
   /**
    * @param owner The address of the token owner.
@@ -196,7 +191,7 @@ export async function buildERC20Contract(
   name: string,
   symbol: string,
   decimals: number
-): Promise<SmartContract & IERC20 & IERC20META> {
+): Promise<SmartContract & IERC20> {
   /**
    * Represents an ERC20 token contract implementation.
    *
@@ -205,7 +200,7 @@ export async function buildERC20Contract(
    * It manages token balances, transfers, and approvals, adhering to the ERC20 standard.
    *
    */
-  class Erc20Contract extends SmartContract implements IERC20, IERC20META {
+  class Erc20Contract extends SmartContract implements IERC20 {
     /**
      * Stores the total amount of tokens in circulation.
      *
@@ -362,109 +357,29 @@ export async function buildERC20Contract(
   return new Erc20Contract(address);
 }
 
-export async function buildERC20MetaContract(
-  address: PublicKey,
-  name: string,
-  symbol: string,
-  decimals: number
-): Promise<SmartContract & IERC20META> {
-  class Erc20MetaContract extends SmartContract implements IERC20META {
-    /**
-     * Stores the total amount of tokens in circulation.
-     *
-     * @type {State<UInt64>}
-     */
-    @state(UInt64) totalAmountInCirculation = State<UInt64>();
+export class SErc20Contract extends SmartContract implements IERC20 {
+  static staticSymbol = '';
+  static staticName = '';
+  static staticDecimals = 0;
 
-    /**
-     * Deploys the contract to the blockchain and configures permissions.
-     *
-     * @remarks
-     * This method sets up proof-based permissions for sensitive actions.
-     */
-    public deploy() {
-      super.deploy();
-
-      const permissionToEdit = Permissions.proof();
-
-      this.account.permissions.set({
-        ...Permissions.default(),
-        editState: permissionToEdit,
-        setTokenSymbol: permissionToEdit,
-        send: permissionToEdit,
-        receive: permissionToEdit,
-      });
-    }
-
-    /**
-     * Initializes the contract after deployment.
-     *
-     * @remarks
-     * This method performs the following steps:
-     * 1. Calls the superclass's `init` method to handle any base initialization tasks.
-     * 2. Sets the token symbol for the contract.
-     * 3. Initializes the total amount of tokens in circulation to zero.
-     */
-    @method init() {
-      super.init();
-      this.account.tokenSymbol.set(symbol);
-      this.totalAmountInCirculation.set(UInt64.zero);
-    }
-
-    /**
-     * @returns The name of the token, as a CircuitString.
-     * @remarks
-     * This method adheres to the ERC20 standard for retrieving the token's name.
-     * It converts the stored string name into a CircuitString for compatibility with zkApp operations.
-     */
-    name(): CircuitString {
-      return CircuitString.fromString(name);
-    }
-
-    /**
-     * @returns The symbol of the token, as a CircuitString.
-     * @remarks
-     * This method adheres to the ERC20 standard for retrieving the token's symbol.
-     * It converts the stored string symbol into a CircuitString for compatibility with zkApp operations.
-     */
-    symbol(): CircuitString {
-      return CircuitString.fromString(symbol);
-    }
-
-    /**
-     * @returns The number of decimals used to represent token amounts, as a Field.
-     * @todo Should be UInt8 when available.
-     */
-    decimals(): Field {
-      return Field(decimals);
-    }
-
-    /**
-     * @returns The total token supply, as a UInt64.
-     * @remarks
-     * This method accesses the `totalAmountInCirculation` state variable to provide the current token supply.
-     */
-    totalSupply(): UInt64 {
-      return this.totalAmountInCirculation.get();
-    }
-
-  }
-
-  await Erc20MetaContract.compile(); // Compile
-
-  return new Erc20MetaContract(address);
-}
-
-export class Erc20MetaContract extends SmartContract implements IERC20META {
-  static initsymbol = ""
-  static initname = ""
-  static initdecimals = 0
-
+  /**
+   * Stores the total amount of tokens in circulation.
+   *
+   * @type {State<UInt64>}
+   */
   @state(UInt64) totalAmountInCirculation = State<UInt64>();
 
+  /**
+   * Deploys the contract to the blockchain and configures permissions.
+   *
+   * @remarks
+   * This method sets up proof-based permissions for sensitive actions.
+   */
   public deploy() {
     super.deploy();
+
     const permissionToEdit = Permissions.proof();
+
     this.account.permissions.set({
       ...Permissions.default(),
       editState: permissionToEdit,
@@ -472,28 +387,128 @@ export class Erc20MetaContract extends SmartContract implements IERC20META {
       send: permissionToEdit,
       receive: permissionToEdit,
     });
-
   }
 
+  /**
+   * Initializes the contract after deployment.
+   *
+   * @remarks
+   * This method performs the following steps:
+   * 1. Calls the superclass's `init` method to handle any base initialization tasks.
+   * 2. Sets the token symbol for the contract.
+   * 3. Initializes the total amount of tokens in circulation to zero.
+   */
   @method init() {
     super.init();
-    this.account.tokenSymbol.set(Erc20MetaContract.initsymbol);
+    this.account.tokenSymbol.set(SErc20Contract.staticSymbol);
     this.totalAmountInCirculation.set(UInt64.zero);
   }
 
+  /**
+   * @returns The name of the token, as a CircuitString.
+   * @remarks
+   * This method adheres to the ERC20 standard for retrieving the token's name.
+   * It converts the stored string name into a CircuitString for compatibility with zkApp operations.
+   */
   name(): CircuitString {
-    return CircuitString.fromString(Erc20MetaContract.initname);
+    return CircuitString.fromString(SErc20Contract.staticName);
   }
-
+  /**
+   * @returns The symbol of the token, as a CircuitString.
+   * @remarks
+   * This method adheres to the ERC20 standard for retrieving the token's symbol.
+   * It converts the stored string symbol into a CircuitString for compatibility with zkApp operations.
+   */
   symbol(): CircuitString {
-    return CircuitString.fromString(Erc20MetaContract.initname);
+    return CircuitString.fromString(SErc20Contract.staticSymbol);
   }
-
+  /**
+   * @returns The number of decimals used to represent token amounts, as a Field.
+   * @todo Should be UInt8 when available.
+   */
   decimals(): Field {
-    return Field(Erc20MetaContract.initdecimals);
+    return Field(SErc20Contract.staticDecimals);
   }
-
+  /**
+   * @returns The total token supply, as a UInt64.
+   * @remarks
+   * This method accesses the `totalAmountInCirculation` state variable to provide the current token supply.
+   */
   totalSupply(): UInt64 {
     return this.totalAmountInCirculation.get();
   }
+
+  /**
+   * @param owner The address of the token owner.
+   * @returns The balance of the owner, as a UInt64.
+   * @remarks
+   * Fetches the balance from the owner's account state and verifies its integrity using `requireEquals`.
+   * This check ensures data consistency and helps prevent potential issues.
+   */
+  balanceOf(owner: PublicKey): UInt64 {
+    let account = Account(owner, this.token.id);
+    let balance = account.balance.get();
+    account.balance.requireEquals(balance);
+    return balance;
+  }
+  /**
+   * @param owner The address of the token owner.
+   * @param spender The address of the spender.
+   * @returns The amount of tokens approved for the spender, as a UInt64.
+   * @todo Implement allowance functionality to enable approved spending.
+   */
+  allowance(owner: PublicKey, spender: PublicKey): UInt64 {
+    // TODO: implement allowances
+    return UInt64.zero;
+  }
+  /**
+   * @method
+   * @param to The address to transfer tokens to.
+   * @param value The amount of tokens to transfer.
+   * @returns True if the transfer was successful, false otherwise.
+   * @emits Transfer
+   * @remarks
+   * Leverages the zkApp protocol to handle balance checks and transfer logic securely.
+   * Directly emits a Transfer event to signal the token transfer.
+   */
+  @method transfer(to: PublicKey, value: UInt64): Bool {
+    this.token.send({ from: this.sender, to, amount: value });
+    this.emitEvent('Transfer', { from: this.sender, to, value });
+    // we don't have to check the balance of the sender -- this is done by the zkApp protocol
+    return Bool(true);
+  }
+  /**
+   * @method
+   * @param from The address to transfer tokens from.
+   * @param to The address to transfer tokens to.
+   * @param value The amount of tokens to transfer.
+   * @returns True if the transfer was successful, false otherwise.
+   * @emits Transfer
+   * @remarks
+   * Similar to `transfer()`, but allows transferring tokens from a specified address, often for approved spending.
+   * Also relies on the zkApp protocol for secure balance checks and emits a Transfer event.
+   */
+  @method transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool {
+    this.token.send({ from, to, amount: value });
+    this.emitEvent('Transfer', { from, to, value });
+    // we don't have to check the balance of the sender -- this is done by the zkApp protocol
+    return Bool(true);
+  }
+  /**
+   * @method
+   * @param spender The address to approve as a spender.
+   * @param value The amount of tokens to approve.
+   * @returns True if the approval was successful, false otherwise.
+   * @emits Approval
+   * @todo Implement allowance functionality to enable token approvals.
+   */
+  @method approveSpend(spender: PublicKey, value: UInt64): Bool {
+    // TODO: implement allowances
+    return Bool(false);
+  }
+
+  /**
+   * Events emitted by the contract to signal important state changes.
+   */
+  events = ERC20Events;
 }

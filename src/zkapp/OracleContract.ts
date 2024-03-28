@@ -15,6 +15,14 @@ import {
 } from 'o1js';
 import { BasicRequestClient } from './BasicRequestClient.js';
 
+export interface IOracleData {
+  sender: string;
+  req0: string;
+  req1: string;
+  req2: string;
+  req3: string;
+}
+
 /**
  * Abstract class representing an Oracle client.
  */

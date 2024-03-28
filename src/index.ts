@@ -13,6 +13,7 @@ import {
   IERC677Events,
   ERC677Events,
   buildERC677Contract,
+  SErc677Contract,
 } from './token/Erc677Token.js';
 import { Toolkit } from './Toolkit.js';
 import {
@@ -24,7 +25,6 @@ import {
 import {
   buildOracleRequestTx,
   BasicRequestClient,
-  // buildBasicRequestClient,
 } from './zkapp/BasicRequestClient.js';
 import { OracleRequest } from './gen/oracle-request_pb.js';
 
@@ -40,6 +40,7 @@ export {
   IERC677Events,
   ERC677Events,
   buildERC677Contract,
+  SErc677Contract,
   IOracleClient,
   IOracleEvents,
   IOracleData,

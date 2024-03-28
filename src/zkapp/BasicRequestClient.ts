@@ -8,10 +8,11 @@ import {
   method,
   state,
   Mina,
+  UInt64,
 } from 'o1js';
 import { OracleContract, IOracleClient } from './OracleContract.js';
 import { OracleRequest } from '../gen/oracle-request_pb.js';
-import { buildERC677Contract } from '../token/Erc677Token.js';
+import { buildERC677Contract, SErc677Contract } from '../token/Erc677Token.js';
 
 /**
  * Builds a Mina transaction that sends an Oracle request to a designated zkApp with Addr.
@@ -80,7 +81,7 @@ export async function buildTransferAndCallTx(
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
   return Mina.transaction(sender, () => {
-    // zkApp.sendErc677RequestTo(reqField[0], reqField[1], reqField[2], reqField[3]);
+    zkApp.sendErc677RequestTo(reqField[0], reqField[1], reqField[2], reqField[3]);
   });
 }
 
@@ -209,8 +210,19 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
     const tokenAddressPublicKey = this.tokenAddress.get();
     this.tokenAddress.requireEquals(this.tokenAddress.get());
 
-    // const oracleContract =  buildERC677Contract(oraclePublicKey, "","",9); // Instantiate Oracle contract
-    // return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
+    const oracleAddressPublicKey = this.oracleAddress.get();
+    this.oracleAddress.requireEquals(this.oracleAddress.get());
+
+    const tokenContract = new SErc677Contract(tokenAddressPublicKey);
+
+    tokenContract.transferAndCall(
+      oracleAddressPublicKey,
+      UInt64.from(100_000),
+      req0,
+      req1,
+      req2,
+      req3
+    );
 
     return Bool(true);
   }

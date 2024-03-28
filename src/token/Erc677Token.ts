@@ -32,7 +32,10 @@ export type IERC677Events = IERC20Events & {
     from: PublicKey;
     to: PublicKey;
     value: UInt64;
-    data: CircuitString;
+    data0: Field,
+    data1: Field,
+    data2: Field,
+    data3: Field
   }>;
 };
 
@@ -68,12 +71,11 @@ const TransferAndCallEvent = {
      * @type {UInt64}
      */
     value: UInt64,
-    /**
-     * Additional data to be passed to the contract method.
-     *
-     * @type {CircuitString}
-     */
-    data: CircuitString,
+
+    data0: Field,
+    data1: Field,
+    data2: Field,
+    data3: Field
   }),
 };
 /**
@@ -338,4 +340,198 @@ export async function buildERC677Contract(
   await Erc677Contract.compile(); // Compile
 
   return new Erc677Contract(address);
+}
+
+export class SErc677Contract extends SmartContract implements IERC677 {
+  static staticSymbol = '';
+  static staticName = '';
+  static staticDecimals = 0;
+
+  /**
+   * Stores the total amount of tokens in circulation.
+   *
+   * @type {State<UInt64>}
+   */
+  @state(UInt64) totalAmountInCirculation = State<UInt64>();
+
+  /**
+   * Deploys the contract to the blockchain and configures permissions.
+   *
+   * @remarks
+   * This method sets up proof-based permissions for sensitive actions.
+   */
+  public deploy() {
+    super.deploy();
+
+    const permissionToEdit = Permissions.proof();
+
+    this.account.permissions.set({
+      ...Permissions.default(),
+      editState: permissionToEdit,
+      setTokenSymbol: permissionToEdit,
+      send: permissionToEdit,
+      receive: permissionToEdit,
+    });
+  }
+
+  /**
+   * Initializes the contract after deployment.
+   *
+   * @remarks
+   * This method performs the following steps:
+   * 1. Calls the superclass's `init` method to handle any base initialization tasks.
+   * 2. Sets the token symbol for the contract.
+   * 3. Initializes the total amount of tokens in circulation to zero.
+   */
+  @method init() {
+    super.init();
+    this.account.tokenSymbol.set(SErc677Contract.staticSymbol);
+    this.totalAmountInCirculation.set(UInt64.zero);
+  }
+
+  /**
+   * @returns The name of the token, as a CircuitString.
+   * @remarks
+   * This method adheres to the ERC677 standard for retrieving the token's name.
+   * It converts the stored string name into a CircuitString for compatibility with zkApp operations.
+   */
+  name(): CircuitString {
+    return CircuitString.fromString(SErc677Contract.staticName);
+  }
+  /**
+   * @returns The symbol of the token, as a CircuitString.
+   * @remarks
+   * This method adheres to the ERC677 standard for retrieving the token's symbol.
+   * It converts the stored string symbol into a CircuitString for compatibility with zkApp operations.
+   */
+  symbol(): CircuitString {
+    return CircuitString.fromString(SErc677Contract.staticSymbol);
+  }
+  /**
+   * @returns The number of decimals used to represent token amounts, as a Field.
+   * @todo Should be UInt8 when available.
+   */
+  decimals(): Field {
+    return Field(SErc677Contract.staticDecimals);
+  }
+  /**
+   * @returns The total token supply, as a UInt64.
+   * @remarks
+   * This method accesses the `totalAmountInCirculation` state variable to provide the current token supply.
+   */
+  totalSupply(): UInt64 {
+    return this.totalAmountInCirculation.get();
+  }
+
+  /**
+   * @param owner The address of the token owner.
+   * @returns The balance of the owner, as a UInt64.
+   * @remarks
+   * Fetches the balance from the owner's account state and verifies its integrity using `requireEquals`.
+   * This check ensures data consistency and helps prevent potential issues.
+   */
+  balanceOf(owner: PublicKey): UInt64 {
+    let account = Account(owner, this.token.id);
+    let balance = account.balance.get();
+    account.balance.requireEquals(balance);
+    return balance;
+  }
+  /**
+   * @param owner The address of the token owner.
+   * @param spender The address of the spender.
+   * @returns The amount of tokens approved for the spender, as a UInt64.
+   * @todo Implement allowance functionality to enable approved spending.
+   */
+  allowance(owner: PublicKey, spender: PublicKey): UInt64 {
+    // TODO: implement allowances
+    return UInt64.zero;
+  }
+  /**
+   * @method
+   * @param to The address to transfer tokens to.
+   * @param value The amount of tokens to transfer.
+   * @returns True if the transfer was successful, false otherwise.
+   * @emits Transfer
+   * @remarks
+   * Leverages the zkApp protocol to handle balance checks and transfer logic securely.
+   * Directly emits a Transfer event to signal the token transfer.
+   */
+  @method transfer(to: PublicKey, value: UInt64): Bool {
+    this.token.send({ from: this.sender, to, amount: value });
+    this.emitEvent('Transfer', { from: this.sender, to, value });
+    // we don't have to check the balance of the sender -- this is done by the zkApp protocol
+    return Bool(true);
+  }
+  /**
+   * @method
+   * @param from The address to transfer tokens from.
+   * @param to The address to transfer tokens to.
+   * @param value The amount of tokens to transfer.
+   * @returns True if the transfer was successful, false otherwise.
+   * @emits Transfer
+   * @remarks
+   * Similar to `transfer()`, but allows transferring tokens from a specified address, often for approved spending.
+   * Also relies on the zkApp protocol for secure balance checks and emits a Transfer event.
+   */
+  @method transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool {
+    this.token.send({ from, to, amount: value });
+    this.emitEvent('Transfer', { from, to, value });
+    // we don't have to check the balance of the sender -- this is done by the zkApp protocol
+    return Bool(true);
+  }
+  /**
+   * @method
+   * @param spender The address to approve as a spender.
+   * @param value The amount of tokens to approve.
+   * @returns True if the approval was successful, false otherwise.
+   * @emits Approval
+   * @todo Implement allowance functionality to enable token approvals.
+   */
+  @method approveSpend(spender: PublicKey, value: UInt64): Bool {
+    // TODO: implement allowances
+    return Bool(false);
+  }
+
+  /**
+   * Transfers tokens to a recipient and optionally calls a contract method.
+   *
+   * @param {PublicKey} to - The address of the recipient.
+   * @param {UInt64} value - The amount of tokens to transfer.
+   * @param data0 - The first additional field to be passed to the contract method, if applicable.
+   * @param data1 - The second additional field to be passed to the contract method, if applicable.
+   * @param data2 - The third additional field to be passed to the contract method, if applicable.
+   * @param data3 - The fourth additional field to be passed to the contract method, if applicable.
+   * @returns {Bool} - Returns `false` in the current implementation.
+   * @emits TransferAndCall - Emitted when the transfer is successful.
+   */
+  transferAndCall(
+    to: PublicKey,
+    value: UInt64,
+    data0: Field,
+    data1: Field,
+    data2: Field,
+    data3: Field
+  ): Bool {
+    this.token.send({ from: this.sender, to, amount: value });
+    this.emitEvent('TransferAndCall', {
+      from: this.sender,
+      to,
+      value,
+      data0,
+      data1,
+      data2,
+      data3,
+    });
+
+    const oracleContract = new OracleContract(to);
+    oracleContract.oracleRequest(data0, data1, data2, data3);
+
+    // we don't have to check the balance of the sender -- this is done by the zkApp protocol
+
+    return Bool(true);
+  }
+  /**
+   * Events emitted by the contract.
+   */
+  events = ERC677Events;
 }

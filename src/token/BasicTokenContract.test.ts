@@ -14,7 +14,6 @@ import {
   IBasicTokenContract,
   buildBasicTokenContract,
 } from './BasicTokenContract.js';
-import { Toolkit } from '../Toolkit.js';
 
 const tokenSymbol = 'MYS';
 
