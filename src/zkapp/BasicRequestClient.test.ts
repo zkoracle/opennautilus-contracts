@@ -80,8 +80,6 @@ async function setupAccounts() {
   zkAppSErc677 = new SErc677Contract(serc677TokenAddress);
   tokenSErc677Id = zkAppSErc677.token.id;
 
-  zkAppOracle = new OracleContract(zkAppOracleAddress);
-
   zkAppOraclePrivateKey = PrivateKey.random();
   zkAppOracleAddress = zkAppOraclePrivateKey.toPublicKey();
 
@@ -138,6 +136,11 @@ async function setupLocal() {
 
 describe('BasicRequestClient SmartContract', () => {
   beforeAll(async () => {
+
+    SErc677Contract.staticSymbol = "PRC"
+    SErc677Contract.staticName = "PRICE"
+    SErc677Contract.staticDecimals = 9
+
     await SErc677Contract.compile();
     await OracleContract.compile();
     await BasicRequestClient.compile();
@@ -349,8 +352,6 @@ describe('BasicRequestClient SmartContract', () => {
         zkAppClient.setOracleContract(zkAppOracleAddress);
       });
 
-      // MINT
-
       await txnSet.prove();
       txnSet.sign([player1Key, zkAppClientPrivateKey]);
       await txnSet.send();
@@ -360,6 +361,19 @@ describe('BasicRequestClient SmartContract', () => {
 
       const oracleAddr = zkAppClient.oracleAddress.get();
       expect(oracleAddr).toEqual(zkAppOracleAddress);
+
+      // expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1))
+
+      // Mint
+      // const txnMint = await Mina.transaction(player1, () => {
+      //   zkAppSErc677.mint(player1, UInt64.from(500_000))
+      // });
+      //
+      // await txnMint.prove();
+      // txnMint.sign([player1Key, serc677TokenPrivateKey]);
+      // await txnMint.send();
+
+      // expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1))
 
       // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({

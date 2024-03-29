@@ -446,6 +446,68 @@ export class SErc677Contract extends SmartContract implements IERC677 {
     // TODO: implement allowances
     return UInt64.zero;
   }
+
+  /**
+   * Mints new tokens and assigns them to a receiver.
+   *
+   * @remarks
+   * This method assumes that authorization checks for minting are handled elsewhere.
+   * It directly performs the following steps:
+   * 1. Retrieves the current total supply of tokens in circulation.
+   * 2. Asserts consistency of the retrieved state value.
+   * 3. Calculates the new total supply after minting.
+   * 4. Calls the underlying token module to mint the new tokens.
+   * 5. Updates the total token supply in the contract's state.
+   *
+   * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
+   * @param amount - The amount of tokens to mint
+   */
+  @method mint(receiverAddress: PublicKey, amount: UInt64) {
+    let totalAmountInCirculation = this.totalAmountInCirculation.get();
+    this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+
+    let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
+
+    this.token.mint({
+      address: receiverAddress,
+      amount,
+    });
+    this.totalAmountInCirculation.set(newTotalAmountInCirculation);
+  }
+
+
+  /**
+   * Burns (destroys) existing tokens, reducing the total supply.
+   *
+   * @remarks
+   * This method assumes that authorization checks for burning are handled elsewhere.
+   * It directly performs the following steps:
+   * 1. Retrieves the current total supply of tokens in circulation.
+   * 2. Asserts consistency of the retrieved state value.
+   * 3. Calculates the new total supply after burning.
+   * 4. Calls the underlying token module to burn the specified tokens.
+   * 5. Updates the total token supply in the contract's state.
+   *
+   * @param receiverAddress - The address of the token holder whose tokens will be burned
+   * @param amount - The amount of tokens to burn
+   *
+   * @warning This method does not explicitly check for authorization to burn tokens.
+   *          It's essential to ensure that appropriate authorization mechanisms are in place
+   *          to prevent unauthorized token burning.
+   */
+  @method burn(receiverAddress: PublicKey, amount: UInt64) {
+    let totalAmountInCirculation = this.totalAmountInCirculation.get();
+    this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+    let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
+
+    this.token.burn({
+      address: receiverAddress,
+      amount,
+    });
+
+    this.totalAmountInCirculation.set(newTotalAmountInCirculation);
+  }
+
   /**
    * @method
    * @param to The address to transfer tokens to.
