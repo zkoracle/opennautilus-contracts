@@ -6,6 +6,8 @@
 
 name: CI
 on: [push, pull_request]
+permissions:
+  contents: write
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
@@ -17,10 +19,12 @@ jobs:
           node-version: '16'
       - name: Git checkout
         uses: actions/checkout@v4
-      - name: NPM ci, build, & test
+      - name: NPM ci, build, & coverage
         run: |
           npm install
           npm run coverage --if-present
+          pwd
+
       - name: Create Coverage Badges
         uses: jaywcjlove/coverage-badges-cli@main
         with:

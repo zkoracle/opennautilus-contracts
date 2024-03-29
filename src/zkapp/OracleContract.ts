@@ -15,6 +15,14 @@ import {
 } from 'o1js';
 import { BasicRequestClient } from './BasicRequestClient.js';
 
+export interface IOracleData {
+  sender: string;
+  req0: string;
+  req1: string;
+  req2: string;
+  req3: string;
+}
+
 /**
  * Abstract class representing an Oracle client.
  */
@@ -31,7 +39,15 @@ export abstract class IOracleClient {
    */
   abstract setOracleContract(oracleAddress: PublicKey): Bool;
   /**
-   * Sends an Oracle request.
+   * Updates the stored ERC-677 token address associated with this oracle contract.
+   *
+   * @param tokenAddress - The new PublicKey of the ERC-677 token.
+   * @returns True to indicate successful execution.
+   */
+  abstract setErc677Token(tokenAddress: PublicKey): Bool;
+
+  /**
+   * Sends an Oracle request with Address.
    *
    * @param oracleAddress - The public key of the Oracle contract.
    * @param req0 - The first field of the request data.
@@ -48,12 +64,38 @@ export abstract class IOracleClient {
     req3: Field
   ): Bool;
 
+  /**
+   * Sends an Oracle request.
+   *
+   * @param req0 - The first field of the request data.
+   * @param req1 - The second field of the request data.
+   * @param req2 - The third field of the request data.
+   * @param req3 - The fourth field of the request data.
+   * @returns A boolean indicating success.
+   */
   abstract sendOracleRequest(
     req0: Field,
     req1: Field,
     req2: Field,
     req3: Field
   ): Bool;
+
+  /**
+   * Sends an Erc677 TransferAndCall request.
+   *
+   * @param req0 - The first field of the request data.
+   * @param req1 - The second field of the request data.
+   * @param req2 - The third field of the request data.
+   * @param req3 - The fourth field of the request data.
+   * @returns A boolean indicating success.
+   */
+  abstract sendErc677RequestTo(
+    req0: Field,
+    req1: Field,
+    req2: Field,
+    req3: Field
+  ): Bool;
+
   /**
    * Handles the fulfillment of an Oracle request.
    *
@@ -97,9 +139,8 @@ export interface IOracleData {
  * Abstract class representing an Oracle contract.
  */
 export abstract class IOracleContract {
-  
   tokenAddress = State<PublicKey>(); // State variable storing the Token's address
-  
+
   /**
    * Makes an Oracle request.
    *
@@ -202,10 +243,10 @@ export const OracleEvents: IOracleEvents = {
  */
 export class OracleContract extends SmartContract implements IOracleContract {
   /**
-   * Stores the address of a token associated with the oracle contract. This 
+   * Stores the address of a token associated with the oracle contract. This
    * token might be used for payment of oracle services or other interactions.
    */
-  @state(PublicKey) tokenAddress = State<PublicKey>(); 
+  @state(PublicKey) tokenAddress = State<PublicKey>();
 
   init() {
     super.init();
@@ -213,9 +254,9 @@ export class OracleContract extends SmartContract implements IOracleContract {
 
   /**
    * Updates the stored ERC-677 token address associated with this oracle contract.
-   * 
+   *
    * @param tokenAddress - The new PublicKey of the ERC-677 token.
-   * @returns True to indicate successful execution. 
+   * @returns True to indicate successful execution.
    */
   @method setErc677Token(tokenAddress: PublicKey): Bool {
     this.tokenAddress.set(tokenAddress);
@@ -237,6 +278,7 @@ export class OracleContract extends SmartContract implements IOracleContract {
 
     // Assert Erc677Token from Sender
     // ? CallbackAddr
+    // const validSignature = signature.verify(tokenAddress, [roundId]);
 
     this.emitEvent('OracleRequest', {
       sender: this.sender,

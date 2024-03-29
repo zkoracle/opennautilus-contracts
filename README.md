@@ -1,5 +1,9 @@
 # OpenNautilus | contracts
 
+| Develop | Berkeley | 
+| ------- | -------- |
+| [![CI](https://github.com/zkoracle/opennautilus-contacts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zkoracle/opennautilus-contacts/actions/workflows/ci.yml)<br/>[![Coverage](https://raw.githubusercontent.com/zkoracle/opennautilus-contacts/gh-pages/coverage/badges.svg)](https://zkoracle.github.io/opennautilus-contacts/lcov-report)  | 🔥🔥🔥 | 
+
 OpenNautilus Contracts is an open-source library designed to empower developers building smart contracts for zero-knowledge applications (zkApps). 
 
 It provides a set of tools and abstractions that simplify the development process, enabling you to focus on the core logic of your zkApp without getting bogged down in low-level complexities.
@@ -12,31 +16,40 @@ TBD
 
 ### Usage
 
-### How to build
+### Building the Project
+
+Use the following command to build the project:
 
 ```sh
-pnpm run build
+npm run build
 ```
 
-### How to run tests
+### Running Tests
+
+Execute the following commands to run tests:
 
 ```sh
-pnpm run test
-pnpm run testw # watch mode
+npm run test
+npm run testw # watch mode
 ```
 
-### How to run coverage
+### Code Coverage
+
+To run a code coverage report:
 
 ```sh
-pnpm run coverage
+npm run coverage
 ```
 
-### Local
-```
-pnpm link --global
+### Local Setup
+
+Here's how to set up the project locally:
+
+```sh
+npm link --global
 
 cd <project>
-pnpm link --global @zkoracle/opennautilus-contracts
+npm link --global @zkoracle/opennautilus-contracts
 
 ```
 
