@@ -12,7 +12,9 @@ It provides a set of tools and abstractions that simplify the development proces
 
 ### Installation
 
-TBD
+```sh
+npm i @zkoracle/opennuatilus-contracts --save
+```
 
 ### Usage
 
@@ -33,11 +35,12 @@ npm run test
 npm run testw # watch mode
 ```
 
-### Code Coverage
+### Documentation & Code Coverage
 
 To run a code coverage report:
 
 ```sh
+npm run docs
 npm run coverage
 ```
 
