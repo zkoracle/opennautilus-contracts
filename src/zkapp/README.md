@@ -43,7 +43,7 @@ When you run the test, using the following command:
       }
     ]
 
-      at Function.displayEvents (src/Toolkit.ts:203:13)
+      at Function.displayEvents (src/Toolkit:203:13)
 
   console.log
     request https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC&tsyms=USD

@@ -28,7 +28,6 @@ import {
   buildOracleRequestTx, buildTransferAndCallTx,
 } from './BasicRequestClient.js';
 import { IERC677, buildERC677Contract, SErc677Contract } from '../token/Erc677Token.js';
-import { Toolkit } from '../Toolkit';
 
 let player1: PublicKey,
   player1Key: PrivateKey,
@@ -132,6 +131,20 @@ async function setupLocal() {
   await tx3.prove();
   tx3.sign([serc677TokenPrivateKey, player1Key]);
   await tx3.send();
+}
+
+async function displayEvents(
+  contract: SmartContract,
+  start?: UInt32,
+  end?: UInt32
+) {
+  let events = await contract.fetchEvents(start, end);
+  console.log(
+    `events on ${contract.address.toBase58()}`,
+    events.map((e) => {
+      return { type: e.type, data: JSON.stringify(e.event) };
+    })
+  );
 }
 
 describe('BasicRequestClient SmartContract', () => {
@@ -401,7 +414,7 @@ describe('BasicRequestClient SmartContract', () => {
       // console.log("Token="+serc677TokenAddress.toBase58())
       // console.log("Oracle="+zkAppOracleAddress.toBase58())
 
-      await Toolkit.displayEvents(zkAppOracle,UInt32.from(0));
+      await displayEvents(zkAppOracle,UInt32.from(0));
 
       // const eventsTokenContract = await zkAppSErc677.fetchEvents(UInt32.from(0));
       // expect(eventsTokenContract[0].type).toEqual('TransferAndCall');

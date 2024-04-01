@@ -15,7 +15,6 @@ import {
   buildERC677Contract,
   SErc677Contract,
 } from './token/Erc677Token.js';
-import { Toolkit } from './Toolkit.js';
 import {
   IOracleClient,
   IOracleEvents,
@@ -29,7 +28,7 @@ import {
 import { OracleRequest } from './gen/oracle-request_pb.js';
 
 export {
-  Toolkit,
+  // Toolkit,
   IBasicTokenContract,
   buildBasicTokenContract,
   IERC20,
