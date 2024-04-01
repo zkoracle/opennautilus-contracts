@@ -28,6 +28,7 @@ import {
   buildOracleRequestTx, buildTransferAndCallTx,
 } from './BasicRequestClient.js';
 import { IERC677, buildERC677Contract, SErc677Contract } from '../token/Erc677Token.js';
+import { Toolkit } from '@zkoracle/utils';
 
 let player1: PublicKey,
   player1Key: PrivateKey,
@@ -195,7 +196,7 @@ describe('BasicRequestClient SmartContract', () => {
 
       expect(events[0].type).toEqual('OracleRequest');
 
-      // await displayEvents(zkAppOracle);
+      await Toolkit.displayEvents(zkAppOracle);
 
       interface OracleData {
         sender: string;
