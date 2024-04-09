@@ -1,0 +1,266 @@
+= class IERC20
+
+Represents a standard interface for fungible tokens, implementing the ERC20 standard.
+
+This abstract class defines a set of functions that tokens must implement to be compatible with the ERC20 standard. It provides basic functionality for tracking token balances, transfers, and approvals.
+
+== Properties
+
+[id="zkoracle_opennautilus-contracts_IERC20_decimals_member"]
+=== decimals
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+abstract decimals?: () => Field;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_events_member"]
+=== events
+
+========
+
+Events emitted by the contract.
+
+
+
+
+.Signature
+[source,typescript]
+----
+events: IERC20Events;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_name_member"]
+=== name
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+abstract name?: () => CircuitString;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_symbol_member"]
+=== symbol
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+abstract symbol?: () => CircuitString;
+----
+
+========
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_IERC20_allowance_member_1"]
+=== allowance(owner, spender)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|owner
+m|PublicKey
+|The address of the token owner.
+
+m|spender
+m|PublicKey
+|The address of the spender.
+
+s|Returns
+m|UInt64
+|The amount of tokens approved for the spender to spend on behalf of the owner, as a UInt64.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract allowance(owner: PublicKey, spender: PublicKey): UInt64;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_approveSpend_member_1"]
+=== approveSpend(spender, value)
+
+========
+
+
+
+mutations which need
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|spender
+m|PublicKey
+|The address to approve as a spender.
+
+m|value
+m|UInt64
+|The amount of tokens to approve.
+
+s|Returns
+m|Bool
+|True if the approval was successful, false otherwise.  Approval
+|===
+
+.Signature
+[source,typescript]
+----
+abstract approveSpend(spender: PublicKey, value: UInt64): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_balanceOf_member_1"]
+=== balanceOf(owner)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|owner
+m|PublicKey
+|The address of the token owner.
+
+s|Returns
+m|UInt64
+|The balance of the owner, as a UInt64.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract balanceOf(owner: PublicKey): UInt64;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_totalSupply_member_1"]
+=== totalSupply()
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+abstract totalSupply(): UInt64;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_transfer_member_1"]
+=== transfer(to, value)
+
+========
+
+
+
+mutations which need
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|to
+m|PublicKey
+|The address to transfer tokens to.
+
+m|value
+m|UInt64
+|The amount of tokens to transfer.
+
+s|Returns
+m|Bool
+|True if the transfer was successful, false otherwise.  Transfer
+|===
+
+.Signature
+[source,typescript]
+----
+abstract transfer(to: PublicKey, value: UInt64): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_transferFrom_member_1"]
+=== transferFrom(from, to, value)
+
+========
+
+
+
+mutations which need
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|from
+m|PublicKey
+|The address to transfer tokens from.
+
+m|to
+m|PublicKey
+|The address to transfer tokens to.
+
+m|value
+m|UInt64
+|The amount of tokens to transfer.
+
+s|Returns
+m|Bool
+|True if the transfer was successful, false otherwise.  Transfer
+|===
+
+.Signature
+[source,typescript]
+----
+abstract transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool;
+----
+
+========

@@ -1,0 +1,226 @@
+= class IBasicTokenContract
+
+Defines the basic interface for a token contract.
+
+All token contracts should inherit from this class and implement its methods.
+
+This class is designed to provide a standardized way of interacting with token contracts, ensuring consistency and interoperability across different implementations.
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_IBasicTokenContract_burn_member_1"]
+=== burn(receiverAddress, amount)
+
+========
+
+Burning (destroying) tokens, reducing the total supply. (require signature)
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the token holder whose tokens will be burned
+
+m|amount
+m|UInt64
+|The amount of tokens to burn
+
+s|Returns
+m|void
+|
+|===
+
+.Signature
+[source,typescript]
+----
+abstract burn(receiverAddress: PublicKey, amount: UInt64): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IBasicTokenContract_burnWithSignature_member_1"]
+=== burnWithSignature(receiverAddress, amount, adminSignature)
+
+========
+
+Burning (destroying) tokens with signature, reducing the total supply.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the token holder whose tokens will be burned
+
+m|amount
+m|UInt64
+|The amount of tokens to burn
+
+m|adminSignature
+m|Signature
+|A signature from an authorized administrator, required to approve the burning
+
+s|Returns
+m|void
+|
+|===
+
+.Signature
+[source,typescript]
+----
+abstract burnWithSignature(receiverAddress: PublicKey, amount: UInt64, adminSignature: Signature): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IBasicTokenContract_deploy_member_1"]
+=== deploy()
+
+========
+
+Deploys the token contract to the blockchain.
+
+This method should handle all necessary steps for deploying the contract, such as configuring ownership.
+
+
+.Signature
+[source,typescript]
+----
+abstract deploy(): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IBasicTokenContract_init_member_1"]
+=== init()
+
+========
+
+Initializes the token contract after deployment.
+
+This method is used to perform any additional setup tasks after the contract is deployed, such as setting initial token balances or defining access control rules.
+
+
+.Signature
+[source,typescript]
+----
+abstract init(): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IBasicTokenContract_mint_member_1"]
+=== mint(receiverAddress, amount)
+
+========
+
+Mints new tokens and assigns them to a receiver. (require signature)
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the receiver who will receive the newly minted tokens
+
+m|amount
+m|UInt64
+|The amount of tokens to mint
+
+s|Returns
+m|void
+|
+|===
+
+.Signature
+[source,typescript]
+----
+abstract mint(receiverAddress: PublicKey, amount: UInt64): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IBasicTokenContract_mintWithSignature_member_1"]
+=== mintWithSignature(receiverAddress, amount, adminSignature)
+
+========
+
+Mints new tokens with signature and assigns them to a receiver.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the receiver who will receive the newly minted tokens
+
+m|amount
+m|UInt64
+|The amount of tokens to mint
+
+m|adminSignature
+m|Signature
+|A signature from an authorized administrator, required to approve the minting
+
+s|Returns
+m|void
+|
+|===
+
+.Signature
+[source,typescript]
+----
+abstract mintWithSignature(receiverAddress: PublicKey, amount: UInt64, adminSignature: Signature): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IBasicTokenContract_sendTokens_member_1"]
+=== sendTokens(senderAddress, receiverAddress, amount)
+
+========
+
+Sends tokens from one address to another.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|senderAddress
+m|PublicKey
+|The address of the sender who is transferring the tokens
+
+m|receiverAddress
+m|PublicKey
+|The address of the receiver who will receive the tokens
+
+m|amount
+m|UInt64
+|The amount of tokens to transfer
+
+s|Returns
+m|void
+|
+|===
+
+.Signature
+[source,typescript]
+----
+abstract sendTokens(senderAddress: PublicKey, receiverAddress: PublicKey, amount: UInt64): void;
+----
+
+========

@@ -1,0 +1,42 @@
+=  Contracts
+
+OpenNautilus Contracts is an open-source library for smart contract development.
+
+* It focuses on zero-knowledge applications (zkApps).
+* Provides tools and abstractions for simplified development process.
+* Allows developers to focus on core logic, removing low-level complexities.
+
+== Overview
+
+=== Installation
+
+[source,sh]
+----
+npm i @zkoracle/opennuatilus-contracts --save
+----
+
+=== Usage
+
+After the installation, you can utilize the contracts present in the library by performing an import operation:
+
+[source,typescript]
+----
+import {
+  IERC20,
+  buildERC20Contract
+} from '@zkoracle/opennautilus-contracts';
+
+let zkAppPrivateKey = PrivateKey.random();
+let zkAppAddress = zkAppPrivateKey.toPublicKey();
+
+let zkApp: SmartContract & IERC20;
+
+zkApp = await buildERC20Contract(zkAppAddress, 'SomeCoin', "SOM", 9);
+
+----
+
+== Security
+TBD
+
+== Learn More
+TBD

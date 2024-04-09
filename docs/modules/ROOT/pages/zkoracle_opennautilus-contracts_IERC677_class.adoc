@@ -1,0 +1,84 @@
+= class IERC677
+
+Defines the interface for an ERC677 token contract.
+
+Extends the standard ERC20 interface with the additional `transferAndCall` method, enabling token transfers that also trigger contract calls.
+
+  {IERC20}
+
+
+
+== Properties
+
+[id="zkoracle_opennautilus-contracts_IERC677_events_member"]
+=== events
+
+========
+
+The events emitted by the contract.
+
+ {IERC677Events}
+
+
+
+
+.Signature
+[source,typescript]
+----
+events: IERC677Events;
+----
+
+========
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_IERC677_transferAndCall_member_1"]
+=== transferAndCall(to, value, data0, data1, data2, data3)
+
+========
+
+Transfers tokens to a recipient and calls a contract method.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|to
+m|PublicKey
+|The address of the recipient.
+
+m|value
+m|UInt64
+|The amount of tokens to transfer.
+
+m|data0
+m|Field
+|The first additional field to be passed to the contract method, if applicable.
+
+m|data1
+m|Field
+|The second additional field to be passed to the contract method, if applicable.
+
+m|data2
+m|Field
+|The third additional field to be passed to the contract method, if applicable.
+
+m|data3
+m|Field
+|The fourth additional field to be passed to the contract method, if applicable.
+
+s|Returns
+m|Bool
+|{Bool} - True if the transfer and call were successful, false otherwise.  Transfer - Emitted when the transfer is successful.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract transferAndCall(to: PublicKey, value: UInt64, data0: Field, data1: Field, data2: Field, data3: Field): Bool;
+----
+
+========

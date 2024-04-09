@@ -1,0 +1,469 @@
+= class Toolkit
+
+
+
+
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_Toolkit_deploy_member_1"]
+=== deploy(config, feePayerKey, zkAppKey, zkApp, tag)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|config
+m|any
+|
+
+m|feePayerKey
+m|PrivateKey
+|
+
+m|zkAppKey
+m|PrivateKey
+|
+
+m|zkApp
+m|SmartContract
+|
+
+m|tag
+m|string
+|
+
+s|Returns
+m|Promise&lt;void&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static deploy(config: any, feePayerKey: PrivateKey, zkAppKey: PrivateKey, zkApp: SmartContract, tag: string): Promise<void>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_displayEvents_member_1"]
+=== displayEvents(contract, start, end)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|contract
+m|SmartContract
+|
+
+m|start
+m|UInt32
+|
+
+m|end
+m|UInt32
+|
+
+s|Returns
+m|Promise&lt;void&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static displayEvents(contract: SmartContract, start?: UInt32, end?: UInt32): Promise<void>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_getTxnUrl_member_1"]
+=== getTxnUrl(graphQlUrl, txnHash)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|graphQlUrl
+m|string
+|
+
+m|txnHash
+m|string \| undefined
+|
+
+s|Returns
+m|string
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static getTxnUrl(graphQlUrl: string, txnHash: string | undefined): string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_initialFeePayer_member_1"]
+=== initialFeePayer(fs, network, tag)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|fs
+m|any
+|
+
+m|network
+m|string
+|
+
+m|tag
+m|string
+|
+
+s|Returns
+m|Promise&lt;{
+        privateKey: string;
+        publicKey: string;
+    }&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static initialFeePayer(fs: any, network: string, tag: string): Promise<{
+        privateKey: string;
+        publicKey: string;
+    }>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_initialKey_member_1"]
+=== initialKey(fs, path, tag)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|fs
+m|any
+|
+
+m|path
+m|string
+|
+
+m|tag
+m|string
+|
+
+s|Returns
+m|Promise&lt;{
+        privateKey: string;
+        publicKey: string;
+    }&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static initialKey(fs: any, path: string, tag: string): Promise<{
+        privateKey: string;
+        publicKey: string;
+    }>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_initialKeyPairFromLightnet_member_1"]
+=== initialKeyPairFromLightnet(fs, path)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|fs
+m|any
+|
+
+m|path
+m|string
+|
+
+s|Returns
+m|Promise&lt;{
+        privateKey: string;
+        publicKey: string;
+    }&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static initialKeyPairFromLightnet(fs: any, path: string): Promise<{
+        privateKey: string;
+        publicKey: string;
+    }>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_initialPlayers_member_1"]
+=== initialPlayers(fs, network, tag)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|fs
+m|any
+|
+
+m|network
+m|string
+|
+
+m|tag
+m|string
+|
+
+s|Returns
+m|Promise&lt;{
+        pk1: PrivateKey;
+        pk2: PrivateKey;
+    }&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static initialPlayers(fs: any, network: string, tag: string): Promise<{
+        pk1: PrivateKey;
+        pk2: PrivateKey;
+    }>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_initialZkAppKey_member_1"]
+=== initialZkAppKey(fs, path)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|fs
+m|any
+|
+
+m|path
+m|string
+|
+
+s|Returns
+m|Promise&lt;{
+        privateKey: string;
+        publicKey: string;
+    }&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static initialZkAppKey(fs: any, path: string): Promise<{
+        privateKey: string;
+        publicKey: string;
+    }>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_isFileExists_member_1"]
+=== isFileExists(fs, f)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|fs
+m|any
+|
+
+m|f
+m|string
+|
+
+s|Returns
+m|Promise&lt;boolean&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static isFileExists(fs: any, f: string): Promise<boolean>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_processTx_member_1"]
+=== processTx(config, sentTx, keys, tag)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|config
+m|any
+|
+
+m|sentTx
+m|Transaction
+|
+
+m|keys
+m|PrivateKey[]
+|
+
+m|tag
+m|string
+|
+
+s|Returns
+m|Promise&lt;void&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static processTx(config: any, sentTx: Mina.Transaction, keys: PrivateKey[], tag: string): Promise<void>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_storePrivateKey_member_1"]
+=== storePrivateKey(fs, path, key)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|fs
+m|any
+|
+
+m|path
+m|string
+|
+
+m|key
+m|PrivateKey
+|
+
+s|Returns
+m|Promise&lt;void&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static storePrivateKey(fs: any, path: string, key: PrivateKey): Promise<void>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_Toolkit_Toolkit_member_1"]
+=== Toolkit()
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+Toolkit(): void;
+----
+
+========

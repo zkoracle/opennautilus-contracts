@@ -1,0 +1,282 @@
+= class IOracleClient
+
+Abstract class representing an Oracle client.
+
+
+
+== Properties
+
+[id="zkoracle_opennautilus-contracts_IOracleClient_data0_member"]
+=== data0
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+data0: State<import("o1js/dist/node/lib/field.js").Field>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleClient_oracleAddress_member"]
+=== oracleAddress
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+oracleAddress: State<PublicKey>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleClient_tokenAddress_member"]
+=== tokenAddress
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+tokenAddress: State<PublicKey>;
+----
+
+========
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_IOracleClient_onFulfillRequest_member_1"]
+=== onFulfillRequest(data0)
+
+========
+
+Handles the fulfillment of an Oracle request.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|data0
+m|Field
+|The data0 data from the Oracle.
+
+s|Returns
+m|Bool
+|A boolean indicating success.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract onFulfillRequest(data0: Field): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleClient_sendErc677RequestTo_member_1"]
+=== sendErc677RequestTo(req0, req1, req2, req3)
+
+========
+
+Sends an Erc677 TransferAndCall request.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|req0
+m|Field
+|The first field of the request data.
+
+m|req1
+m|Field
+|The second field of the request data.
+
+m|req2
+m|Field
+|The third field of the request data.
+
+m|req3
+m|Field
+|The fourth field of the request data.
+
+s|Returns
+m|Bool
+|A boolean indicating success.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract sendErc677RequestTo(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleClient_sendOracleRequest_member_1"]
+=== sendOracleRequest(req0, req1, req2, req3)
+
+========
+
+Sends an Oracle request.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|req0
+m|Field
+|The first field of the request data.
+
+m|req1
+m|Field
+|The second field of the request data.
+
+m|req2
+m|Field
+|The third field of the request data.
+
+m|req3
+m|Field
+|The fourth field of the request data.
+
+s|Returns
+m|Bool
+|A boolean indicating success.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract sendOracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleClient_sendOracleRequestWithAddr_member_1"]
+=== sendOracleRequestWithAddr(oracleAddress, req0, req1, req2, req3)
+
+========
+
+Sends an Oracle request with Address.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|oracleAddress
+m|PublicKey
+|The public key of the Oracle contract.
+
+m|req0
+m|Field
+|The first field of the request data.
+
+m|req1
+m|Field
+|The second field of the request data.
+
+m|req2
+m|Field
+|The third field of the request data.
+
+m|req3
+m|Field
+|The fourth field of the request data.
+
+s|Returns
+m|Bool
+|A boolean indicating success.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract sendOracleRequestWithAddr(oracleAddress: PublicKey, req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleClient_setErc677Token_member_1"]
+=== setErc677Token(tokenAddress)
+
+========
+
+Updates the stored ERC-677 token address associated with this oracle contract.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|tokenAddress
+m|PublicKey
+|The new PublicKey of the ERC-677 token.
+
+s|Returns
+m|Bool
+|True to indicate successful execution.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract setErc677Token(tokenAddress: PublicKey): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleClient_setOracleContract_member_1"]
+=== setOracleContract(oracleAddress)
+
+========
+
+Sets the Oracle contract address.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|oracleAddress
+m|PublicKey
+|The public key of the Oracle contract.
+
+s|Returns
+m|Bool
+|A boolean indicating success.
+|===
+
+.Signature
+[source,typescript]
+----
+abstract setOracleContract(oracleAddress: PublicKey): Bool;
+----
+
+========

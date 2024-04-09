@@ -1,0 +1,490 @@
+= class SErc677Contract
+
+
+
+
+
+== Properties
+
+[id="zkoracle_opennautilus-contracts_SErc677Contract_events_member"]
+=== events
+
+========
+
+Events emitted by the contract.
+
+
+
+
+.Signature
+[source,typescript]
+----
+events: IERC677Events;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_staticDecimals_member"]
+=== staticDecimals
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+static staticDecimals: number;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_staticName_member"]
+=== staticName
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+static staticName: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_staticSymbol_member"]
+=== staticSymbol
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+static staticSymbol: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_totalAmountInCirculation_member"]
+=== totalAmountInCirculation
+
+========
+
+Stores the total amount of tokens in circulation.
+
+ {State<UInt64>}
+
+
+
+
+.Signature
+[source,typescript]
+----
+totalAmountInCirculation: State<UInt64>;
+----
+
+========
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_SErc677Contract_allowance_member_1"]
+=== allowance(owner, spender)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|owner
+m|PublicKey
+|The address of the token owner.
+
+m|spender
+m|PublicKey
+|The address of the spender.
+
+s|Returns
+m|UInt64
+|The amount of tokens approved for the spender, as a UInt64.  Implement allowance functionality to enable approved spending.
+|===
+
+.Signature
+[source,typescript]
+----
+allowance(owner: PublicKey, spender: PublicKey): UInt64;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_approveSpend_member_1"]
+=== approveSpend(spender, value)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|spender
+m|PublicKey
+|The address to approve as a spender.
+
+m|value
+m|UInt64
+|The amount of tokens to approve.
+
+s|Returns
+m|Bool
+|True if the approval was successful, false otherwise.  Approval  Implement allowance functionality to enable token approvals.
+|===
+
+.Signature
+[source,typescript]
+----
+approveSpend(spender: PublicKey, value: UInt64): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_balanceOf_member_1"]
+=== balanceOf(owner)
+
+========
+
+
+
+Fetches the balance from the owner's account state and verifies its integrity using `requireEquals`. This check ensures data consistency and helps prevent potential issues.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|owner
+m|PublicKey
+|The address of the token owner.
+
+s|Returns
+m|UInt64
+|The balance of the owner, as a UInt64.
+|===
+
+.Signature
+[source,typescript]
+----
+balanceOf(owner: PublicKey): UInt64;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_burn_member_1"]
+=== burn(receiverAddress, amount)
+
+========
+
+Burns (destroys) existing tokens, reducing the total supply.
+
+This method assumes that authorization checks for burning are handled elsewhere. It directly performs the following steps: 1. Retrieves the current total supply of tokens in circulation. 2. Asserts consistency of the retrieved state value. 3. Calculates the new total supply after burning. 4. Calls the underlying token module to burn the specified tokens. 5. Updates the total token supply in the contract's state.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the token holder whose tokens will be burned
+
+m|amount
+m|UInt64
+|The amount of tokens to burn
+
+ This method does not explicitly check for authorization to burn tokens. It's essential to ensure that appropriate authorization mechanisms are in place to prevent unauthorized token burning.
+
+s|Returns
+m|void
+|
+|===
+
+.Signature
+[source,typescript]
+----
+burn(receiverAddress: PublicKey, amount: UInt64): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_decimals_member_1"]
+=== decimals()
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+decimals(): Field;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_deploy_member_1"]
+=== deploy()
+
+========
+
+Deploys the contract to the blockchain and configures permissions.
+
+This method sets up proof-based permissions for sensitive actions.
+
+
+.Signature
+[source,typescript]
+----
+deploy(): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_init_member_1"]
+=== init()
+
+========
+
+Initializes the contract after deployment.
+
+This method performs the following steps: 1. Calls the superclass's `init` method to handle any base initialization tasks. 2. Sets the token symbol for the contract. 3. Initializes the total amount of tokens in circulation to zero.
+
+
+.Signature
+[source,typescript]
+----
+init(): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_mint_member_1"]
+=== mint(receiverAddress, amount)
+
+========
+
+Mints new tokens and assigns them to a receiver.
+
+This method assumes that authorization checks for minting are handled elsewhere. It directly performs the following steps: 1. Retrieves the current total supply of tokens in circulation. 2. Asserts consistency of the retrieved state value. 3. Calculates the new total supply after minting. 4. Calls the underlying token module to mint the new tokens. 5. Updates the total token supply in the contract's state.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the receiver who will receive the newly minted tokens
+
+m|amount
+m|UInt64
+|The amount of tokens to mint
+
+s|Returns
+m|void
+|
+|===
+
+.Signature
+[source,typescript]
+----
+mint(receiverAddress: PublicKey, amount: UInt64): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_name_member_1"]
+=== name()
+
+========
+
+
+
+This method adheres to the ERC677 standard for retrieving the token's name. It converts the stored string name into a CircuitString for compatibility with zkApp operations.
+
+
+.Signature
+[source,typescript]
+----
+name(): CircuitString;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_symbol_member_1"]
+=== symbol()
+
+========
+
+
+
+This method adheres to the ERC677 standard for retrieving the token's symbol. It converts the stored string symbol into a CircuitString for compatibility with zkApp operations.
+
+
+.Signature
+[source,typescript]
+----
+symbol(): CircuitString;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_totalSupply_member_1"]
+=== totalSupply()
+
+========
+
+
+
+This method accesses the `totalAmountInCirculation` state variable to provide the current token supply.
+
+
+.Signature
+[source,typescript]
+----
+totalSupply(): UInt64;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_transfer_member_1"]
+=== transfer(to, value)
+
+========
+
+
+
+Leverages the zkApp protocol to handle balance checks and transfer logic securely. Directly emits a Transfer event to signal the token transfer.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|to
+m|PublicKey
+|The address to transfer tokens to.
+
+m|value
+m|UInt64
+|The amount of tokens to transfer.
+
+s|Returns
+m|Bool
+|True if the transfer was successful, false otherwise.  Transfer
+|===
+
+.Signature
+[source,typescript]
+----
+transfer(to: PublicKey, value: UInt64): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_transferAndCall_member_1"]
+=== transferAndCall(to, value, data0, data1, data2, data3)
+
+========
+
+Transfers tokens to a recipient and optionally calls a contract method.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|to
+m|PublicKey
+|The address of the recipient.
+
+m|value
+m|UInt64
+|The amount of tokens to transfer.
+
+m|data0
+m|Field
+|The first additional field to be passed to the contract method, if applicable.
+
+m|data1
+m|Field
+|The second additional field to be passed to the contract method, if applicable.
+
+m|data2
+m|Field
+|The third additional field to be passed to the contract method, if applicable.
+
+m|data3
+m|Field
+|The fourth additional field to be passed to the contract method, if applicable.
+
+s|Returns
+m|Bool
+|{Bool} - Returns `false` in the current implementation.  TransferAndCall - Emitted when the transfer is successful.
+|===
+
+.Signature
+[source,typescript]
+----
+transferAndCall(to: PublicKey, value: UInt64, data0: Field, data1: Field, data2: Field, data3: Field): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_transferFrom_member_1"]
+=== transferFrom(from, to, value)
+
+========
+
+
+
+Similar to `transfer()`, but allows transferring tokens from a specified address, often for approved spending. Also relies on the zkApp protocol for secure balance checks and emits a Transfer event.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|from
+m|PublicKey
+|The address to transfer tokens from.
+
+m|to
+m|PublicKey
+|The address to transfer tokens to.
+
+m|value
+m|UInt64
+|The amount of tokens to transfer.
+
+s|Returns
+m|Bool
+|True if the transfer was successful, false otherwise.  Transfer
+|===
+
+.Signature
+[source,typescript]
+----
+transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool;
+----
+
+========

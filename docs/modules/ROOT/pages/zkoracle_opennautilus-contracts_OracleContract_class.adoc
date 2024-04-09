@@ -1,0 +1,172 @@
+= class OracleContract
+
+An Oracle contract implementing the `IOracleContract` interface.
+
+
+
+== Properties
+
+[id="zkoracle_opennautilus-contracts_OracleContract_events_member"]
+=== events
+
+========
+
+Events emitted by this Oracle contract.
+
+
+
+
+.Signature
+[source,typescript]
+----
+events: IOracleEvents;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleContract_tokenAddress_member"]
+=== tokenAddress
+
+========
+
+Stores the address of a token associated with the oracle contract. This token might be used for payment of oracle services or other interactions.
+
+
+
+
+.Signature
+[source,typescript]
+----
+tokenAddress: State<PublicKey>;
+----
+
+========
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_OracleContract_fulfillOracleRequest_member_1"]
+=== fulfillOracleRequest(callbackAddress, data0, signature)
+
+========
+
+Fulfills an Oracle request, verifies a signature, and potentially sends a callback to the specified address.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|callbackAddress
+m|PublicKey
+|The public key of the contract to send the callback to (optional).
+
+m|data0
+m|Field
+|The first field of the data to be sent in the callback (optional).
+
+m|signature
+m|Signature
+|The signature to be verified (associated with the request or data).
+
+s|Returns
+m|Bool
+|A boolean indicating success (always true in this implementation, potentially modify based on requirements).
+|===
+
+.Signature
+[source,typescript]
+----
+fulfillOracleRequest(callbackAddress: PublicKey, data0: Field, signature: Signature): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleContract_init_member_1"]
+=== init()
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+init(): void;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleContract_oracleRequest_member_1"]
+=== oracleRequest(req0, req1, req2, req3)
+
+========
+
+Makes an Oracle request based on provided data.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|req0
+m|Field
+|The first field of the request data.
+
+m|req1
+m|Field
+|The second field of the request data.
+
+m|req2
+m|Field
+|The third field of the request data.
+
+m|req3
+m|Field
+|The fourth field of the request data.
+
+s|Returns
+m|Bool
+|A boolean indicating success (always true in this implementation).
+|===
+
+.Signature
+[source,typescript]
+----
+oracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleContract_setErc677Token_member_1"]
+=== setErc677Token(tokenAddress)
+
+========
+
+Updates the stored ERC-677 token address associated with this oracle contract.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|tokenAddress
+m|PublicKey
+|The new PublicKey of the ERC-677 token.
+
+s|Returns
+m|Bool
+|True to indicate successful execution.
+|===
+
+.Signature
+[source,typescript]
+----
+setErc677Token(tokenAddress: PublicKey): Bool;
+----
+
+========

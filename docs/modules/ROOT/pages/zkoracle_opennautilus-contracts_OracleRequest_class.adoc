@@ -1,0 +1,295 @@
+= class OracleRequest
+
+from message oracle.OracleRequest
+
+
+
+== Properties
+
+[id="zkoracle_opennautilus-contracts_OracleRequest_fields_member"]
+=== fields
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+static readonly fields: FieldList;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_method_member"]
+=== method
+
+========
+
+from field: string method = 2;
+
+
+
+
+.Signature
+[source,typescript]
+----
+method: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_path_member"]
+=== path
+
+========
+
+from field: string path = 4;
+
+
+
+
+.Signature
+[source,typescript]
+----
+path: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_protocol_member"]
+=== protocol
+
+========
+
+from field: string protocol = 1;
+
+
+
+
+.Signature
+[source,typescript]
+----
+protocol: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_runtime_member"]
+=== runtime
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+static readonly runtime: typeof proto3;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_typeName_member"]
+=== typeName
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+static readonly typeName = "oracle.OracleRequest";
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_url_member"]
+=== url
+
+========
+
+from field: string url = 3;
+
+
+
+
+.Signature
+[source,typescript]
+----
+url: string;
+----
+
+========
+
+== Constructors
+
+[id="zkoracle_opennautilus-contracts_OracleRequest_constructor_1"]
+=== (constructor)(data)
+
+========
+
+Constructs a new instance of the `OracleRequest` class
+
+
+
+.Parameters
+[%header,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|data
+m|PartialMessage&lt;xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+constructor(data?: PartialMessage<OracleRequest>);
+----
+
+========
+
+== Methods
+
+[id="zkoracle_opennautilus-contracts_OracleRequest_equals_member_1"]
+=== equals(a, b)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|a
+m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest] \| PlainMessage&lt;xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]&gt; | undefined
+|
+
+m|b
+m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest] \| PlainMessage&lt;xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]&gt; | undefined
+|
+
+s|Returns
+m|boolean
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static equals(a: OracleRequest | PlainMessage<OracleRequest> | undefined, b: OracleRequest | PlainMessage<OracleRequest> | undefined): boolean;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_fromBinary_member_1"]
+=== fromBinary(bytes, options)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|bytes
+m|Uint8Array
+|
+
+m|options
+m|Partial&lt;BinaryReadOptions&gt;
+|
+
+s|Returns
+m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OracleRequest;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_fromJson_member_1"]
+=== fromJson(jsonValue, options)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|jsonValue
+m|JsonValue
+|
+
+m|options
+m|Partial&lt;JsonReadOptions&gt;
+|
+
+s|Returns
+m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OracleRequest;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_OracleRequest_fromJsonString_member_1"]
+=== fromJsonString(jsonString, options)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|jsonString
+m|string
+|
+
+m|options
+m|Partial&lt;JsonReadOptions&gt;
+|
+
+s|Returns
+m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
+|
+|===
+
+.Signature
+[source,typescript]
+----
+static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OracleRequest;
+----
+
+========

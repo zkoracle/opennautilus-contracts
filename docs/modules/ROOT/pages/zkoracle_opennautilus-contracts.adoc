@@ -1,0 +1,214 @@
+= package @zkoracle/opennautilus-contracts
+
+
+
+
+
+== Classes
+
+[%header,cols="1,2",caption=""]
+|===
+|Name |Summary
+
+s|xref:zkoracle_opennautilus-contracts_BasicRequestClient_class.adoc[BasicRequestClient]
+|A basic request client contract that implements the `IOracleClient` interface.
+
+s|xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]
+|Defines the basic interface for a token contract.
+
+All token contracts should inherit from this class and implement its methods.
+
+s|xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]
+|Represents a standard interface for fungible tokens, implementing the ERC20 standard.
+
+s|xref:zkoracle_opennautilus-contracts_IERC677_class.adoc[IERC677]
+|Defines the interface for an ERC677 token contract.
+
+Extends the standard ERC20 interface with the additional `transferAndCall` method, enabling token transfers that also trigger contract calls.
+
+  {IERC20}
+
+s|xref:zkoracle_opennautilus-contracts_IOracleClient_class.adoc[IOracleClient]
+|Abstract class representing an Oracle client.
+
+s|xref:zkoracle_opennautilus-contracts_OracleContract_class.adoc[OracleContract]
+|An Oracle contract implementing the `IOracleContract` interface.
+
+s|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
+|from message oracle.OracleRequest
+
+s|xref:zkoracle_opennautilus-contracts_SErc677Contract_class.adoc[SErc677Contract]
+|
+
+s|xref:zkoracle_opennautilus-contracts_Toolkit_class.adoc[Toolkit]
+|
+|===
+
+== Interfaces
+
+[%header,cols="1,2",caption=""]
+|===
+|Name |Summary
+
+s|xref:zkoracle_opennautilus-contracts_IOracleData_interface.adoc[IOracleData]
+|
+|===
+
+== Functions
+
+[id="zkoracle_opennautilus-contracts_buildBasicTokenContract_function_1"]
+=== buildBasicTokenContract(address, symbol)
+
+========
+
+Creates a basic token contract instance.
+
+This function handles the following steps: 1. Compiles the `BasicTokenContract` class. 2. Initializes the contract with the provided symbol. 3. Sets up necessary permissions for the contract. 4. Returns the newly created contract instance.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|address
+m|PublicKey
+|The address where the contract will be deployed
+
+m|symbol
+m|string
+|The symbol for the token (e.g., "MYTOKEN")
+
+s|Returns
+m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]&gt;
+|A promise that resolves to the created token contract instance
+|===
+
+.Signature
+[source,typescript]
+----
+export declare function buildBasicTokenContract(address: PublicKey, symbol: string): Promise<SmartContract & IBasicTokenContract>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_buildERC20Contract_function_1"]
+=== buildERC20Contract(address, name, symbol, decimals)
+
+========
+
+Constructs and deploys an ERC20 token contract.
+
+This function creates a new contract class that implements the `IERC20` interface, compiles it, and deploys it to the blockchain. The returned contract instance can be used to interact with the token's functionality.
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|address
+m|PublicKey
+|The address of the token contract on the blockchain.
+
+m|name
+m|string
+|The name of the token.
+
+m|symbol
+m|string
+|The symbol of the token.
+
+m|decimals
+m|number
+|The number of decimals used to represent token amounts.
+
+s|Returns
+m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]&gt;
+|A promise that resolves to the deployed contract instance.
+|===
+
+.Signature
+[source,typescript]
+----
+export declare function buildERC20Contract(address: PublicKey, name: string, symbol: string, decimals: number): Promise<SmartContract & IERC20>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_buildERC677Contract_function_1"]
+=== buildERC677Contract(address, name, symbol, decimals)
+
+========
+
+Builds and returns an instance of an ERC677 token contract.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|address
+m|PublicKey
+|The contract address.
+
+m|name
+m|string
+|The token name.
+
+m|symbol
+m|string
+|The token symbol.
+
+m|decimals
+m|number
+|The number of decimals for token precision.
+
+s|Returns
+m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IERC677_class.adoc[IERC677]&gt;
+|{Promise&lt;SmartContract &amp; IERC677&gt;} - A promise that resolves to the constructed contract instance.
+|===
+
+.Signature
+[source,typescript]
+----
+export declare function buildERC677Contract(address: PublicKey, name: string, symbol: string, decimals: number): Promise<SmartContract & IERC677>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_buildOracleRequestTx_function_1"]
+=== buildOracleRequestTx(sender, zkApp, oracleRequest)
+
+========
+
+Builds a Mina transaction that sends an Oracle request to a designated zkApp.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|sender
+m|FeePayerSpec
+|The fee payer specification for the transaction.
+
+m|zkApp
+m|SmartContract & xref:zkoracle_opennautilus-contracts_IOracleClient_class.adoc[IOracleClient]
+|The zkApp contract that accepts Oracle requests, also implementing the `IOracleClient` interface.
+
+m|oracleRequest
+m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
+|The data for the Oracle request, represented as an `OracleRequest` object.
+
+s|Returns
+m|Promise&lt;Transaction&gt;
+|{Promise&lt;Mina.Transaction&gt;} A promise that resolves to a Mina transaction containing the Oracle request.
+|===
+
+.Signature
+[source,typescript]
+----
+export declare function buildOracleRequestTx(sender: Mina.FeePayerSpec, zkApp: SmartContract & IOracleClient, oracleRequest: OracleRequest): Promise<Mina.Transaction>;
+----
+
+========

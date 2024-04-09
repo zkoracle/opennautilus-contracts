@@ -1,0 +1,5 @@
+= type IOracleEvents
+
+Type representing the events emitted by an Oracle contract.
+
+

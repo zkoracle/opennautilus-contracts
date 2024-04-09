@@ -1,0 +1,9 @@
+= type IERC677Events
+
+Represents the events emitted by an ERC677 token contract.
+
+Extends the standard ERC20 events with an additional `TransferAndCall` event. This event is used to signal a token transfer that also triggers a call to a specified contract method.
+
+ {IERC20Events &amp; { TransferAndCall: ProvablePure<TransferAndCallArgs> }}
+
+

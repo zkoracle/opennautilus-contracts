@@ -1,0 +1,5 @@
+= type IERC20Events
+
+Represents the events emitted by an ERC20 token contract.
+
+This type defines the structure of events that signal important state changes within the contract, allowing external observers to track token transfers and approvals.

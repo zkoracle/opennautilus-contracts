@@ -1,0 +1,93 @@
+= interface IOracleData
+
+
+
+
+
+== Properties
+
+[id="zkoracle_opennautilus-contracts_IOracleData_req0_member"]
+=== req0
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+req0: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleData_req1_member"]
+=== req1
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+req1: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleData_req2_member"]
+=== req2
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+req2: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleData_req3_member"]
+=== req3
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+req3: string;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IOracleData_sender_member"]
+=== sender
+
+========
+
+
+
+
+
+
+.Signature
+[source,typescript]
+----
+sender: string;
+----
+
+========
