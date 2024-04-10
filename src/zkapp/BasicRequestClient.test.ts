@@ -38,8 +38,8 @@ let player1: PublicKey,
   zkAppClientPrivateKey: PrivateKey,
   zkAppOracleAddress: PublicKey,
   zkAppOraclePrivateKey: PrivateKey,
-  erc677TokenAddress: PublicKey,
-  erc677TokenPrivateKey: PrivateKey,
+  // erc677TokenAddress: PublicKey,
+  // erc677TokenPrivateKey: PrivateKey,
   serc677TokenAddress: PublicKey,
   serc677TokenPrivateKey: PrivateKey;
 
@@ -151,11 +151,16 @@ async function displayEvents(
 describe('BasicRequestClient SmartContract', () => {
   beforeAll(async () => {
 
+    console.log("beforeAll --- ")
     SErc677Contract.staticSymbol = "PRC"
     SErc677Contract.staticName = "PRICE"
     SErc677Contract.staticDecimals = 9
 
     await SErc677Contract.compile();
+  });
+
+  beforeEach(async () => {
+
     await OracleContract.compile();
     await BasicRequestClient.compile();
   });
@@ -376,18 +381,19 @@ describe('BasicRequestClient SmartContract', () => {
       const oracleAddr = zkAppClient.oracleAddress.get();
       expect(oracleAddr).toEqual(zkAppOracleAddress);
 
-      // expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1))
+      expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1))
 
       // Mint
-      // const txnMint = await Mina.transaction(player1, () => {
-      //   zkAppSErc677.mint(player1, UInt64.from(500_000))
-      // });
-      //
-      // await txnMint.prove();
-      // txnMint.sign([player1Key, serc677TokenPrivateKey]);
-      // await txnMint.send();
+      const txnMint = await Mina.transaction(player1, () => {
+        AccountUpdate.fundNewAccount(player1);
+        zkAppSErc677.mint(player1, UInt64.from(500_000))
+      });
 
-      // expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1))
+      await txnMint.prove();
+      txnMint.sign([player1Key, serc677TokenPrivateKey, zkAppOraclePrivateKey]);
+      await txnMint.send();
+
+      expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1))
 
       // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({
@@ -474,6 +480,13 @@ describe('BasicRequestClient SmartContract', () => {
       console.log(`request ${req2.url}
       - offchain-value '${req2.path}' = ${r10000 / 10000}
       - onchain-value '${req2.path}' = ${Number(feedData.toBigInt()) / 10000}`);
+
+      await displayEvents(zkAppSErc677,UInt32.from(0));
+
+      // use 100_000
+
+      // expect(UInt64.from(400_000)).toEqual(zkAppSErc677.balanceOf(player1))
+      // expect(UInt64.from(100_000)).toEqual(zkAppSErc677.balanceOf(zkAppOracleAddress))
 
 
     });

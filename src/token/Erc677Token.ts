@@ -44,13 +44,12 @@ export type IERC677Events = IERC20Events & {
  *
  * @type {Object}
  * @property {ProvablePure<TransferAndCallArgs>} TransferAndCall - A function that represents the event,
- *                                                              ensuring it's pure (no side effects) and provable.
+ *                                                              ensuring its pure (no side effects) and provable.
  */
 const TransferAndCallEvent = {
   /**
    * The TransferAndCall event function.
    *
-   * @type {ProvablePure<TransferAndCallArgs>}
    */
   TransferAndCall: provablePure({
     /**
