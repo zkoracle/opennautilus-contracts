@@ -22,7 +22,7 @@
     "format": "prettier --write --ignore-unknown **/*",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "testw": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-    "docs": "api-extractor run --local --verbose; api-documenter yaml -i tmp/api -o tmp/api-yaml; api-documenter-yaml-to-antora-asciidoc asciidoc -i tmp/api-yaml -o docs/modules/pages",
+    "docs": "api-extractor run --local --verbose; api-documenter yaml -i tmp/api -o tmp/api-yaml; api-documenter-yaml-to-antora-asciidoc asciidoc -i tmp/api-yaml",
     "lint": "npx eslint src/* --fix",
     "lightnet:up": "zk lightnet start -b berkeley -m single-node",
     "lightnet:down": "zk lightnet stop && rm keys/lightnet-acquire*",

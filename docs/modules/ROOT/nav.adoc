@@ -1,17 +1,1 @@
 * xref:ROOT:index.adoc[]
-
-.API documentation
-* xref:zkoracle_opennautilus-contracts.adoc[@zkoracle/opennautilus-contracts]
-** xref:zkoracle_opennautilus-contracts_BasicRequestClient_class.adoc[BasicRequestClient]
-** xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]
-** xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]
-** xref:zkoracle_opennautilus-contracts_IERC20Events_type.adoc[IERC20Events]
-** xref:zkoracle_opennautilus-contracts_IERC677_class.adoc[IERC677]
-** xref:zkoracle_opennautilus-contracts_IERC677Events_type.adoc[IERC677Events]
-** xref:zkoracle_opennautilus-contracts_IOracleClient_class.adoc[IOracleClient]
-** xref:zkoracle_opennautilus-contracts_IOracleData_interface.adoc[IOracleData]
-** xref:zkoracle_opennautilus-contracts_IOracleEvents_type.adoc[IOracleEvents]
-** xref:zkoracle_opennautilus-contracts_OracleContract_class.adoc[OracleContract]
-** xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
-** xref:zkoracle_opennautilus-contracts_SErc677Contract_class.adoc[SErc677Contract]
-** xref:zkoracle_opennautilus-contracts_Toolkit_class.adoc[Toolkit]
