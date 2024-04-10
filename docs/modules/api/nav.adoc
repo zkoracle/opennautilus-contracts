@@ -12,4 +12,3 @@
 ** xref:zkoracle_opennautilus-contracts_OracleContract_class.adoc[OracleContract]
 ** xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
 ** xref:zkoracle_opennautilus-contracts_SErc677Contract_class.adoc[SErc677Contract]
-** xref:zkoracle_opennautilus-contracts_Toolkit_class.adoc[Toolkit]

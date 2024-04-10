@@ -39,9 +39,6 @@ s|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
 
 s|xref:zkoracle_opennautilus-contracts_SErc677Contract_class.adoc[SErc677Contract]
 |
-
-s|xref:zkoracle_opennautilus-contracts_Toolkit_class.adoc[Toolkit]
-|
 |===
 
 == Interfaces
