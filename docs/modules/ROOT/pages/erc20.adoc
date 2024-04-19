@@ -1,0 +1,18 @@
+=  ERC20
+
+== Introduction to ERC20
+
+ERC-20 tokens are digital assets native to the Ethereum blockchain that adhere to a common set of rules. This standardization ensures predictability and compatibility across dApps, exchanges, and wallets within the Ethereum network.
+
+== Key Components
+
+The ERC-20 protocol mandates the following six core functions:
+
+* totalSupply: Provides the total number of tokens in existence.
+* balanceOf: Returns the token balance associated with a specific address.
+* transfer: Enables direct token transfers between addresses.
+* transferFrom: Allows approved third-party contracts (e.g., decentralized exchanges) to facilitate token transfers on a user's behalf.
+* approve: Grants a designated address (spender) permission to transfer a specified amount of tokens from your account.
+* allowance: Checks the remaining tokens a spender is authorized to transfer from a particular owner's account.
+
+

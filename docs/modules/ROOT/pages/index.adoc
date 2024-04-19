@@ -37,7 +37,10 @@ zkApp = await buildERC20Contract(zkAppAddress, 'SomeCoin', "SOM", 9);
 
 == Security
 
-Our software is currently undergoing a security audit. It's a process to identify potential vulnerabilities in the code. Although we aim for utmost security, all software carries some risk. While our audit is still in progress, users are responsible for assessing their risk before using the software. We disclaim any liability for potential damages during this period. Updates will be provided as we progress.
+Our software is currently undergoing a security audit. It's a process to identify potential vulnerabilities in the code.
+Although we aim for utmost security, all software carries some risk. While our audit is still in progress, users are responsible for assessing their risk before using the software.
+
+We disclaim any liability for potential damages during this period. Updates will be provided as we progress.
 
 == Learn More
 TBD

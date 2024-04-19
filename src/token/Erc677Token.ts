@@ -32,10 +32,10 @@ export type IERC677Events = IERC20Events & {
     from: PublicKey;
     to: PublicKey;
     value: UInt64;
-    data0: Field,
-    data1: Field,
-    data2: Field,
-    data3: Field
+    data0: Field;
+    data1: Field;
+    data2: Field;
+    data3: Field;
   }>;
 };
 
@@ -74,7 +74,7 @@ const TransferAndCallEvent = {
     data0: Field,
     data1: Field,
     data2: Field,
-    data3: Field
+    data3: Field,
   }),
 };
 /**
@@ -473,7 +473,6 @@ export class SErc677Contract extends SmartContract implements IERC677 {
     });
     this.totalAmountInCirculation.set(newTotalAmountInCirculation);
   }
-
 
   /**
    * Burns (destroys) existing tokens, reducing the total supply.

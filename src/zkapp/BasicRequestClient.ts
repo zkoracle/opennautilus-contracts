@@ -81,7 +81,12 @@ export async function buildTransferAndCallTx(
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
   return Mina.transaction(sender, () => {
-    zkApp.sendErc677RequestTo(reqField[0], reqField[1], reqField[2], reqField[3]);
+    zkApp.sendErc677RequestTo(
+      reqField[0],
+      reqField[1],
+      reqField[2],
+      reqField[3]
+    );
   });
 }
 

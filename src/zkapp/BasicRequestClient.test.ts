@@ -16,7 +16,8 @@ import {
 import { JSONPath } from 'jsonpath-plus';
 
 import {
-  IOracleClient, IOracleData,
+  IOracleClient,
+  IOracleData,
   IOracleEvents,
   OracleContract,
 } from './OracleContract.js';
@@ -25,9 +26,14 @@ import {
   BasicRequestClient,
   buildOracleRequestTxWithAddr,
   // buildBasicRequestClient,
-  buildOracleRequestTx, buildTransferAndCallTx,
+  buildOracleRequestTx,
+  buildTransferAndCallTx,
 } from './BasicRequestClient.js';
-import { IERC677, buildERC677Contract, SErc677Contract } from '../token/Erc677Token.js';
+import {
+  IERC677,
+  buildERC677Contract,
+  SErc677Contract,
+} from '../token/Erc677Token.js';
 import { Toolkit } from '@zkoracle/utils';
 
 let player1: PublicKey,
@@ -72,7 +78,6 @@ async function setupAccounts() {
   //   9
   // );
   // tokenErc677Id = zkAppErc677.token.id;
-
 
   serc677TokenPrivateKey = PrivateKey.random();
   serc677TokenAddress = serc677TokenPrivateKey.toPublicKey();
@@ -150,24 +155,21 @@ async function displayEvents(
 
 describe('BasicRequestClient SmartContract', () => {
   beforeAll(async () => {
-
-    console.log("beforeAll --- ")
-    SErc677Contract.staticSymbol = "PRC"
-    SErc677Contract.staticName = "PRICE"
-    SErc677Contract.staticDecimals = 9
+    console.log('beforeAll --- ');
+    SErc677Contract.staticSymbol = 'PRC';
+    SErc677Contract.staticName = 'PRICE';
+    SErc677Contract.staticDecimals = 9;
 
     await SErc677Contract.compile();
   });
 
   beforeEach(async () => {
-
     await OracleContract.compile();
     await BasicRequestClient.compile();
   });
 
   describe("Send BasicRequest to 'OracleRequest()'", () => {
     beforeEach(async () => {
-
       await setupAccounts();
       await setupLocal();
     });
@@ -273,7 +275,7 @@ describe('BasicRequestClient SmartContract', () => {
       txnSet.sign([player1Key, zkAppClientPrivateKey]);
       await txnSet.send();
 
-      const oracleAddr =  zkAppClient.oracleAddress.get();
+      const oracleAddr = zkAppClient.oracleAddress.get();
       expect(oracleAddr).toEqual(zkAppOracleAddress);
 
       // BasicRequest from Client to Oracle 'OracleRequest'
@@ -363,8 +365,6 @@ describe('BasicRequestClient SmartContract', () => {
     });
 
     test('should got oracleRequest event from on-chain tx, then fetch BTC price and fulfillOracle', async () => {
-
-
       // Set OracleContract on Client
       const txnSet = await Mina.transaction(player1, () => {
         zkAppClient.setErc677Token(serc677TokenAddress);
@@ -381,19 +381,19 @@ describe('BasicRequestClient SmartContract', () => {
       const oracleAddr = zkAppClient.oracleAddress.get();
       expect(oracleAddr).toEqual(zkAppOracleAddress);
 
-      expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1))
+      expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1));
 
       // Mint
       const txnMint = await Mina.transaction(player1, () => {
         AccountUpdate.fundNewAccount(player1);
-        zkAppSErc677.mint(player1, UInt64.from(500_000))
+        zkAppSErc677.mint(player1, UInt64.from(500_000));
       });
 
       await txnMint.prove();
       txnMint.sign([player1Key, serc677TokenPrivateKey, zkAppOraclePrivateKey]);
       await txnMint.send();
 
-      expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1))
+      expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1));
 
       // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({
@@ -421,7 +421,7 @@ describe('BasicRequestClient SmartContract', () => {
       // console.log("Token="+serc677TokenAddress.toBase58())
       // console.log("Oracle="+zkAppOracleAddress.toBase58())
 
-      await displayEvents(zkAppOracle,UInt32.from(0));
+      await displayEvents(zkAppOracle, UInt32.from(0));
 
       // const eventsTokenContract = await zkAppSErc677.fetchEvents(UInt32.from(0));
       // expect(eventsTokenContract[0].type).toEqual('TransferAndCall');
@@ -432,7 +432,9 @@ describe('BasicRequestClient SmartContract', () => {
       expect(eventsOracle[0].type).toEqual('OracleRequest');
 
       // Reparse from jsonStringify (event.data)
-      const r: IOracleData = JSON.parse(JSON.stringify(eventsOracle[0].event.data));
+      const r: IOracleData = JSON.parse(
+        JSON.stringify(eventsOracle[0].event.data)
+      );
 
       const onOracleReq = [
         Field.fromJSON(r.req0),
@@ -474,23 +476,19 @@ describe('BasicRequestClient SmartContract', () => {
       await txnFeed.send();
 
       // Test onChain on Client
-      const feedData =  zkAppClient.data0.get();
+      const feedData = zkAppClient.data0.get();
       expect(feedData).toEqual(Field(r10000));
 
       console.log(`request ${req2.url}
       - offchain-value '${req2.path}' = ${r10000 / 10000}
       - onchain-value '${req2.path}' = ${Number(feedData.toBigInt()) / 10000}`);
 
-      await displayEvents(zkAppSErc677,UInt32.from(0));
+      await displayEvents(zkAppSErc677, UInt32.from(0));
 
       // use 100_000
 
       // expect(UInt64.from(400_000)).toEqual(zkAppSErc677.balanceOf(player1))
       // expect(UInt64.from(100_000)).toEqual(zkAppSErc677.balanceOf(zkAppOracleAddress))
-
-
     });
-
   });
-
 });

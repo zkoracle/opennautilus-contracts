@@ -1,1 +1,5 @@
 * xref:ROOT:index.adoc[Overview]
+
+* xref:tokens.adoc[Tokens]
+** xref:erc20.adoc[ERC20]
+** xref:erc677.adoc[ERC677]

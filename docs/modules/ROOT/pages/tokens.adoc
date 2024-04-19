@@ -1,0 +1,9 @@
+=  Tokens
+
+Tokens, within blockchain systems, are programmable units that represent digital assets. These assets can embody ownership of digital objects, access rights within a system, or the logic of a smart contract.  Tokens are foundational elements within blockchain applications.
+
+== Standards
+
+* xref:erc20.adoc[ERC20]  is Ethereum's popular technical standard for implementing tokens. It includes a set of predefined rules that all new tokens based on the Ethereum blockchain must implement, such as balanceOf, transfer, transferFrom, approve, and allowance.
+
+* xref:erc677.adoc[ERC677] is a chain-specific token standard in the Ethereum blockchain. It is an extension of the ERC20 standard, introducing a `transferAndCall` method which allows tokens to be transferred and a call to be made to the receiving contract in a single transaction.
