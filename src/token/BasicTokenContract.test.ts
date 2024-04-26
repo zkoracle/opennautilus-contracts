@@ -9,6 +9,7 @@ import {
   TokenId,
   UInt64,
   fetchAccount,
+  TokenContract,
 } from 'o1js';
 import {
   IBasicTokenContract,
@@ -25,35 +26,34 @@ let player1: PublicKey,
   zkAppPrivateKey: PrivateKey;
 
 let tokenId: Field;
-let zkApp: SmartContract & IBasicTokenContract;
+let zkApp: TokenContract & IBasicTokenContract;
 
 async function setupAccounts() {
-  let Local = Mina.LocalBlockchain({
+  let Local = await Mina.LocalBlockchain({
     proofsEnabled: true,
     enforceTransactionLimits: false,
   });
   Mina.setActiveInstance(Local);
-  player1Key = Local.testAccounts[0].privateKey;
-  player1 = Local.testAccounts[0].publicKey;
+  player1Key = Local.testAccounts[0].key;
+  player1 = Local.testAccounts[0];
 
-  player2Key = Local.testAccounts[1].privateKey;
-  player2 = Local.testAccounts[1].publicKey;
+  player2Key = Local.testAccounts[1].key;
+  player2 = Local.testAccounts[1];
 
   zkAppPrivateKey = PrivateKey.random();
   zkAppAddress = zkAppPrivateKey.toPublicKey();
 
   zkApp = await buildBasicTokenContract(zkAppAddress, tokenSymbol);
-  tokenId = zkApp.token.id;
+  tokenId = TokenId.derive(zkAppAddress);
 }
 
 async function setupLocal() {
-  let tx = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: zkAppAddress,
-      amount: Mina.getNetworkConstants().accountCreationFee,
+  let tx = await Mina.transaction(player1, async () => {
+    await zkApp.deploy();
+    AccountUpdate.fundNewAccount(player1).send({
+      to: zkApp.self,
+      amount: 10_000_000,
     });
-    zkApp.deploy();
   });
   await tx.prove();
   tx.sign([zkAppPrivateKey, player1Key]);
@@ -106,9 +106,9 @@ describe('BasicTokenContract', () => {
           amount.toFields().concat(player1.toFields())
         );
 
-        let tx = await Mina.transaction(player1, () => {
+        let tx = await Mina.transaction(player1, async () => {
           AccountUpdate.fundNewAccount(player1);
-          zkApp.mintWithSignature(player1, amount, adminSignature);
+          await zkApp.mintWithSignature(player1, amount, adminSignature);
         });
 
         await tx.prove();
@@ -138,9 +138,9 @@ describe('BasicTokenContract', () => {
           amountMint.toFields().concat(player1.toFields())
         );
 
-        let txMint = await Mina.transaction(player1, () => {
+        let txMint = await Mina.transaction(player1, async () => {
           AccountUpdate.fundNewAccount(player1);
-          zkApp.mintWithSignature(player1, amountMint, adminSigMint);
+          await zkApp.mintWithSignature(player1, amountMint, adminSigMint);
         });
 
         await txMint.prove();
@@ -153,8 +153,8 @@ describe('BasicTokenContract', () => {
           amountBurn.toFields().concat(player1.toFields())
         );
 
-        let txBurn = await Mina.transaction(player1, () => {
-          zkApp.burnWithSignature(player1, amountBurn, adminSigBurn);
+        let txBurn = await Mina.transaction(player1, async () => {
+          await zkApp.burnWithSignature(player1, amountBurn, adminSigBurn);
         });
 
         await txBurn.prove();

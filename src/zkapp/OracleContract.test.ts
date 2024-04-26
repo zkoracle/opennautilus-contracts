@@ -21,13 +21,13 @@ let tokenId: Field;
 // let zkApp: OracleClient; //& OracleClient;
 
 async function setupAccounts() {
-  let Local = Mina.LocalBlockchain({
+  let Local = await Mina.LocalBlockchain({
     proofsEnabled: true,
     enforceTransactionLimits: false,
   });
   Mina.setActiveInstance(Local);
-  player1Key = Local.testAccounts[0].privateKey;
-  player1 = Local.testAccounts[0].publicKey;
+  player1Key = Local.testAccounts[0].key;
+  player1 = Local.testAccounts[0];
 
   //   player2Key = Local.testAccounts[1].privateKey;
   //   player2 = Local.testAccounts[1].publicKey;

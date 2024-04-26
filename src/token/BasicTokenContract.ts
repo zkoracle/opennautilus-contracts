@@ -9,6 +9,8 @@ import {
   Signature,
   AccountUpdate,
   VerificationKey,
+  TokenContract,
+  AccountUpdateForest,
 } from 'o1js';
 
 /**
@@ -28,7 +30,7 @@ export abstract class IBasicTokenContract {
    * This method should handle all necessary steps for deploying the contract,
    * such as configuring ownership.
    */
-  abstract deploy(): void;
+  abstract deploy(): Promise<void>;
 
   /**
    * Initializes the token contract after deployment.
@@ -50,7 +52,7 @@ export abstract class IBasicTokenContract {
     receiverAddress: PublicKey,
     amount: UInt64,
     adminSignature: Signature
-  ): void;
+  ): Promise<void>;
 
   /**
    * Mints new tokens and assigns them to a receiver. (require signature)
@@ -58,7 +60,7 @@ export abstract class IBasicTokenContract {
    * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
    * @param amount - The amount of tokens to mint
    */
-  abstract mint(receiverAddress: PublicKey, amount: UInt64): void;
+  abstract mint(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
 
   /**
    * Burning (destroying) tokens with signature, reducing the total supply.
@@ -71,7 +73,7 @@ export abstract class IBasicTokenContract {
     receiverAddress: PublicKey,
     amount: UInt64,
     adminSignature: Signature
-  ): void;
+  ): Promise<void>;
 
   /**
    * Burning (destroying) tokens, reducing the total supply. (require signature)
@@ -79,7 +81,7 @@ export abstract class IBasicTokenContract {
    * @param receiverAddress - The address of the token holder whose tokens will be burned
    * @param amount - The amount of tokens to burn
    */
-  abstract burn(receiverAddress: PublicKey, amount: UInt64): void;
+  abstract burn(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
 
   /**
    * Sends tokens from one address to another.
@@ -92,7 +94,7 @@ export abstract class IBasicTokenContract {
     senderAddress: PublicKey,
     receiverAddress: PublicKey,
     amount: UInt64
-  ): void;
+  ): Promise<void>;
 }
 
 /**
@@ -112,9 +114,9 @@ export abstract class IBasicTokenContract {
 export async function buildBasicTokenContract(
   address: PublicKey,
   symbol: string
-): Promise<SmartContract & IBasicTokenContract> {
+): Promise<TokenContract & IBasicTokenContract> {
   class BasicTokenContract
-    extends SmartContract
+    extends TokenContract
     implements IBasicTokenContract
   {
     /**
@@ -140,8 +142,8 @@ export async function buildBasicTokenContract(
      *   - `send`: Requires proof to send tokens from the contract.
      *   - `receive`: Requires proof to receive tokens into the contract.
      */
-    public deploy() {
-      super.deploy();
+    public async deploy() {
+      await super.deploy();
 
       const permissionToEdit = Permissions.proof();
 
@@ -168,8 +170,11 @@ export async function buildBasicTokenContract(
      * @param address - The address where the zkApp account will be deployed
      * @param verificationKey - The verification key to be associated with the zkApp account
      */
-    @method deployZkapp(address: PublicKey, verificationKey: VerificationKey) {
-      let tokenId = this.token.id;
+    @method async deployZkapp(
+      address: PublicKey,
+      verificationKey: VerificationKey
+    ) {
+      let tokenId = this.deriveTokenId();
       let zkapp = AccountUpdate.defaultAccountUpdate(address, tokenId);
       this.approve(zkapp);
       zkapp.account.permissions.set(Permissions.default());
@@ -185,10 +190,14 @@ export async function buildBasicTokenContract(
      * 2. Sets the token symbol for the contract.
      * 3. Initializes the total amount of tokens in circulation to zero.
      */
-    @method init() {
+    init() {
       super.init();
       this.account.tokenSymbol.set(symbol);
       this.totalAmountInCirculation.set(UInt64.zero);
+    }
+
+    @method async approveBase(forest: AccountUpdateForest) {
+      this.checkZeroBalanceChange(forest);
     }
 
     /**
@@ -206,13 +215,14 @@ export async function buildBasicTokenContract(
      * @param amount - The amount of tokens to mint
      * @param adminSignature - A signature from an authorized administrator, required to approve the minting
      */
-    @method mintWithSignature(
+    @method async mintWithSignature(
       receiverAddress: PublicKey,
       amount: UInt64,
       adminSignature: Signature
     ) {
       let totalAmountInCirculation = this.totalAmountInCirculation.get();
-      this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+      // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
 
       let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
 
@@ -223,7 +233,7 @@ export async function buildBasicTokenContract(
         )
         .assertTrue();
 
-      this.token.mint({
+      this.internal.mint({
         address: receiverAddress,
         amount,
       });
@@ -246,13 +256,14 @@ export async function buildBasicTokenContract(
      * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
      * @param amount - The amount of tokens to mint
      */
-    @method mint(receiverAddress: PublicKey, amount: UInt64) {
+    @method async mint(receiverAddress: PublicKey, amount: UInt64) {
       let totalAmountInCirculation = this.totalAmountInCirculation.get();
-      this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+      // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
 
       let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
 
-      this.token.mint({
+      this.internal.mint({
         address: receiverAddress,
         amount,
       });
@@ -274,13 +285,14 @@ export async function buildBasicTokenContract(
      * @param amount - The amount of tokens to burn
      * @param adminSignature - A signature from an authorized administrator, required to approve the burning
      */
-    @method burnWithSignature(
+    @method async burnWithSignature(
       receiverAddress: PublicKey,
       amount: UInt64,
       adminSignature: Signature
     ) {
       let totalAmountInCirculation = this.totalAmountInCirculation.get();
-      this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+      // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
       let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
 
       adminSignature
@@ -290,7 +302,7 @@ export async function buildBasicTokenContract(
         )
         .assertTrue();
 
-      this.token.burn({
+      this.internal.burn({
         address: receiverAddress,
         amount,
       });
@@ -317,12 +329,13 @@ export async function buildBasicTokenContract(
      *          It's essential to ensure that appropriate authorization mechanisms are in place
      *          to prevent unauthorized token burning.
      */
-    @method burn(receiverAddress: PublicKey, amount: UInt64) {
+    @method async burn(receiverAddress: PublicKey, amount: UInt64) {
       let totalAmountInCirculation = this.totalAmountInCirculation.get();
-      this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+      // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
       let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
 
-      this.token.burn({
+      this.internal.burn({
         address: receiverAddress,
         amount,
       });
@@ -341,12 +354,12 @@ export async function buildBasicTokenContract(
      * @param receiverAddress - The address of the receiver who will receive the tokens
      * @param amount - The amount of tokens to transfer
      */
-    @method sendTokens(
+    @method async sendTokens(
       senderAddress: PublicKey,
       receiverAddress: PublicKey,
       amount: UInt64
     ) {
-      this.token.send({
+      this.internal.send({
         from: senderAddress,
         to: receiverAddress,
         amount,

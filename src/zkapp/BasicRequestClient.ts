@@ -8,7 +8,7 @@ import {
   method,
   state,
   Mina,
-  UInt64,
+  UInt64, AccountUpdate,
 } from 'o1js';
 import { OracleContract, IOracleClient } from './OracleContract.js';
 import { OracleRequest } from '../gen/oracle-request_pb.js';
@@ -28,12 +28,12 @@ export async function buildOracleRequestTxWithAddr(
   oracleAddress: PublicKey,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
-): Promise<Mina.Transaction> {
+): Promise<Mina.Transaction<false,false>> {
   const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
-  return Mina.transaction(sender, () => {
-    zkApp.sendOracleRequestWithAddr(
+  return Mina.transaction(sender, async () => {
+    await zkApp.sendOracleRequestWithAddr(
       oracleAddress,
       reqField[0],
       reqField[1],
@@ -55,12 +55,12 @@ export async function buildOracleRequestTx(
   sender: Mina.FeePayerSpec,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
-): Promise<Mina.Transaction> {
+): Promise<Mina.Transaction<false,false>> {
   const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
-  return Mina.transaction(sender, () => {
-    zkApp.sendOracleRequest(reqField[0], reqField[1], reqField[2], reqField[3]);
+  return Mina.transaction(sender, async () => {
+    await zkApp.sendOracleRequest(reqField[0], reqField[1], reqField[2], reqField[3]);
   });
 }
 
@@ -74,14 +74,16 @@ export async function buildOracleRequestTx(
  */
 export async function buildTransferAndCallTx(
   sender: Mina.FeePayerSpec,
+  pk: PublicKey,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
-): Promise<Mina.Transaction> {
+): Promise<Mina.Transaction<false,false>> {
   const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
-  return Mina.transaction(sender, () => {
-    zkApp.sendErc677RequestTo(
+  return Mina.transaction(sender, async () => {
+    AccountUpdate.fundNewAccount(pk);
+    await zkApp.sendErc677RequestTo(
       reqField[0],
       reqField[1],
       reqField[2],
@@ -134,9 +136,8 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    * @param {PublicKey} oracleAddress - The new Oracle contract address to set.
    * @returns {Bool} - A boolean indicating success (always true in this implementation).
    */
-  @method setOracleContract(oracleAddress: PublicKey): Bool {
+  @method async setOracleContract(oracleAddress: PublicKey) {
     this.oracleAddress.set(oracleAddress);
-    return Bool(true);
   }
 
   /**
@@ -145,9 +146,8 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    * @param {PublicKey} tokenAddress - The new PublicKey of the ERC-677 token.
    * @return {Bool} - True to indicate successful execution.
    */
-  @method setErc677Token(tokenAddress: PublicKey): Bool {
+  @method async setErc677Token(tokenAddress: PublicKey) {
     this.tokenAddress.set(tokenAddress);
-    return Bool(true);
   }
 
   /**
@@ -160,18 +160,18 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    * @param {Field} req3 - The fourth field of the request data.
    * @returns {Bool} - A boolean indicating success (determined by the Oracle contract).
    */
-  @method sendOracleRequestWithAddr(
+  @method async sendOracleRequestWithAddr(
     oracleAddress: PublicKey,
     req0: Field,
     req1: Field,
     req2: Field,
     req3: Field
-  ): Bool {
+  ) {
     // const oraclePublicKey = this.oraclePublicKey.get();
     // this.oraclePublicKey.assertEquals(oraclePublicKey);
 
     const oracleContract = new OracleContract(oracleAddress); // Instantiate Oracle contract
-    return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
+    await oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
   }
 
   /**
@@ -183,17 +183,17 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    * @param {Field} req3 - The fourth field of the request data.
    * @returns {Bool} - A boolean indicating success (determined by the Oracle contract).
    */
-  @method sendOracleRequest(
+  @method async sendOracleRequest(
     req0: Field,
     req1: Field,
     req2: Field,
     req3: Field
-  ): Bool {
+  ) {
     const oraclePublicKey = this.oracleAddress.get();
     this.oracleAddress.requireEquals(this.oracleAddress.get());
 
     const oracleContract = new OracleContract(oraclePublicKey); // Instantiate Oracle contract
-    return oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
+    await oracleContract.oracleRequest(req0, req1, req2, req3); // Forward request to Oracle
   }
 
   /**
@@ -206,12 +206,12 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    *
    * @return {Bool} - Returns true if the request was successfully sent to the Oracle contract.
    */
-  @method sendErc677RequestTo(
+  @method async sendErc677RequestTo(
     req0: Field,
     req1: Field,
     req2: Field,
     req3: Field
-  ): Bool {
+  ) {
     const tokenAddressPublicKey = this.tokenAddress.get();
     this.tokenAddress.requireEquals(this.tokenAddress.get());
 
@@ -219,8 +219,7 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
     this.oracleAddress.requireEquals(this.oracleAddress.get());
 
     const tokenContract = new SErc677Contract(tokenAddressPublicKey);
-
-    tokenContract.transferAndCall(
+    await tokenContract.transferAndCall(
       oracleAddressPublicKey,
       UInt64.from(100_000),
       req0,
@@ -229,7 +228,6 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
       req3
     );
 
-    return Bool(true);
   }
 
   /**
@@ -238,10 +236,8 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
    * @param {Field} data0 - The data to fulfill the request with.
    * @returns {Bool} A boolean indicating success (always true in this implementation, potentially requiring verification).
    */
-  @method onFulfillRequest(data0: Field): Bool {
+  @method async onFulfillRequest(data0: Field) {
     // verify from oracleContract
     this.data0.set(data0);
-
-    return Bool(true);
   }
 }

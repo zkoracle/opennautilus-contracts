@@ -37,14 +37,14 @@ export abstract class IOracleClient {
    * @param oracleAddress - The public key of the Oracle contract.
    * @returns A boolean indicating success.
    */
-  abstract setOracleContract(oracleAddress: PublicKey): Bool;
+  abstract setOracleContract(oracleAddress: PublicKey): Promise<void>;
   /**
    * Updates the stored ERC-677 token address associated with this oracle contract.
    *
    * @param tokenAddress - The new PublicKey of the ERC-677 token.
    * @returns True to indicate successful execution.
    */
-  abstract setErc677Token(tokenAddress: PublicKey): Bool;
+  abstract setErc677Token(tokenAddress: PublicKey): Promise<void>;
 
   /**
    * Sends an Oracle request with Address.
@@ -62,7 +62,7 @@ export abstract class IOracleClient {
     req1: Field,
     req2: Field,
     req3: Field
-  ): Bool;
+  ): Promise<void>;
 
   /**
    * Sends an Oracle request.
@@ -78,7 +78,7 @@ export abstract class IOracleClient {
     req1: Field,
     req2: Field,
     req3: Field
-  ): Bool;
+  ): Promise<void>;
 
   /**
    * Sends an Erc677 TransferAndCall request.
@@ -94,7 +94,7 @@ export abstract class IOracleClient {
     req1: Field,
     req2: Field,
     req3: Field
-  ): Bool;
+  ): Promise<void>;
 
   /**
    * Handles the fulfillment of an Oracle request.
@@ -102,7 +102,7 @@ export abstract class IOracleClient {
    * @param data0 - The data0 data from the Oracle.
    * @returns A boolean indicating success.
    */
-  abstract onFulfillRequest(data0: Field): Bool;
+  abstract onFulfillRequest(data0: Field): Promise<void>;
 }
 
 /**
@@ -155,7 +155,7 @@ export abstract class IOracleContract {
     req1: Field,
     req2: Field,
     req3: Field
-  ): Bool;
+  ): Promise<void>;
 
   /**
    * Fulfills an Oracle request, verifies a signature, and potentially sends a callback to the specified address.
@@ -169,7 +169,7 @@ export abstract class IOracleContract {
     callbackAddress: PublicKey,
     data0: Field,
     signature: Signature
-  ): Bool;
+  ): Promise<void>;
 
   /**
    * Events emitted by the Oracle contract.
@@ -258,9 +258,8 @@ export class OracleContract extends SmartContract implements IOracleContract {
    * @param tokenAddress - The new PublicKey of the ERC-677 token.
    * @returns True to indicate successful execution.
    */
-  @method setErc677Token(tokenAddress: PublicKey): Bool {
+  @method async setErc677Token(tokenAddress: PublicKey) {
     this.tokenAddress.set(tokenAddress);
-    return Bool(true);
   }
 
   /**
@@ -273,7 +272,7 @@ export class OracleContract extends SmartContract implements IOracleContract {
    * @returns A boolean indicating success (always true in this implementation).
    */
   @method
-  oracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool {
+  async oracleRequest(req0: Field, req1: Field, req2: Field, req3: Field) {
     // Publish Event for Operator
 
     // Assert Erc677Token from Sender
@@ -281,14 +280,12 @@ export class OracleContract extends SmartContract implements IOracleContract {
     // const validSignature = signature.verify(tokenAddress, [roundId]);
 
     this.emitEvent('OracleRequest', {
-      sender: this.sender,
+      sender: this.sender.getAndRequireSignature(),
       req0,
       req1,
       req2,
       req3,
     });
-
-    return Bool(true); // Always return true, potentially modify based on requirements
   }
 
   /**
@@ -300,18 +297,16 @@ export class OracleContract extends SmartContract implements IOracleContract {
    * @returns A boolean indicating success (always true in this implementation, potentially modify based on requirements).
    */
   @method
-  fulfillOracleRequest(
+  async fulfillOracleRequest(
     callbackAddress: PublicKey,
     data0: Field,
     signature: Signature
-  ): Bool {
+  ) {
     const validSignature = signature.verify(this.address, [data0]);
     validSignature.assertTrue();
 
     const callbackContract = new BasicRequestClient(callbackAddress);
-    callbackContract.onFulfillRequest(data0);
-
-    return Bool(true); // Always return true, potentially modify based on requirements
+    await callbackContract.onFulfillRequest(data0);
   }
 
   // ⬜ cancelOracleRequest - Allows requesters to cancel requests.

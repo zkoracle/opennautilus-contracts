@@ -12,6 +12,9 @@ import {
   Permissions,
   State,
   state,
+  TokenContract,
+  AccountUpdateForest,
+  AccountUpdate,
 } from 'o1js';
 
 /**
@@ -114,7 +117,7 @@ export abstract class IERC20 {
    * @param owner The address of the token owner.
    * @returns The balance of the owner, as a UInt64.
    */
-  abstract balanceOf(owner: PublicKey): UInt64;
+  abstract balanceOf(owner: PublicKey | AccountUpdate): Promise<UInt64>;
   /**
    * @param owner The address of the token owner.
    * @param spender The address of the spender.
@@ -123,16 +126,20 @@ export abstract class IERC20 {
   abstract allowance(owner: PublicKey, spender: PublicKey): UInt64;
 
   /**
-   * @method
-   * @param to The address to transfer tokens to.
-   * @param value The amount of tokens to transfer.
-   * @returns True if the transfer was successful, false otherwise.
-   * @emits Transfer
+   * Mints new tokens and assigns them to a receiver. (require signature)
    *
-   * @remarks
-   * mutations which need @method
+   * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
+   * @param amount - The amount of tokens to mint
    */
-  abstract transfer(to: PublicKey, value: UInt64): Bool; // emits "Transfer" event
+  abstract mint(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
+
+  /**
+   * Burning (destroying) tokens, reducing the total supply. (require signature)
+   *
+   * @param receiverAddress - The address of the token holder whose tokens will be burned
+   * @param amount - The amount of tokens to burn
+   */
+  abstract burn(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
 
   /**
    * @method
@@ -145,7 +152,11 @@ export abstract class IERC20 {
    * @remarks
    * mutations which need @method
    */
-  abstract transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool; // emits "Transfer" event
+  abstract transferFrom(
+    from: PublicKey,
+    to: PublicKey,
+    value: UInt64
+  ): Promise<void>; // emits "Transfer" event
 
   /**
    * @method
@@ -157,7 +168,7 @@ export abstract class IERC20 {
    * @remarks
    * mutations which need @method
    */
-  abstract approveSpend(spender: PublicKey, value: UInt64): Bool; // emits "Approve" event
+  abstract approveSpend(spender: PublicKey, value: UInt64): Promise<void>; // emits "Approve" event
 
   /**
    * Events emitted by the contract.
@@ -191,7 +202,7 @@ export async function buildERC20Contract(
   name: string,
   symbol: string,
   decimals: number
-): Promise<SmartContract & IERC20> {
+): Promise<TokenContract & IERC20> {
   /**
    * Represents an ERC20 token contract implementation.
    *
@@ -200,7 +211,7 @@ export async function buildERC20Contract(
    * It manages token balances, transfers, and approvals, adhering to the ERC20 standard.
    *
    */
-  class Erc20Contract extends SmartContract implements IERC20 {
+  class Erc20Contract extends TokenContract implements IERC20 {
     /**
      * Stores the total amount of tokens in circulation.
      *
@@ -214,8 +225,8 @@ export async function buildERC20Contract(
      * @remarks
      * This method sets up proof-based permissions for sensitive actions.
      */
-    public deploy() {
-      super.deploy();
+    public async deploy() {
+      await super.deploy();
 
       const permissionToEdit = Permissions.proof();
 
@@ -237,10 +248,14 @@ export async function buildERC20Contract(
      * 2. Sets the token symbol for the contract.
      * 3. Initializes the total amount of tokens in circulation to zero.
      */
-    @method init() {
+    init() {
       super.init();
       this.account.tokenSymbol.set(symbol);
       this.totalAmountInCirculation.set(UInt64.zero);
+    }
+
+    @method async approveBase(forest: AccountUpdateForest) {
+      this.checkZeroBalanceChange(forest);
     }
 
     /**
@@ -277,18 +292,13 @@ export async function buildERC20Contract(
       return this.totalAmountInCirculation.get();
     }
 
-    /**
-     * @param owner The address of the token owner.
-     * @returns The balance of the owner, as a UInt64.
-     * @remarks
-     * Fetches the balance from the owner's account state and verifies its integrity using `requireEquals`.
-     * This check ensures data consistency and helps prevent potential issues.
-     */
-    balanceOf(owner: PublicKey): UInt64 {
-      let account = Account(owner, this.token.id);
-      let balance = account.balance.get();
-      account.balance.requireEquals(balance);
-      return balance;
+    async balanceOf(owner: PublicKey | AccountUpdate): Promise<UInt64> {
+      let update =
+        owner instanceof PublicKey
+          ? AccountUpdate.create(owner, this.deriveTokenId())
+          : owner;
+      await this.approveAccountUpdate(update);
+      return update.account.balance.getAndRequireEquals();
     }
     /**
      * @param owner The address of the token owner.
@@ -300,22 +310,68 @@ export async function buildERC20Contract(
       // TODO: implement allowances
       return UInt64.zero;
     }
+
     /**
-     * @method
-     * @param to The address to transfer tokens to.
-     * @param value The amount of tokens to transfer.
-     * @returns True if the transfer was successful, false otherwise.
-     * @emits Transfer
+     * Mints new tokens and assigns them to a receiver.
+     *
      * @remarks
-     * Leverages the zkApp protocol to handle balance checks and transfer logic securely.
-     * Directly emits a Transfer event to signal the token transfer.
+     * This method assumes that authorization checks for minting are handled elsewhere.
+     * It directly performs the following steps:
+     * 1. Retrieves the current total supply of tokens in circulation.
+     * 2. Asserts consistency of the retrieved state value.
+     * 3. Calculates the new total supply after minting.
+     * 4. Calls the underlying token module to mint the new tokens.
+     * 5. Updates the total token supply in the contract's state.
+     *
+     * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
+     * @param amount - The amount of tokens to mint
      */
-    @method transfer(to: PublicKey, value: UInt64): Bool {
-      this.token.send({ from: this.sender, to, amount: value });
-      this.emitEvent('Transfer', { from: this.sender, to, value });
-      // we don't have to check the balance of the sender -- this is done by the zkApp protocol
-      return Bool(true);
+    @method async mint(receiverAddress: PublicKey, amount: UInt64) {
+      let totalAmountInCirculation = this.totalAmountInCirculation.get();
+      this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+      // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
+
+      this.internal.mint({
+        address: receiverAddress,
+        amount,
+      });
+      this.totalAmountInCirculation.set(newTotalAmountInCirculation);
     }
+
+    /**
+     * Burns (destroys) existing tokens, reducing the total supply.
+     *
+     * @remarks
+     * This method assumes that authorization checks for burning are handled elsewhere.
+     * It directly performs the following steps:
+     * 1. Retrieves the current total supply of tokens in circulation.
+     * 2. Asserts consistency of the retrieved state value.
+     * 3. Calculates the new total supply after burning.
+     * 4. Calls the underlying token module to burn the specified tokens.
+     * 5. Updates the total token supply in the contract's state.
+     *
+     * @param receiverAddress - The address of the token holder whose tokens will be burned
+     * @param amount - The amount of tokens to burn
+     *
+     * @warning This method does not explicitly check for authorization to burn tokens.
+     *          It's essential to ensure that appropriate authorization mechanisms are in place
+     *          to prevent unauthorized token burning.
+     */
+    @method async burn(receiverAddress: PublicKey, amount: UInt64) {
+      let totalAmountInCirculation = this.totalAmountInCirculation.get();
+      this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+      // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+      let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
+
+      this.internal.burn({
+        address: receiverAddress,
+        amount,
+      });
+
+      this.totalAmountInCirculation.set(newTotalAmountInCirculation);
+    }
+
     /**
      * @method
      * @param from The address to transfer tokens from.
@@ -327,11 +383,10 @@ export async function buildERC20Contract(
      * Similar to `transfer()`, but allows transferring tokens from a specified address, often for approved spending.
      * Also relies on the zkApp protocol for secure balance checks and emits a Transfer event.
      */
-    @method transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool {
-      this.token.send({ from, to, amount: value });
+    @method async transferFrom(from: PublicKey, to: PublicKey, value: UInt64) {
+      this.internal.send({ from, to, amount: value });
       this.emitEvent('Transfer', { from, to, value });
       // we don't have to check the balance of the sender -- this is done by the zkApp protocol
-      return Bool(true);
     }
     /**
      * @method
@@ -341,9 +396,8 @@ export async function buildERC20Contract(
      * @emits Approval
      * @todo Implement allowance functionality to enable token approvals.
      */
-    @method approveSpend(spender: PublicKey, value: UInt64): Bool {
+    @method async approveSpend(spender: PublicKey, value: UInt64) {
       // TODO: implement allowances
-      return Bool(false);
     }
 
     /**
@@ -357,7 +411,7 @@ export async function buildERC20Contract(
   return new Erc20Contract(address);
 }
 
-export class SErc20Contract extends SmartContract implements IERC20 {
+export class SErc20Contract extends TokenContract implements IERC20 {
   static staticSymbol = '';
   static staticName = '';
   static staticDecimals = 0;
@@ -375,8 +429,8 @@ export class SErc20Contract extends SmartContract implements IERC20 {
    * @remarks
    * This method sets up proof-based permissions for sensitive actions.
    */
-  public deploy() {
-    super.deploy();
+  public async deploy() {
+    await super.deploy();
 
     const permissionToEdit = Permissions.proof();
 
@@ -398,10 +452,14 @@ export class SErc20Contract extends SmartContract implements IERC20 {
    * 2. Sets the token symbol for the contract.
    * 3. Initializes the total amount of tokens in circulation to zero.
    */
-  @method init() {
+  init() {
     super.init();
     this.account.tokenSymbol.set(SErc20Contract.staticSymbol);
     this.totalAmountInCirculation.set(UInt64.zero);
+  }
+
+  @method async approveBase(forest: AccountUpdateForest) {
+    this.checkZeroBalanceChange(forest);
   }
 
   /**
@@ -438,19 +496,15 @@ export class SErc20Contract extends SmartContract implements IERC20 {
     return this.totalAmountInCirculation.get();
   }
 
-  /**
-   * @param owner The address of the token owner.
-   * @returns The balance of the owner, as a UInt64.
-   * @remarks
-   * Fetches the balance from the owner's account state and verifies its integrity using `requireEquals`.
-   * This check ensures data consistency and helps prevent potential issues.
-   */
-  balanceOf(owner: PublicKey): UInt64 {
-    let account = Account(owner, this.token.id);
-    let balance = account.balance.get();
-    account.balance.requireEquals(balance);
-    return balance;
+  async balanceOf(owner: PublicKey | AccountUpdate): Promise<UInt64> {
+    let update =
+      owner instanceof PublicKey
+        ? AccountUpdate.create(owner, this.deriveTokenId())
+        : owner;
+    await this.approveAccountUpdate(update);
+    return update.account.balance.getAndRequireEquals();
   }
+
   /**
    * @param owner The address of the token owner.
    * @param spender The address of the spender.
@@ -461,22 +515,68 @@ export class SErc20Contract extends SmartContract implements IERC20 {
     // TODO: implement allowances
     return UInt64.zero;
   }
+
   /**
-   * @method
-   * @param to The address to transfer tokens to.
-   * @param value The amount of tokens to transfer.
-   * @returns True if the transfer was successful, false otherwise.
-   * @emits Transfer
+   * Mints new tokens and assigns them to a receiver.
+   *
    * @remarks
-   * Leverages the zkApp protocol to handle balance checks and transfer logic securely.
-   * Directly emits a Transfer event to signal the token transfer.
+   * This method assumes that authorization checks for minting are handled elsewhere.
+   * It directly performs the following steps:
+   * 1. Retrieves the current total supply of tokens in circulation.
+   * 2. Asserts consistency of the retrieved state value.
+   * 3. Calculates the new total supply after minting.
+   * 4. Calls the underlying token module to mint the new tokens.
+   * 5. Updates the total token supply in the contract's state.
+   *
+   * @param receiverAddress - The address of the receiver who will receive the newly minted tokens
+   * @param amount - The amount of tokens to mint
    */
-  @method transfer(to: PublicKey, value: UInt64): Bool {
-    this.token.send({ from: this.sender, to, amount: value });
-    this.emitEvent('Transfer', { from: this.sender, to, value });
-    // we don't have to check the balance of the sender -- this is done by the zkApp protocol
-    return Bool(true);
+  @method async mint(receiverAddress: PublicKey, amount: UInt64) {
+    let totalAmountInCirculation = this.totalAmountInCirculation.get();
+    this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+    // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+    let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
+
+    this.internal.mint({
+      address: receiverAddress,
+      amount,
+    });
+    this.totalAmountInCirculation.set(newTotalAmountInCirculation);
   }
+
+  /**
+   * Burns (destroys) existing tokens, reducing the total supply.
+   *
+   * @remarks
+   * This method assumes that authorization checks for burning are handled elsewhere.
+   * It directly performs the following steps:
+   * 1. Retrieves the current total supply of tokens in circulation.
+   * 2. Asserts consistency of the retrieved state value.
+   * 3. Calculates the new total supply after burning.
+   * 4. Calls the underlying token module to burn the specified tokens.
+   * 5. Updates the total token supply in the contract's state.
+   *
+   * @param receiverAddress - The address of the token holder whose tokens will be burned
+   * @param amount - The amount of tokens to burn
+   *
+   * @warning This method does not explicitly check for authorization to burn tokens.
+   *          It's essential to ensure that appropriate authorization mechanisms are in place
+   *          to prevent unauthorized token burning.
+   */
+  @method async burn(receiverAddress: PublicKey, amount: UInt64) {
+    let totalAmountInCirculation = this.totalAmountInCirculation.get();
+    this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
+    // this.totalAmountInCirculation.assertEquals(totalAmountInCirculation);
+    let newTotalAmountInCirculation = totalAmountInCirculation.sub(amount);
+
+    this.internal.burn({
+      address: receiverAddress,
+      amount,
+    });
+
+    this.totalAmountInCirculation.set(newTotalAmountInCirculation);
+  }
+
   /**
    * @method
    * @param from The address to transfer tokens from.
@@ -488,11 +588,10 @@ export class SErc20Contract extends SmartContract implements IERC20 {
    * Similar to `transfer()`, but allows transferring tokens from a specified address, often for approved spending.
    * Also relies on the zkApp protocol for secure balance checks and emits a Transfer event.
    */
-  @method transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool {
-    this.token.send({ from, to, amount: value });
+  @method async transferFrom(from: PublicKey, to: PublicKey, value: UInt64) {
+    this.internal.send({ from, to, amount: value });
     this.emitEvent('Transfer', { from, to, value });
     // we don't have to check the balance of the sender -- this is done by the zkApp protocol
-    return Bool(true);
   }
   /**
    * @method
@@ -502,9 +601,8 @@ export class SErc20Contract extends SmartContract implements IERC20 {
    * @emits Approval
    * @todo Implement allowance functionality to enable token approvals.
    */
-  @method approveSpend(spender: PublicKey, value: UInt64): Bool {
+  @method async approveSpend(spender: PublicKey, value: UInt64) {
     // TODO: implement allowances
-    return Bool(false);
   }
 
   /**

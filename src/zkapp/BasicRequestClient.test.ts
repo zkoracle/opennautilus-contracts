@@ -10,7 +10,7 @@ import {
   SmartContract,
   UInt32,
   UInt64,
-  provablePure,
+  provablePure, TokenId,
 } from 'o1js';
 
 import { JSONPath } from 'jsonpath-plus';
@@ -57,13 +57,13 @@ let zkAppClient: SmartContract & IOracleClient;
 let zkAppOracle: OracleContract;
 
 async function setupAccounts() {
-  let Local = Mina.LocalBlockchain({
+  let Local = await Mina.LocalBlockchain({
     proofsEnabled: true,
     enforceTransactionLimits: false,
   });
   Mina.setActiveInstance(Local);
-  player1Key = Local.testAccounts[0].privateKey;
-  player1 = Local.testAccounts[0].publicKey;
+  player1Key = Local.testAccounts[0].key;
+  player1 = Local.testAccounts[0];
 
   // player2Key = Local.testAccounts[1].privateKey;
   // player2 = Local.testAccounts[1].publicKey;
@@ -83,7 +83,7 @@ async function setupAccounts() {
   serc677TokenAddress = serc677TokenPrivateKey.toPublicKey();
 
   zkAppSErc677 = new SErc677Contract(serc677TokenAddress);
-  tokenSErc677Id = zkAppSErc677.token.id;
+  tokenSErc677Id = TokenId.derive(serc677TokenAddress);
 
   zkAppOraclePrivateKey = PrivateKey.random();
   zkAppOracleAddress = zkAppOraclePrivateKey.toPublicKey();
@@ -102,37 +102,34 @@ async function setupAccounts() {
 }
 
 async function setupLocal() {
-  let tx1 = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: zkAppClientAddress,
-      amount: Mina.getNetworkConstants().accountCreationFee,
+  let tx1 = await Mina.transaction(player1, async () => {
+    await zkAppClient.deploy();
+    AccountUpdate.fundNewAccount(player1).send({
+      to: zkAppClient.self,
+      amount: 10_000_000,
     });
-    zkAppClient.deploy();
   });
   await tx1.prove();
-  tx1.sign([zkAppClientPrivateKey, zkAppOraclePrivateKey, player1Key]);
+  tx1.sign([zkAppClientPrivateKey, zkAppOraclePrivateKey, serc677TokenPrivateKey, player1Key]);
   await tx1.send();
 
-  let tx2 = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: zkAppOracleAddress,
-      amount: Mina.getNetworkConstants().accountCreationFee,
+  let tx2 = await Mina.transaction(player1, async () => {
+    await zkAppOracle.deploy();
+    AccountUpdate.fundNewAccount(player1).send({
+      to: zkAppOracle.self,
+      amount: 10_000_000,
     });
-    zkAppOracle.deploy();
   });
   await tx2.prove();
   tx2.sign([zkAppOraclePrivateKey, player1Key]);
   await tx2.send();
 
-  let tx3 = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: serc677TokenAddress,
-      amount: Mina.getNetworkConstants().accountCreationFee,
+  let tx3 = await Mina.transaction(player1, async () => {
+    await zkAppSErc677.deploy();
+    AccountUpdate.fundNewAccount(player1).send({
+      to: zkAppSErc677.self,
+      amount: 10_000_000,
     });
-    zkAppSErc677.deploy();
   });
   await tx3.prove();
   tx3.sign([serc677TokenPrivateKey, player1Key]);
@@ -243,8 +240,8 @@ describe('BasicRequestClient SmartContract', () => {
       ]);
 
       // Send fulfillOracleRequest()
-      const txnFeed = await Mina.transaction(player1, () => {
-        zkAppOracle.fulfillOracleRequest(
+      const txnFeed = await Mina.transaction(player1, async () => {
+        await zkAppOracle.fulfillOracleRequest(
           zkAppClientAddress,
           Field(r10000),
           signatureFeed
@@ -267,8 +264,8 @@ describe('BasicRequestClient SmartContract', () => {
 
     test('should got oracleRequest event from on-chain tx, then fetch MINA price and fulfillOracle', async () => {
       // Set OracleContract on Client
-      const txnSet = await Mina.transaction(player1, () => {
-        zkAppClient.setOracleContract(zkAppOracleAddress);
+      const txnSet = await Mina.transaction(player1, async () => {
+        await zkAppClient.setOracleContract(zkAppOracleAddress);
       });
 
       await txnSet.prove();
@@ -336,8 +333,8 @@ describe('BasicRequestClient SmartContract', () => {
       ]);
 
       // Send fulfillOracleRequest()
-      const txnFeed = await Mina.transaction(player1, () => {
-        zkAppOracle.fulfillOracleRequest(
+      const txnFeed = await Mina.transaction(player1, async () => {
+        await zkAppOracle.fulfillOracleRequest(
           zkAppClientAddress,
           Field(r10000),
           signatureFeed
@@ -366,9 +363,9 @@ describe('BasicRequestClient SmartContract', () => {
 
     test('should got oracleRequest event from on-chain tx, then fetch BTC price and fulfillOracle', async () => {
       // Set OracleContract on Client
-      const txnSet = await Mina.transaction(player1, () => {
-        zkAppClient.setErc677Token(serc677TokenAddress);
-        zkAppClient.setOracleContract(zkAppOracleAddress);
+      const txnSet = await Mina.transaction(player1, async () => {
+        await zkAppClient.setErc677Token(serc677TokenAddress);
+        await zkAppClient.setOracleContract(zkAppOracleAddress);
       });
 
       await txnSet.prove();
@@ -381,19 +378,19 @@ describe('BasicRequestClient SmartContract', () => {
       const oracleAddr = zkAppClient.oracleAddress.get();
       expect(oracleAddr).toEqual(zkAppOracleAddress);
 
-      expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1));
+      expect(UInt64.zero).toEqual(await zkAppSErc677.balanceOf(player1));
 
       // Mint
-      const txnMint = await Mina.transaction(player1, () => {
+      const txnMint = await Mina.transaction(player1, async() => {
         AccountUpdate.fundNewAccount(player1);
-        zkAppSErc677.mint(player1, UInt64.from(500_000));
+        await zkAppSErc677.mint(player1, UInt64.from(500_000));
       });
 
       await txnMint.prove();
       txnMint.sign([player1Key, serc677TokenPrivateKey, zkAppOraclePrivateKey]);
       await txnMint.send();
 
-      expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1));
+      expect(UInt64.from(500_000)).toEqual(await zkAppSErc677.balanceOf(player1));
 
       // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({
@@ -407,7 +404,7 @@ describe('BasicRequestClient SmartContract', () => {
       const ReqField = Encoding.bytesToFields(offChainBytes);
 
       let tx = await buildTransferAndCallTx(
-        { sender: player1 },
+        { sender: player1 }, player1,
         zkAppClient,
         req1
       );
@@ -463,8 +460,8 @@ describe('BasicRequestClient SmartContract', () => {
       ]);
 
       // Send fulfillOracleRequest()
-      const txnFeed = await Mina.transaction(player1, () => {
-        zkAppOracle.fulfillOracleRequest(
+      const txnFeed = await Mina.transaction(player1, async () => {
+        await zkAppOracle.fulfillOracleRequest(
           zkAppClientAddress,
           Field(r10000),
           signatureFeed
@@ -487,8 +484,8 @@ describe('BasicRequestClient SmartContract', () => {
 
       // use 100_000
 
-      // expect(UInt64.from(400_000)).toEqual(zkAppSErc677.balanceOf(player1))
-      // expect(UInt64.from(100_000)).toEqual(zkAppSErc677.balanceOf(zkAppOracleAddress))
+      // expect(UInt64.from(400_000)).toEqual(await zkAppSErc677.balanceOf(player1))
+      // expect(UInt64.from(100_000)).toEqual(await zkAppSErc677.balanceOf(zkAppOracleAddress))
     });
   });
 });

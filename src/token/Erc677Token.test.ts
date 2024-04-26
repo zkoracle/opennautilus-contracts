@@ -11,6 +11,7 @@ import {
   method,
   CircuitString,
   fetchAccount,
+  TokenContract,
 } from 'o1js';
 import {
   IERC677,
@@ -31,54 +32,52 @@ let player1: PublicKey,
 
 let tokenId: Field;
 let tokenSErc677Id: Field;
-let zkApp: SmartContract & IERC677;
+let zkApp: TokenContract & IERC677;
 let zkAppSErc677: SErc677Contract;
 
 async function setupAccounts() {
-  let Local = Mina.LocalBlockchain({
+  let Local = await Mina.LocalBlockchain({
     proofsEnabled: true,
     enforceTransactionLimits: false,
   });
   Mina.setActiveInstance(Local);
-  player1Key = Local.testAccounts[0].privateKey;
-  player1 = Local.testAccounts[0].publicKey;
+  player1Key = Local.testAccounts[0].key;
+  player1 = Local.testAccounts[0];
 
-  player2Key = Local.testAccounts[1].privateKey;
-  player2 = Local.testAccounts[1].publicKey;
+  player2Key = Local.testAccounts[1].key;
+  player2 = Local.testAccounts[1];
 
   zkAppPrivateKey = PrivateKey.random();
   zkAppAddress = zkAppPrivateKey.toPublicKey();
 
   zkApp = await buildERC677Contract(zkAppAddress, 'SomeCoin', tokenSymbol, 9);
-  tokenId = zkApp.token.id;
+  tokenId = TokenId.derive(zkAppAddress);
 
   serc677TokenPrivateKey = PrivateKey.random();
   serc677TokenAddress = serc677TokenPrivateKey.toPublicKey();
 
   zkAppSErc677 = new SErc677Contract(serc677TokenAddress);
-  tokenSErc677Id = zkAppSErc677.token.id;
+  tokenSErc677Id = TokenId.derive(serc677TokenAddress);
 }
 
 async function setupLocal() {
-  let tx = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: zkAppAddress,
-      amount: Mina.accountCreationFee(),
+  let tx = await Mina.transaction(player1, async () => {
+    await zkApp.deploy();
+    AccountUpdate.fundNewAccount(player1).send({
+      to: zkApp.self,
+      amount: 10_000_000,
     });
-    zkApp.deploy();
   });
   await tx.prove();
   tx.sign([zkAppPrivateKey, player1Key]);
   await tx.send();
 
-  let tx3 = await Mina.transaction(player1, () => {
-    let feePayerUpdate = AccountUpdate.fundNewAccount(player1);
-    feePayerUpdate.send({
-      to: serc677TokenAddress,
-      amount: Mina.getNetworkConstants().accountCreationFee,
+  let tx3 = await Mina.transaction(player1, async () => {
+    await zkAppSErc677.deploy();
+    AccountUpdate.fundNewAccount(player1).send({
+      to: zkAppSErc677.self,
+      amount: 10_000_000,
     });
-    zkAppSErc677.deploy();
   });
   await tx3.prove();
   tx3.sign([serc677TokenPrivateKey, player1Key]);
@@ -119,19 +118,21 @@ describe('Erc677 TokenContract', () => {
       test('token contract can successfully mint with sign and updates the balances in the ledger', async () => {
         // await fetchAccount({ publicKey: player1 })
 
-        expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1));
+        expect(UInt64.zero).toEqual(await zkAppSErc677.balanceOf(player1));
 
         // Mint
-        const txnMint = await Mina.transaction(player1, () => {
+        const txnMint = await Mina.transaction(player1, async () => {
           AccountUpdate.fundNewAccount(player1);
-          zkAppSErc677.mint(player1, UInt64.from(500_000));
+          await zkAppSErc677.mint(player1, UInt64.from(500_000));
         });
 
         await txnMint.prove();
         txnMint.sign([player1Key, serc677TokenPrivateKey]);
         await txnMint.send();
 
-        expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1));
+        expect(UInt64.from(500_000)).toEqual(
+          await zkAppSErc677.balanceOf(player1)
+        );
       });
     });
 
@@ -139,30 +140,34 @@ describe('Erc677 TokenContract', () => {
       test('token contract can successfully burn with sign and updates the balances in the ledger', async () => {
         // await fetchAccount({ publicKey: player1 })
 
-        expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1));
+        expect(UInt64.zero).toEqual(await zkAppSErc677.balanceOf(player1));
 
         // Mint
-        const txnMint = await Mina.transaction(player1, () => {
+        const txnMint = await Mina.transaction(player1, async () => {
           AccountUpdate.fundNewAccount(player1);
-          zkAppSErc677.mint(player1, UInt64.from(500_000));
+          await zkAppSErc677.mint(player1, UInt64.from(500_000));
         });
 
         await txnMint.prove();
         txnMint.sign([player1Key, serc677TokenPrivateKey]);
         await txnMint.send();
 
-        expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1));
+        expect(UInt64.from(500_000)).toEqual(
+          await zkAppSErc677.balanceOf(player1)
+        );
 
         // Burn
-        const txnBurn = await Mina.transaction(player1, () => {
-          zkAppSErc677.burn(player1, UInt64.from(50_000));
+        const txnBurn = await Mina.transaction(player1, async () => {
+          await zkAppSErc677.burn(player1, UInt64.from(50_000));
         });
 
         await txnBurn.prove();
         txnBurn.sign([player1Key, serc677TokenPrivateKey]);
         await txnBurn.send();
 
-        expect(UInt64.from(450_000)).toEqual(zkAppSErc677.balanceOf(player1));
+        expect(UInt64.from(450_000)).toEqual(
+          await zkAppSErc677.balanceOf(player1)
+        );
       });
     });
 
@@ -170,43 +175,54 @@ describe('Erc677 TokenContract', () => {
       test('token contract can successfully mint with sign and updates the balances in the ledger', async () => {
         // await fetchAccount({ publicKey: player1 })
 
-        expect(UInt64.zero).toEqual(zkAppSErc677.balanceOf(player1));
+        expect(UInt64.zero).toEqual(await zkAppSErc677.balanceOf(player1));
 
         // Mint
-        const txnMint = await Mina.transaction(player1, () => {
+        const txnMint = await Mina.transaction(player1, async () => {
           AccountUpdate.fundNewAccount(player1);
-          zkAppSErc677.mint(player1, UInt64.from(500_000));
+          await zkAppSErc677.mint(player1, UInt64.from(500_000));
         });
 
         await txnMint.prove();
         txnMint.sign([player1Key, serc677TokenPrivateKey]);
         await txnMint.send();
 
-        expect(UInt64.from(500_000)).toEqual(zkAppSErc677.balanceOf(player1));
+        expect(UInt64.from(500_000)).toEqual(
+          await zkAppSErc677.balanceOf(player1)
+        );
 
-        const txnSend = await Mina.transaction(player2, () => {
+        const txnSend = await Mina.transaction(player2, async () => {
           AccountUpdate.fundNewAccount(player2);
-          zkAppSErc677.mint(player2, UInt64.from(400_000));
+          await zkAppSErc677.mint(player2, UInt64.from(400_000));
         });
 
         await txnSend.prove();
         txnSend.sign([player2Key, serc677TokenPrivateKey]);
         await txnSend.send();
 
-        expect(UInt64.from(400_000)).toEqual(zkAppSErc677.balanceOf(player2));
+        expect(UInt64.from(400_000)).toEqual(
+          await zkAppSErc677.balanceOf(player2)
+        );
 
-        const txnSend2 = await Mina.transaction(player2, () => {
+        const txnSend2 = await Mina.transaction(player2, async () => {
           // AccountUpdate.fundNewAccount(player2);
-          zkAppSErc677.transfer(player1, UInt64.from(40_000));
+          await zkAppSErc677.transferFrom(
+            player2,
+            player1,
+            UInt64.from(40_000)
+          );
         });
 
         await txnSend2.prove();
         txnSend2.sign([player2Key, serc677TokenPrivateKey]);
         await txnSend2.send();
 
-        expect(UInt64.from(540_000)).toEqual(zkAppSErc677.balanceOf(player1));
-        expect(UInt64.from(360_000)).toEqual(zkAppSErc677.balanceOf(player2));
-
+        expect(UInt64.from(540_000)).toEqual(
+          await zkAppSErc677.balanceOf(player1)
+        );
+        expect(UInt64.from(360_000)).toEqual(
+          await zkAppSErc677.balanceOf(player2)
+        );
       });
     });
   });
