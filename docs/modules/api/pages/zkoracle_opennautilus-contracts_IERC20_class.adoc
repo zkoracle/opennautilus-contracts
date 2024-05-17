@@ -134,14 +134,14 @@ m|UInt64
 |The amount of tokens to approve.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |True if the approval was successful, false otherwise.  Approval
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract approveSpend(spender: PublicKey, value: UInt64): Bool;
+abstract approveSpend(spender: PublicKey, value: UInt64): Promise<void>;
 ----
 
 ========
@@ -160,18 +160,86 @@ abstract approveSpend(spender: PublicKey, value: UInt64): Bool;
 |Name |Type |Description
 
 m|owner
-m|PublicKey
+m|PublicKey \| AccountUpdate
 |The address of the token owner.
 
 s|Returns
-m|UInt64
+m|Promise&lt;UInt64&gt;
 |The balance of the owner, as a UInt64.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract balanceOf(owner: PublicKey): UInt64;
+abstract balanceOf(owner: PublicKey | AccountUpdate): Promise<UInt64>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_burn_member_1"]
+=== burn(receiverAddress, amount)
+
+========
+
+Burning (destroying) tokens, reducing the total supply. (require signature)
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the token holder whose tokens will be burned
+
+m|amount
+m|UInt64
+|The amount of tokens to burn
+
+s|Returns
+m|Promise&lt;void&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+abstract burn(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_IERC20_mint_member_1"]
+=== mint(receiverAddress, amount)
+
+========
+
+Mints new tokens and assigns them to a receiver. (require signature)
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|receiverAddress
+m|PublicKey
+|The address of the receiver who will receive the newly minted tokens
+
+m|amount
+m|UInt64
+|The amount of tokens to mint
+
+s|Returns
+m|Promise&lt;void&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+abstract mint(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
 ----
 
 ========
@@ -189,40 +257,6 @@ abstract balanceOf(owner: PublicKey): UInt64;
 [source,typescript]
 ----
 abstract totalSupply(): UInt64;
-----
-
-========
-[id="zkoracle_opennautilus-contracts_IERC20_transfer_member_1"]
-=== transfer(to, value)
-
-========
-
-
-
-mutations which need
-
-.Parameters
-[%header%footer,cols="2,3,4",caption=""]
-|===
-|Name |Type |Description
-
-m|to
-m|PublicKey
-|The address to transfer tokens to.
-
-m|value
-m|UInt64
-|The amount of tokens to transfer.
-
-s|Returns
-m|Bool
-|True if the transfer was successful, false otherwise.  Transfer
-|===
-
-.Signature
-[source,typescript]
-----
-abstract transfer(to: PublicKey, value: UInt64): Bool;
 ----
 
 ========
@@ -253,14 +287,14 @@ m|UInt64
 |The amount of tokens to transfer.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |True if the transfer was successful, false otherwise.  Transfer
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool;
+abstract transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Promise<void>;
 ----
 
 ========

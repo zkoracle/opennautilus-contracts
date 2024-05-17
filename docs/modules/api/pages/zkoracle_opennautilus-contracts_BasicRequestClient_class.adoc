@@ -21,7 +21,7 @@ Represents the initial state of a field in a data structure.
 .Signature
 [source,typescript]
 ----
-data0: State<import("o1js/dist/node/lib/field.js").Field>;
+data0: State<import("o1js/dist/node/lib/provable/field.js").Field>;
 ----
 
 ========
@@ -104,14 +104,14 @@ m|Field
 |The data to fulfill the request with.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |{Bool} A boolean indicating success (always true in this implementation, potentially requiring verification).
 |===
 
 .Signature
 [source,typescript]
 ----
-onFulfillRequest(data0: Field): Bool;
+onFulfillRequest(data0: Field): Promise<void>;
 ----
 
 ========
@@ -148,14 +148,14 @@ m|Field
  {Bool} - Returns true if the request was successfully sent to the Oracle contract.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |
 |===
 
 .Signature
 [source,typescript]
 ----
-sendErc677RequestTo(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+sendErc677RequestTo(req0: Field, req1: Field, req2: Field, req3: Field): Promise<void>;
 ----
 
 ========
@@ -190,14 +190,14 @@ m|Field
 |The fourth field of the request data.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |{Bool} - A boolean indicating success (determined by the Oracle contract).
 |===
 
 .Signature
 [source,typescript]
 ----
-sendOracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+sendOracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Promise<void>;
 ----
 
 ========
@@ -236,14 +236,14 @@ m|Field
 |The fourth field of the request data.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |{Bool} - A boolean indicating success (determined by the Oracle contract).
 |===
 
 .Signature
 [source,typescript]
 ----
-sendOracleRequestWithAddr(oracleAddress: PublicKey, req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+sendOracleRequestWithAddr(oracleAddress: PublicKey, req0: Field, req1: Field, req2: Field, req3: Field): Promise<void>;
 ----
 
 ========
@@ -266,14 +266,14 @@ m|PublicKey
 |The new PublicKey of the ERC-677 token.  {Bool} - True to indicate successful execution.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |
 |===
 
 .Signature
 [source,typescript]
 ----
-setErc677Token(tokenAddress: PublicKey): Bool;
+setErc677Token(tokenAddress: PublicKey): Promise<void>;
 ----
 
 ========
@@ -296,14 +296,14 @@ m|PublicKey
 |The new Oracle contract address to set.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |{Bool} - A boolean indicating success (always true in this implementation).
 |===
 
 .Signature
 [source,typescript]
 ----
-setOracleContract(oracleAddress: PublicKey): Bool;
+setOracleContract(oracleAddress: PublicKey): Promise<void>;
 ----
 
 ========

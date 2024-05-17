@@ -71,14 +71,14 @@ m|Field
 |The fourth additional field to be passed to the contract method, if applicable.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |{Bool} - True if the transfer and call were successful, false otherwise.  Transfer - Emitted when the transfer is successful.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract transferAndCall(to: PublicKey, value: UInt64, data0: Field, data1: Field, data2: Field, data3: Field): Bool;
+abstract transferAndCall(to: PublicKey, value: UInt64, data0: Field, data1: Field, data2: Field, data3: Field): Promise<void>;
 ----
 
 ========

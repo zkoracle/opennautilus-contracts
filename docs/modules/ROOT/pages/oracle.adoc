@@ -1,0 +1,134 @@
+= Oracles and Off-chain Processing in Blockchain Development
+
+This tutorial will guide you on how to interact with decentralized Oracles and handle off-chain processing using TypeScript language. Oracles provide a way for a blockchain or smart contract to interact with external data. In this tutorial, we are specifically using the Mina protocol and the ZKOracle for data interaction and request handling.
+
+We will cover the following sections:
+
+- Setting up the Oracle and ERC677 token for user interaction.
+- Creating a request to fetch real-world data from an external Oracle.
+- Processing an Oracle Request on-chain.
+- Performing off-chain processing to make an actual request to the external API.
+- Responding to the Oracle Request off-chain and fulfilling the Oracle Request.
+
+Please ensure you have a good understanding of TypeScript language, as well as a fundamental knowledge of blockchain principles.
+
+Let's get started!
+
+In the first code block, we set the ERC677 token and Oracle contract for the user (player1). This is a necessary setup for the interaction with the oracle.
+
+[source,typescript]
+----
+const txnSet = await Mina.transaction(player1, async () => {
+    await zkAppClient.setErc677Token(serc677TokenAddress);
+    await zkAppClient.setOracleContract(zkAppOracleAddress);
+});
+
+await txnSet.prove();
+txnSet.sign([player1Key, zkAppClientPrivateKey]);
+await txnSet.send();
+
+----
+
+In our second code block, we're creating an OracleRequest. This is a request for data from an external oracle. We're requesting data from the "min-api.cryptocompare.com" API, specifically the price of mina in USD
+
+[source,typescript]
+----
+import {
+  buildTransferAndCallTx,
+  OracleRequest
+} from '@zkoracle/opennautilus-contracts';
+
+// BasicRequest from Client to Oracle 'OracleRequest'
+let req1 = new OracleRequest({
+    protocol: 'http',
+    method: 'get',
+    url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=MINA&tsyms=USD',
+    path: 'RAW.MINA.USD.PRICE',
+});
+
+let tx = await buildTransferAndCallTx(
+    { sender: player1 },
+    player1,
+    zkAppClient,
+    req1
+);
+
+await tx.prove();
+tx.sign([player1Key, zkAppClientPrivateKey]);
+await tx.send();
+
+----
+
+In the third code block, we are processing an oracle request. We fetch the oracle requests from the oracle contract, parse the data from the request, and extract the raw bytes to the OracleRequest.
+
+[source,typescript]
+----
+import {
+  IOracleData
+} from '@zkoracle/opennautilus-contracts';
+
+// Fetcher got Event and filter OracleRequest.
+const eventsOracle = await zkAppOracle.fetchEvents(UInt32.from(0));
+
+// Reparse from jsonStringify (event.data) from archive
+const r: IOracleData = JSON.parse(
+  JSON.stringify(eventsOracle[0].event.data)
+);
+
+const onOracleReq = [
+    Field.fromJSON(r.req0),
+    Field.fromJSON(r.req1),
+    Field.fromJSON(r.req2),
+    Field.fromJSON(r.req3),
+];
+
+// Extract rawBytes to OracleRequest.
+const onOracleDataBytes = Encoding.bytesFromFields(onOracleReq);
+const req2 = OracleRequest.fromBinary(onOracleDataBytes);
+
+----
+
+The next block of code represents off-chain processing. Here, we make the actual request to the external API and process the response. We're grabbing the specific data we requested from the JSON response and scaling the resulting float to an integer.
+
+[source,typescript]
+----
+// Off chain processing
+// {
+//     protocol: 'http',
+//     method: 'get',
+//     url: 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=MINA&tsyms=USD',
+//     path: 'RAW.MINA.USD.PRICE',
+// }
+
+const response = await fetch(req2.url);
+const data = await response.json();
+const result = JSONPath({ path: req2.path, json: data });
+
+// Scale float value to int
+const r10000 = Math.floor((result[0] * 10000) as number);
+
+----
+
+Finally, we sign the data and fulfill the oracle request. This is where we send the calculated data back to the oracle contract.
+
+[source,typescript]
+----
+// Sign FeedData
+const signatureFeed = Signature.create(zkAppOraclePrivateKey, [
+  Field(r10000),
+]);
+
+// Send fulfillOracleRequest()
+const txnFeed = await Mina.transaction(player1, async () => {
+await zkAppOracle.fulfillOracleRequest(
+  zkAppClientAddress,
+  Field(r10000),
+  signatureFeed
+);
+});
+
+await txnFeed.prove();
+txnFeed.sign([player1Key, zkAppOraclePrivateKey]);
+await txnFeed.send();
+
+----

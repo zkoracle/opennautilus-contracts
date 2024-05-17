@@ -8,7 +8,8 @@ import {
   method,
   state,
   Mina,
-  UInt64, AccountUpdate,
+  UInt64,
+  AccountUpdate,
 } from 'o1js';
 import { OracleContract, IOracleClient } from './OracleContract.js';
 import { OracleRequest } from '../gen/oracle-request_pb.js';
@@ -28,7 +29,7 @@ export async function buildOracleRequestTxWithAddr(
   oracleAddress: PublicKey,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
-): Promise<Mina.Transaction<false,false>> {
+): Promise<Mina.Transaction<false, false>> {
   const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
@@ -55,12 +56,17 @@ export async function buildOracleRequestTx(
   sender: Mina.FeePayerSpec,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
-): Promise<Mina.Transaction<false,false>> {
+): Promise<Mina.Transaction<false, false>> {
   const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
   return Mina.transaction(sender, async () => {
-    await zkApp.sendOracleRequest(reqField[0], reqField[1], reqField[2], reqField[3]);
+    await zkApp.sendOracleRequest(
+      reqField[0],
+      reqField[1],
+      reqField[2],
+      reqField[3]
+    );
   });
 }
 
@@ -77,7 +83,7 @@ export async function buildTransferAndCallTx(
   pk: PublicKey,
   zkApp: SmartContract & IOracleClient,
   oracleRequest: OracleRequest
-): Promise<Mina.Transaction<false,false>> {
+): Promise<Mina.Transaction<false, false>> {
   const offChainBytes = oracleRequest.toBinary(); // Convert request data to binary
   const reqField = Encoding.bytesToFields(offChainBytes); // Convert binary to fields
 
@@ -227,7 +233,6 @@ export class BasicRequestClient extends SmartContract implements IOracleClient {
       req2,
       req3
     );
-
   }
 
   /**

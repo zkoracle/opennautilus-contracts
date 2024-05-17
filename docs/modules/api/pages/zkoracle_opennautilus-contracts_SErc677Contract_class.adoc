@@ -130,6 +130,36 @@ allowance(owner: PublicKey, spender: PublicKey): UInt64;
 ----
 
 ========
+[id="zkoracle_opennautilus-contracts_SErc677Contract_approveBase_member_1"]
+=== approveBase(forest)
+
+========
+
+
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|forest
+m|AccountUpdateForest
+|
+
+s|Returns
+m|Promise&lt;void&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+approveBase(forest: AccountUpdateForest): Promise<void>;
+----
+
+========
 [id="zkoracle_opennautilus-contracts_SErc677Contract_approveSpend_member_1"]
 === approveSpend(spender, value)
 
@@ -153,14 +183,14 @@ m|UInt64
 |The amount of tokens to approve.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |True if the approval was successful, false otherwise.  Approval  Implement allowance functionality to enable token approvals.
 |===
 
 .Signature
 [source,typescript]
 ----
-approveSpend(spender: PublicKey, value: UInt64): Bool;
+approveSpend(spender: PublicKey, value: UInt64): Promise<void>;
 ----
 
 ========
@@ -171,7 +201,7 @@ approveSpend(spender: PublicKey, value: UInt64): Bool;
 
 
 
-Fetches the balance from the owner's account state and verifies its integrity using `requireEquals`. This check ensures data consistency and helps prevent potential issues.
+
 
 .Parameters
 [%header%footer,cols="2,3,4",caption=""]
@@ -179,18 +209,18 @@ Fetches the balance from the owner's account state and verifies its integrity us
 |Name |Type |Description
 
 m|owner
-m|PublicKey
-|The address of the token owner.
+m|PublicKey \| AccountUpdate
+|
 
 s|Returns
-m|UInt64
-|The balance of the owner, as a UInt64.
+m|Promise&lt;UInt64&gt;
+|
 |===
 
 .Signature
 [source,typescript]
 ----
-balanceOf(owner: PublicKey): UInt64;
+balanceOf(owner: PublicKey | AccountUpdate): Promise<UInt64>;
 ----
 
 ========
@@ -219,14 +249,14 @@ m|UInt64
  This method does not explicitly check for authorization to burn tokens. It's essential to ensure that appropriate authorization mechanisms are in place to prevent unauthorized token burning.
 
 s|Returns
-m|void
+m|Promise&lt;void&gt;
 |
 |===
 
 .Signature
 [source,typescript]
 ----
-burn(receiverAddress: PublicKey, amount: UInt64): void;
+burn(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
 ----
 
 ========
@@ -260,7 +290,7 @@ This method sets up proof-based permissions for sensitive actions.
 .Signature
 [source,typescript]
 ----
-deploy(): void;
+deploy(): Promise<void>;
 ----
 
 ========
@@ -304,14 +334,14 @@ m|UInt64
 |The amount of tokens to mint
 
 s|Returns
-m|void
+m|Promise&lt;void&gt;
 |
 |===
 
 .Signature
 [source,typescript]
 ----
-mint(receiverAddress: PublicKey, amount: UInt64): void;
+mint(receiverAddress: PublicKey, amount: UInt64): Promise<void>;
 ----
 
 ========
@@ -366,40 +396,6 @@ totalSupply(): UInt64;
 ----
 
 ========
-[id="zkoracle_opennautilus-contracts_SErc677Contract_transfer_member_1"]
-=== transfer(to, value)
-
-========
-
-
-
-Leverages the zkApp protocol to handle balance checks and transfer logic securely. Directly emits a Transfer event to signal the token transfer.
-
-.Parameters
-[%header%footer,cols="2,3,4",caption=""]
-|===
-|Name |Type |Description
-
-m|to
-m|PublicKey
-|The address to transfer tokens to.
-
-m|value
-m|UInt64
-|The amount of tokens to transfer.
-
-s|Returns
-m|Bool
-|True if the transfer was successful, false otherwise.  Transfer
-|===
-
-.Signature
-[source,typescript]
-----
-transfer(to: PublicKey, value: UInt64): Bool;
-----
-
-========
 [id="zkoracle_opennautilus-contracts_SErc677Contract_transferAndCall_member_1"]
 === transferAndCall(to, value, data0, data1, data2, data3)
 
@@ -439,14 +435,14 @@ m|Field
 |The fourth additional field to be passed to the contract method, if applicable.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |{Bool} - Returns `false` in the current implementation.  TransferAndCall - Emitted when the transfer is successful.
 |===
 
 .Signature
 [source,typescript]
 ----
-transferAndCall(to: PublicKey, value: UInt64, data0: Field, data1: Field, data2: Field, data3: Field): Bool;
+transferAndCall(to: PublicKey, value: UInt64, data0: Field, data1: Field, data2: Field, data3: Field): Promise<void>;
 ----
 
 ========
@@ -477,14 +473,14 @@ m|UInt64
 |The amount of tokens to transfer.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |True if the transfer was successful, false otherwise.  Transfer
 |===
 
 .Signature
 [source,typescript]
 ----
-transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Bool;
+transferFrom(from: PublicKey, to: PublicKey, value: UInt64): Promise<void>;
 ----
 
 ========

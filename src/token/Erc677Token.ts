@@ -358,21 +358,11 @@ export async function buildERC677Contract(
       data2: Field,
       data3: Field
     ) {
-
       this.internal.send({
         from: this.sender.getAndRequireSignature(),
         to,
         amount: value,
       });
-      // this.emitEvent('TransferAndCall', {
-      //   from: this.sender.getAndRequireSignature(),
-      //   to,
-      //   value,
-      //   data0,
-      //   data1,
-      //   data2,
-      //   data3,
-      // });
 
       const oracleContract = new OracleContract(to);
       await oracleContract.oracleRequest(data0, data1, data2, data3);

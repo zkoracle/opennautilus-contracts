@@ -70,14 +70,14 @@ m|Signature
 |The signature to be verified (associated with the request or data).
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |A boolean indicating success (always true in this implementation, potentially modify based on requirements).
 |===
 
 .Signature
 [source,typescript]
 ----
-fulfillOracleRequest(callbackAddress: PublicKey, data0: Field, signature: Signature): Bool;
+fulfillOracleRequest(callbackAddress: PublicKey, data0: Field, signature: Signature): Promise<void>;
 ----
 
 ========
@@ -129,14 +129,14 @@ m|Field
 |The fourth field of the request data.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |A boolean indicating success (always true in this implementation).
 |===
 
 .Signature
 [source,typescript]
 ----
-oracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+oracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Promise<void>;
 ----
 
 ========
@@ -159,14 +159,14 @@ m|PublicKey
 |The new PublicKey of the ERC-677 token.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |True to indicate successful execution.
 |===
 
 .Signature
 [source,typescript]
 ----
-setErc677Token(tokenAddress: PublicKey): Bool;
+setErc677Token(tokenAddress: PublicKey): Promise<void>;
 ----
 
 ========

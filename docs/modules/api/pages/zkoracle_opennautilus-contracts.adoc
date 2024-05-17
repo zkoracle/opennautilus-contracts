@@ -76,14 +76,14 @@ m|string
 |The symbol for the token (e.g., "MYTOKEN")
 
 s|Returns
-m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]&gt;
+m|Promise&lt;TokenContract & xref:zkoracle_opennautilus-contracts_IBasicTokenContract_class.adoc[IBasicTokenContract]&gt;
 |A promise that resolves to the created token contract instance
 |===
 
 .Signature
 [source,typescript]
 ----
-export declare function buildBasicTokenContract(address: PublicKey, symbol: string): Promise<SmartContract & IBasicTokenContract>;
+export declare function buildBasicTokenContract(address: PublicKey, symbol: string): Promise<TokenContract & IBasicTokenContract>;
 ----
 
 ========
@@ -118,14 +118,14 @@ m|number
 |The number of decimals used to represent token amounts.
 
 s|Returns
-m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]&gt;
+m|Promise&lt;TokenContract & xref:zkoracle_opennautilus-contracts_IERC20_class.adoc[IERC20]&gt;
 |A promise that resolves to the deployed contract instance.
 |===
 
 .Signature
 [source,typescript]
 ----
-export declare function buildERC20Contract(address: PublicKey, name: string, symbol: string, decimals: number): Promise<SmartContract & IERC20>;
+export declare function buildERC20Contract(address: PublicKey, name: string, symbol: string, decimals: number): Promise<TokenContract & IERC20>;
 ----
 
 ========
@@ -160,14 +160,14 @@ m|number
 |The number of decimals for token precision.
 
 s|Returns
-m|Promise&lt;SmartContract & xref:zkoracle_opennautilus-contracts_IERC677_class.adoc[IERC677]&gt;
+m|Promise&lt;TokenContract & xref:zkoracle_opennautilus-contracts_IERC677_class.adoc[IERC677]&gt;
 |{Promise&lt;SmartContract &amp; IERC677&gt;} - A promise that resolves to the constructed contract instance.
 |===
 
 .Signature
 [source,typescript]
 ----
-export declare function buildERC677Contract(address: PublicKey, name: string, symbol: string, decimals: number): Promise<SmartContract & IERC677>;
+export declare function buildERC677Contract(address: PublicKey, name: string, symbol: string, decimals: number): Promise<TokenContract & IERC677>;
 ----
 
 ========
@@ -198,14 +198,56 @@ m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
 |The data for the Oracle request, represented as an `OracleRequest` object.
 
 s|Returns
-m|Promise&lt;Transaction&gt;
+m|Promise&lt;o1js!Transaction&lt;false, false&gt;&gt;
 |{Promise&lt;Mina.Transaction&gt;} A promise that resolves to a Mina transaction containing the Oracle request.
 |===
 
 .Signature
 [source,typescript]
 ----
-export declare function buildOracleRequestTx(sender: Mina.FeePayerSpec, zkApp: SmartContract & IOracleClient, oracleRequest: OracleRequest): Promise<Mina.Transaction>;
+export declare function buildOracleRequestTx(sender: Mina.FeePayerSpec, zkApp: SmartContract & IOracleClient, oracleRequest: OracleRequest): Promise<Mina.Transaction<false, false>>;
+----
+
+========
+[id="zkoracle_opennautilus-contracts_buildTransferAndCallTx_function_1"]
+=== buildTransferAndCallTx(sender, pk, zkApp, oracleRequest)
+
+========
+
+Builds a transfer and call transaction.
+
+
+
+.Parameters
+[%header%footer,cols="2,3,4",caption=""]
+|===
+|Name |Type |Description
+
+m|sender
+m|FeePayerSpec
+|The sender of the transaction.
+
+m|pk
+m|PublicKey
+|
+
+m|zkApp
+m|SmartContract & xref:zkoracle_opennautilus-contracts_IOracleClient_class.adoc[IOracleClient]
+|The smart contract that implements the OracleClient interface.
+
+m|oracleRequest
+m|xref:zkoracle_opennautilus-contracts_OracleRequest_class.adoc[OracleRequest]
+|The oracle request to be sent.  {Promise&lt;Mina.Transaction&gt;} A promise that resolves to the built transaction.
+
+s|Returns
+m|Promise&lt;o1js!Transaction&lt;false, false&gt;&gt;
+|
+|===
+
+.Signature
+[source,typescript]
+----
+export declare function buildTransferAndCallTx(sender: Mina.FeePayerSpec, pk: PublicKey, zkApp: SmartContract & IOracleClient, oracleRequest: OracleRequest): Promise<Mina.Transaction<false, false>>;
 ----
 
 ========

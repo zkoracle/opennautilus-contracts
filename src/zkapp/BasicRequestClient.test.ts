@@ -10,7 +10,8 @@ import {
   SmartContract,
   UInt32,
   UInt64,
-  provablePure, TokenId,
+  provablePure,
+  TokenId,
 } from 'o1js';
 
 import { JSONPath } from 'jsonpath-plus';
@@ -110,7 +111,12 @@ async function setupLocal() {
     });
   });
   await tx1.prove();
-  tx1.sign([zkAppClientPrivateKey, zkAppOraclePrivateKey, serc677TokenPrivateKey, player1Key]);
+  tx1.sign([
+    zkAppClientPrivateKey,
+    zkAppOraclePrivateKey,
+    serc677TokenPrivateKey,
+    player1Key,
+  ]);
   await tx1.send();
 
   let tx2 = await Mina.transaction(player1, async () => {
@@ -381,7 +387,7 @@ describe('BasicRequestClient SmartContract', () => {
       expect(UInt64.zero).toEqual(await zkAppSErc677.balanceOf(player1));
 
       // Mint
-      const txnMint = await Mina.transaction(player1, async() => {
+      const txnMint = await Mina.transaction(player1, async () => {
         AccountUpdate.fundNewAccount(player1);
         await zkAppSErc677.mint(player1, UInt64.from(500_000));
       });
@@ -390,7 +396,9 @@ describe('BasicRequestClient SmartContract', () => {
       txnMint.sign([player1Key, serc677TokenPrivateKey, zkAppOraclePrivateKey]);
       await txnMint.send();
 
-      expect(UInt64.from(500_000)).toEqual(await zkAppSErc677.balanceOf(player1));
+      expect(UInt64.from(500_000)).toEqual(
+        await zkAppSErc677.balanceOf(player1)
+      );
 
       // BasicRequest from Client to Oracle 'OracleRequest'
       let req1 = new OracleRequest({
@@ -404,7 +412,8 @@ describe('BasicRequestClient SmartContract', () => {
       const ReqField = Encoding.bytesToFields(offChainBytes);
 
       let tx = await buildTransferAndCallTx(
-        { sender: player1 }, player1,
+        { sender: player1 },
+        player1,
         zkAppClient,
         req1
       );

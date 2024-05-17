@@ -19,7 +19,7 @@ Abstract class representing an Oracle client.
 .Signature
 [source,typescript]
 ----
-data0: State<import("o1js/dist/node/lib/field.js").Field>;
+data0: State<import("o1js/dist/node/lib/provable/field.js").Field>;
 ----
 
 ========
@@ -79,14 +79,14 @@ m|Field
 |The data0 data from the Oracle.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |A boolean indicating success.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract onFulfillRequest(data0: Field): Bool;
+abstract onFulfillRequest(data0: Field): Promise<void>;
 ----
 
 ========
@@ -121,14 +121,14 @@ m|Field
 |The fourth field of the request data.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |A boolean indicating success.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract sendErc677RequestTo(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+abstract sendErc677RequestTo(req0: Field, req1: Field, req2: Field, req3: Field): Promise<void>;
 ----
 
 ========
@@ -163,14 +163,14 @@ m|Field
 |The fourth field of the request data.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |A boolean indicating success.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract sendOracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+abstract sendOracleRequest(req0: Field, req1: Field, req2: Field, req3: Field): Promise<void>;
 ----
 
 ========
@@ -209,14 +209,14 @@ m|Field
 |The fourth field of the request data.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |A boolean indicating success.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract sendOracleRequestWithAddr(oracleAddress: PublicKey, req0: Field, req1: Field, req2: Field, req3: Field): Bool;
+abstract sendOracleRequestWithAddr(oracleAddress: PublicKey, req0: Field, req1: Field, req2: Field, req3: Field): Promise<void>;
 ----
 
 ========
@@ -239,14 +239,14 @@ m|PublicKey
 |The new PublicKey of the ERC-677 token.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |True to indicate successful execution.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract setErc677Token(tokenAddress: PublicKey): Bool;
+abstract setErc677Token(tokenAddress: PublicKey): Promise<void>;
 ----
 
 ========
@@ -269,14 +269,14 @@ m|PublicKey
 |The public key of the Oracle contract.
 
 s|Returns
-m|Bool
+m|Promise&lt;void&gt;
 |A boolean indicating success.
 |===
 
 .Signature
 [source,typescript]
 ----
-abstract setOracleContract(oracleAddress: PublicKey): Bool;
+abstract setOracleContract(oracleAddress: PublicKey): Promise<void>;
 ----
 
 ========
