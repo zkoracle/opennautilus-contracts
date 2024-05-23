@@ -1,0 +1,26 @@
+= ERC721
+
+
+== Introduction to ERC721
+
+ERC721 is a free and open standard that describes how to create and manage non-fungible tokens (NFTs) on the Ethereum blockchain. The ERC721 standard was proposed by William Entriken, Dieter Shirley, Jacob Evans, and Nastassia Sachs, and it became an official Ethereum Improvement Proposal (EIP) in April 2018.
+
+Unlike fungible tokens (like ERC20), non-fungible tokens are unique, and they are used for representing ownership of unique items or assets. This could involve art, real estate, virtual estate in a game, or any other unique assets.
+
+== Key Components of ERC721
+
+1. *Unique Identification*: Each ERC721 token is identified by a unique identifier (token ID), which is a unique UINT256 ID, making each token distinct from every other token.
+
+2. *Ownership*: The standard provides functions such as `balanceOf()` and `ownerOf()` to keep a record of all tokens owned by an address. This leads to clear ownership rights on the Ethereum blockchain.
+
+3. *Transferability*: ERC721 defines a set of functions (`transferFrom()`, `safeTransferFrom()`, etc.) to manage ownership transfers. This functionality allows token owners to send their tokens to others.
+
+4. *Approvals*: The `approve()` and `setApprovalForAll()` methods enable token owners to provide other addresses (like marketplaces or specific other users) with the approval to transfer tokens on their behalf.
+
+5. *Events*: ERC721 mandates the triggering of events (`Transfer` and `Approval` events) during the token transfers and approval updates. This enables Ethereum clients such as web apps or wallets to react to on-chain events.
+
+6. *Metadata Standard*: The ERC721 metadata extension provides a way for each token to link to a specific metadata file, which describes the specific properties of the token.
+
+7. *Enumeration Standard*: An optional specification, it provides a way to store, count, and query a full list of tokens of a specific address, although it is not required for the basic operation of the ERC721 token.
+
+8. *Safety Checks*: The `safeTransferFrom()` function incorporates safety checks to ensure that the receiver address is prepared to accept ERC721 tokens. This safety measure reduces the risk of tokens getting locked in contracts that do not support ERC721 tokens.

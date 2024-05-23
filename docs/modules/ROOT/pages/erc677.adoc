@@ -4,12 +4,10 @@
 
 ERC-677 is an Ethereum token standard designed to streamline token interactions with smart contracts. Unlike ERC-20, it includes a 'transferAndCall' function. This enables token transfers to directly trigger actions within the recipient contract (a callback), enhancing automation potential.
 
-== Key Components
+== Key Components of ERC677
 
-=== Transfer and Call: The Heart of ERC-677
+1. *Transfer and Call*: This is an essential function in the ERC-677 standard known as 'transferAndCall'. It enhances the basic transfer functionality from ERC-20, allowing more intricate interactions. Upon transferring tokens, 'transferAndCall' automatically initiates a callback in the receiving smart contract, given the contract is designed to accommodate it.
 
-The transferAndCall function is the cornerstone of the ERC-677 standard. It expands upon the basic transfer functionality from ERC-20 by enabling more complex interactions.  When tokens are transferred, transferAndCall automatically triggers a callback within the receiving smart contract (if that contract is programmed to handle it).
+2. *ERC677Receiver*: For a smart contract to be compatible with ERC-677 transfers, it has to implement the ERC677Receiver protocol. This encompasses a sole function titled 'onTokenTransfer', serving as the defined callback. Consequently, it enables the contract to run custom logic whenever it obtains ERC-677 tokens.
 
-=== ERC677Receiver: The Contract's Role
-
-For a smart contract to be compatible with ERC-677 transfers, it must implement the ERC677Receiver protocol.  This includes a single function: onTokenTransfer.  This function serves as the designated callback, allowing the contract to execute custom logic when it receives ERC-677 tokens.
+Please note, specifics of the key components and connected functions may vary depending on the specific requirements of your project's implementation.

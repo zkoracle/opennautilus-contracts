@@ -4,15 +4,18 @@
 
 ERC-20 tokens are digital assets native to the Ethereum blockchain that adhere to a common set of rules. This standardization ensures predictability and compatibility across dApps, exchanges, and wallets within the Ethereum network.
 
-== Key Components
+== Key Components of ERC20
 
-The ERC-20 protocol mandates the following six core functions:
+1. *Total Supply*: The 'totalSupply' method provides the overall amount of tokens in existence.
 
-* totalSupply: Provides the total number of tokens in existence.
-* balanceOf: Returns the token balance associated with a specific address.
-* transfer: Enables direct token transfers between addresses.
-* transferFrom: Allows approved third-party contracts (e.g., decentralized exchanges) to facilitate token transfers on a user's behalf.
-* approve: Grants a designated address (spender) permission to transfer a specified amount of tokens from your account.
-* allowance: Checks the remaining tokens a spender is authorized to transfer from a particular owner's account.
+2. *Ownership*: The 'balanceOf' function allows users to check the balance of tokens associated with a particular address.
 
+3. *Direct Transfer*: 'transfer' method enables token owners to directly transfer their tokens to other addresses.
 
+4. *Delegated Transfer*: The 'transferFrom' function allows an approved third-party contracts, such as decentralized exchanges, to facilitate token transfers on behalf of the user.
+
+5. *Approvals*: The 'approve' method gives a specific address (spender) the permission to transfer a pre-defined amount of tokens from your account.
+
+6. *Remaining Allowance*: 'allowance' function is used to check the balance of tokens that a spender is still allowed to pull from an owner's account.
+
+Please note that the key components and associated functionality can differ depending on the implementation and the specific requirements of your project.

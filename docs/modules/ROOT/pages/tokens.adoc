@@ -7,3 +7,13 @@ Tokens, within blockchain systems, are programmable units that represent digital
 * xref:erc20.adoc[ERC20]  is Ethereum's popular technical standard for implementing tokens. It includes a set of predefined rules that all new tokens based on the Ethereum blockchain must implement, such as balanceOf, transfer, transferFrom, approve, and allowance.
 
 * xref:erc677.adoc[ERC677] is a chain-specific token standard in the Ethereum blockchain. It is an extension of the ERC20 standard, introducing a `transferAndCall` method which allows tokens to be transferred and a call to be made to the receiving contract in a single transaction.
+
+== Ethereum Request for Comments (ERC) Standards
+
+* *xref:erc20.adoc[ERC20]:* ERC20 is the foundational standard for fungible tokens on Ethereum blockchain. It establishes a common list of rules for all Ethereum tokens to adhere to, allowing developers to accurately predict the interaction between tokens. These rules comprise six crucial functions: totalSupply, balanceOf, transfer, transferFrom, approve, and allowance.
+
+* *xref:erc721.adoc[ERC721]:* ERC721 implemented a standard for non-fungible tokens (NFTs) on the Ethereum blockchain. Unlike ERC20 tokens which all have the same value, each ERC721 token possesses a unique value. Beyond standard functions for maintaining ownership records and facilitating token transfer, ERC721 also introduces a secure operators feature. This allows secure, authorized transfers and reduces the risk of tokens getting stuck in unprepared contracts. ERC721 also encourages optional metadata extensions for adding extra token information.
+
+* *xref:erc677.adoc[ERC677]:* ERC677 is an extension to the ERC20 standard that introduces a new function called `transferAndCall`. This functionality allows tokens to be transferred and a callback to be executed in a single transaction. This results in more efficient token transfers when interacting with smart contract functions. For compatibility, smart contracts must implement a 'tokenFallback' function to handle incoming ERC677 token transfers.
+
+It's important to note that even though these standards guide the behavior of tokens on the Ethereum network, the final implementations and functionalities may vary based on the specific use-case or the decisions of the developers.

@@ -2,6 +2,7 @@
 
 * xref:tokens.adoc[Tokens]
 ** xref:erc20.adoc[ERC20]
+** xref:erc677.adoc[ERC721 (Draft)]
 ** xref:erc677.adoc[ERC677]
 
 * xref:ROOT:oracle.adoc[Oracle]
