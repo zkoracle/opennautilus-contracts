@@ -62,11 +62,11 @@ TBD
 
 ## Security
 
-TBD
+Our software is currently undergoing a security audit. It's a process to identify potential vulnerabilities in the code.
 
 ## Contribute
 
-OpenNautilus Contracts exists thanks to its contributors. There are many ways you can participate and help build high quality software. Check out the [contribution guide](CONTRIBUTING.md)!
+OpenNautilus Contracts exists thanks to its contributors. There are many ways you can participate and help build high quality software. Check out [code of conduct](CODE_OF_CONDUCT.md) and the [contribution guide](CONTRIBUTING.md)!
 
 ## License
 
@@ -74,4 +74,4 @@ OpenNautilus Contracts is released under the [Apache-2.0](LICENSE)
 
 ## Legal
 
-TBD
+This software is provided "as is", without any warranties, either express or implied. By using OpenNautilus Contracts, you're agreeing to our terms and accepting that we can't be held responsible for any damages. We don't collect personal data, and we fully respect user privacy. The terms of the Apache-2.0 License apply both to users and contributors, the latter of whom bear sole responsibility for their modifications. We reserve the right to change the legal terms at any time, without notice.
