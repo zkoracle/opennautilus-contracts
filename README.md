@@ -70,8 +70,6 @@ OpenNautilus Contracts exists thanks to its contributors. There are many ways yo
 
 ## License
 
-OpenNautilus Contracts is released under the [Apache-2.0](LICENSE)
+OpenNautilus Contracts is released under the terms of the [Apache-2.0](LICENSE) License apply both to users and contributors, the latter of whom bear sole responsibility for their modifications.
 
-## Legal
-
-This software is provided "as is", without any warranties, either express or implied. By using OpenNautilus Contracts, you're agreeing to our terms and accepting that we can't be held responsible for any damages. We don't collect personal data, and we fully respect user privacy. The terms of the Apache-2.0 License apply both to users and contributors, the latter of whom bear sole responsibility for their modifications. We reserve the right to change the legal terms at any time, without notice.
+This software is provided "as is", without any warranties, either express or implied. By using OpenNautilus Contracts, you're agreeing to our terms and accepting that we can't be held responsible for any damages. We don't collect personal data, and we fully respect user privacy.

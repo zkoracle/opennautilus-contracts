@@ -1,0 +1,10 @@
+= ERC20 (Limited Supply Token)
+
+== Introduction to ERC20
+
+ERC20 is a standard interface for tokens, meaning that these tokens have a predetermined set of functions that allow them to interact seamlessly with other tokens and platforms that support the ERC20 standard. It has become a common token standard used in the Ethereum blockchain
+
+== Limited Supply ERC20 Token
+
+In contrast to a standard ERC20 token, a 'limited supply' ERC20 token has a fixed supply that is defined upon contract creation and cannot be expanded in the future.
+
