@@ -15,12 +15,14 @@ import {
   TokenContract,
 } from 'o1js';
 import { buildOC20Contract, IOC20 } from './Oc20Token.js';
+import { TestPublicKey } from 'o1js/dist/node/lib/mina/local-blockchain';
 
 const tokenSymbol = 'SOM';
 const tokenName = 'SomeCoin';
 
 const proofsEnabled = true;
 let zkPubkey: PublicKey;
+let sendPubkey: TestPublicKey;
 let zkApp: SmartContract & IOC20;
 
 async function setupLocalTest() {
@@ -30,7 +32,7 @@ async function setupLocalTest() {
   let [sender, receiver, contractAccount, other] = Local.testAccounts;
   zkPubkey = contractAccount;
   zkApp = await buildOC20Contract(contractAccount, tokenName, tokenSymbol, 9);
-
+  sendPubkey = sender;
   // deploy and create first account
 
   console.time('deploy');
@@ -79,4 +81,24 @@ describe('Setup OC20 Contract', () => {
     });
   });
 
-})
+  describe('Create Account', () => {
+    test('token contract can successfully mint with sign and updates the balances in the ledger (signature)', async () => {
+
+      console.time('create account');
+      await Mina.transaction(sendPubkey, async () => {
+        // first call (should succeed)
+        await zkApp.createAccount(sendPubkey, UInt64.from(1000));
+
+        // second call (should fail)
+        await zkApp.createAccount(sendPubkey, UInt64.from(2000));
+      })
+        .sign([sendPubkey.key])
+        .prove()
+        .send();
+      console.timeEnd('create account');
+
+
+    });
+  });
+
+});
