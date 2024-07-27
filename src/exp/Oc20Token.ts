@@ -28,7 +28,7 @@ export async function buildOC20Contract(
   name: string,
   symbol: string,
   decimals: number
-): Promise<SmartContract & IOC20> {
+): Promise<[SmartContract & IOC20]> {
 
    const Oc20State = OffchainState(
     {
@@ -108,17 +108,13 @@ export async function buildOC20Contract(
     }
   }
 
-  let contract = new Oc20Contract(address);
-  Oc20State.setContractInstance(contract);
+  let oc20Contract = new Oc20Contract(address);
+  Oc20State.setContractInstance(oc20Contract);
 
   if (proofsEnabled) {
-    console.time('compile program');
     await Oc20State.compile();
-    console.timeEnd('compile program');
-    console.time('compile contract');
     await Oc20Contract.compile();
-    console.timeEnd('compile contract');
   }
 
-  return contract;
+  return [oc20Contract];
 }
