@@ -21,6 +21,7 @@ export abstract class IOC20 {
   abstract totalSupply(): Promise<UInt64>;
   abstract balanceOf(owner: PublicKey): Promise<UInt64>;
   abstract createAccount(address: PublicKey, amountToMint: UInt64): Promise<void>;
+  abstract transfer(from: PublicKey, to: PublicKey, amount: UInt64): Promise<void>;
 }
 
 export async function buildOC20Contract(

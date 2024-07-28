@@ -23,6 +23,7 @@ const tokenName = 'SomeCoin';
 const proofsEnabled = true;
 let zkPubkey: PublicKey;
 let sendPubkey: TestPublicKey;
+let recvPubkey: TestPublicKey;
 let zkApp: SmartContract & IOC20;
 
 async function setupLocalTest() {
@@ -33,6 +34,7 @@ async function setupLocalTest() {
   zkPubkey = contractAccount;
   [zkApp] = await buildOC20Contract(contractAccount, tokenName, tokenSymbol, 9);
   sendPubkey = sender;
+  recvPubkey = receiver;
   // deploy and create first account
 
   console.time('deploy');
@@ -94,6 +96,34 @@ describe('Setup OC20 Contract', () => {
         .sign([sendPubkey.key])
         .prove()
         .send();
+
+      // let proof = await offchainState.createSettlementProof();
+
+    });
+  });
+
+  describe('Transfer Oc20', () => {
+    test('token contract can successfully send with sign and updates the balances in the ledger', async () => {
+
+      await Mina.transaction(sendPubkey, async () => {
+        // first call (should succeed)
+        await zkApp.createAccount(sendPubkey, UInt64.from(1000));
+
+        // second call (should fail)
+        await zkApp.createAccount(sendPubkey, UInt64.from(2000));
+      })
+        .sign([sendPubkey.key])
+        .prove()
+        .send();
+
+      console.time('transfer');
+      await Mina.transaction(sendPubkey, async () => {
+        await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
+      })
+        .sign([sendPubkey.key])
+        .prove()
+        .send();
+      console.timeEnd('transfer');
 
       // let proof = await offchainState.createSettlementProof();
 
