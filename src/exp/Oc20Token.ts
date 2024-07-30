@@ -11,7 +11,6 @@ import {
 
 const { OffchainState } = Experimental;
 
-
 const proofsEnabled = true;
 
 export abstract class IOC20 {
@@ -20,9 +19,25 @@ export abstract class IOC20 {
   abstract decimals: () => Field;
   abstract totalSupply(): Promise<UInt64>;
   abstract balanceOf(owner: PublicKey): Promise<UInt64>;
-  abstract createAccount(address: PublicKey, amountToMint: UInt64): Promise<void>;
-  abstract transfer(from: PublicKey, to: PublicKey, amount: UInt64): Promise<void>;
+  abstract createAccount(
+    address: PublicKey,
+    amountToMint: UInt64
+  ): Promise<void>;
+  abstract transfer(
+    from: PublicKey,
+    to: PublicKey,
+    amount: UInt64
+  ): Promise<void>;
 }
+
+const Oc20State = OffchainState(
+  {
+    accounts: OffchainState.Map(PublicKey, UInt64),
+    totalSupply: OffchainState.Field(UInt64),
+  },
+  { logTotalCapacity: 10, maxActionsPerProof: 5 }
+);
+class Oc20StateProof extends Oc20State.Proof {}
 
 export async function buildOC20Contract(
   address: PublicKey,
@@ -30,19 +45,8 @@ export async function buildOC20Contract(
   symbol: string,
   decimals: number
 ): Promise<[SmartContract & IOC20]> {
-
-   const Oc20State = OffchainState(
-    {
-      accounts: OffchainState.Map(PublicKey, UInt64),
-      totalSupply: OffchainState.Field(UInt64),
-    },
-    { logTotalCapacity: 10, maxActionsPerProof: 5 }
-  );
-  class Oc20StateProof extends Oc20State.Proof {}
-
   class Oc20Contract extends SmartContract implements IOC20 {
     @state(OffchainState.Commitments) offchainState = Oc20State.commitments();
-
 
     @method
     async createAccount(address: PublicKey, amountToMint: UInt64) {

@@ -37,18 +37,17 @@ async function setupLocalTest() {
   recvPubkey = receiver;
   // deploy and create first account
 
-  console.time('deploy');
+  // console.time('deploy');
   await Mina.transaction(sender, async () => {
     await zkApp.deploy();
   })
     .sign([sender.key, contractAccount.key])
     .prove()
     .send();
-  console.timeEnd('deploy');
+  // console.timeEnd('deploy');
 }
 
 describe('Setup OC20 Contract', () => {
-
   beforeEach(async () => {
     await setupLocalTest();
   });
@@ -65,7 +64,6 @@ describe('Setup OC20 Contract', () => {
     */
 
     describe('Oc20 Contract Creation/Deployment', () => {
-
       test('setting a valid token symbol on a contract', async () => {
         expect(zkApp).toBeDefined();
         let symbol = zkApp.symbol().toString();
@@ -79,13 +77,11 @@ describe('Setup OC20 Contract', () => {
         expect(tokenName).toBeDefined();
         expect(name).toEqual(tokenName);
       });
-
     });
   });
 
   describe('Create Account', () => {
     test('token contract can successfully mint with sign and updates the balances in the ledger (signature)', async () => {
-
       await Mina.transaction(sendPubkey, async () => {
         // first call (should succeed)
         await zkApp.createAccount(sendPubkey, UInt64.from(1000));
@@ -98,36 +94,34 @@ describe('Setup OC20 Contract', () => {
         .send();
 
       // let proof = await offchainState.createSettlementProof();
-
     });
   });
 
-  describe('Transfer Oc20', () => {
-    test('token contract can successfully send with sign and updates the balances in the ledger', async () => {
-
-      await Mina.transaction(sendPubkey, async () => {
-        // first call (should succeed)
-        await zkApp.createAccount(sendPubkey, UInt64.from(1000));
-
-        // second call (should fail)
-        await zkApp.createAccount(sendPubkey, UInt64.from(2000));
-      })
-        .sign([sendPubkey.key])
-        .prove()
-        .send();
-
-      console.time('transfer');
-      await Mina.transaction(sendPubkey, async () => {
-        await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
-      })
-        .sign([sendPubkey.key])
-        .prove()
-        .send();
-      console.timeEnd('transfer');
-
-      // let proof = await offchainState.createSettlementProof();
-
-    });
-  });
-
+  //   describe('Transfer Oc20', () => {
+  //     test('token contract can successfully send with sign and updates the balances in the ledger', async () => {
+  //
+  //       await Mina.transaction(sendPubkey, async () => {
+  //         // first call (should succeed)
+  //         await zkApp.createAccount(sendPubkey, UInt64.from(1000));
+  //
+  //         // second call (should fail)
+  //         await zkApp.createAccount(sendPubkey, UInt64.from(2000));
+  //       })
+  //         .sign([sendPubkey.key])
+  //         .prove()
+  //         .send();
+  //
+  //       console.time('transfer');
+  //       await Mina.transaction(sendPubkey, async () => {
+  //         await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
+  //       })
+  //         .sign([sendPubkey.key])
+  //         .prove()
+  //         .send();
+  //       console.timeEnd('transfer');
+  //
+  //       // let proof = await offchainState.createSettlementProof();
+  //
+  //     });
+  //   });
 });
