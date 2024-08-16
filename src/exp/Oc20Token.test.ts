@@ -14,8 +14,9 @@ import {
   Signature,
   TokenContract,
 } from 'o1js';
-import { buildOC20Contract, IOC20 } from './Oc20Token.js';
+import { buildOC20Contract, IOC20, Oc20State } from './Oc20Token.js';
 import { TestPublicKey } from 'o1js/dist/node/lib/mina/local-blockchain';
+import assert from 'assert';
 
 const tokenSymbol = 'SOM';
 const tokenName = 'SomeCoin';
@@ -48,7 +49,7 @@ async function setupLocalTest() {
 }
 
 describe('Setup OC20 Contract', () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await setupLocalTest();
   });
 
@@ -93,34 +94,67 @@ describe('Setup OC20 Contract', () => {
         .prove()
         .send();
 
-      // let proof = await offchainState.createSettlementProof();
+      let proof = await Oc20State.createSettlementProof();
+
+      console.time('settle 1');
+      await Mina.transaction(sendPubkey, () => zkApp.settle(proof))
+        .sign([sendPubkey.key])
+        .prove()
+        .send();
+      console.timeEnd('settle 1');
+
+      let supply = (await zkApp.totalSupply()).toBigInt();
+      assert.strictEqual(supply, 1000n);
+
     });
   });
 
     describe('Transfer Oc20', () => {
       test('token contract can successfully send with sign and updates the balances in the ledger', async () => {
 
+        console.time('transfer');
         await Mina.transaction(sendPubkey, async () => {
-          // first call (should succeed)
-          await zkApp.createAccount(sendPubkey, UInt64.from(1000));
-
-          // second call (should fail)
-          await zkApp.createAccount(sendPubkey, UInt64.from(2000));
+          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
         })
           .sign([sendPubkey.key])
           .prove()
           .send();
-  //
-  //       console.time('transfer');
-  //       await Mina.transaction(sendPubkey, async () => {
-  //         await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
-  //       })
-  //         .sign([sendPubkey.key])
-  //         .prove()
-  //         .send();
-  //       console.timeEnd('transfer');
-  //
-  //       // let proof = await offchainState.createSettlementProof();
+        console.timeEnd('transfer');
+
+
+        await Mina.transaction(sendPubkey, async () => {
+          // more transfers that should fail
+          // (these are enough to need two proof steps during settlement)
+          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(200));
+          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(300));
+          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(400));
+
+          // // create another account (should succeed)
+          // await zkApp.createAccount(other, UInt64.from(555));
+
+          // create existing account again (should fail)
+          await zkApp.createAccount(recvPubkey, UInt64.from(333));
+        })
+          .sign([sendPubkey.key])
+          .prove()
+          .send();
+        console.timeEnd('more transfers');
+
+
+        console.time('settlement proof 2');
+        let proof = await Oc20State.createSettlementProof();
+        console.timeEnd('settlement proof 2');
+
+        console.time('settle 2');
+        await Mina.transaction(sendPubkey, () => zkApp.settle(proof))
+          .sign([sendPubkey.key])
+          .prove()
+          .send();
+        console.timeEnd('settle 2');
+        //
+        // let supply = (await zkApp.getSupply()).toBigInt();
+        // assert.strictEqual(supply, expectedSupply);
+
 
       });
     });

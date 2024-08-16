@@ -28,16 +28,18 @@ export abstract class IOC20 {
     to: PublicKey,
     amount: UInt64
   ): Promise<void>;
+
+  abstract settle(proof: Oc20StateProof): Promise<void>;
 }
 
-const Oc20State = OffchainState(
+export const Oc20State = OffchainState(
   {
     accounts: OffchainState.Map(PublicKey, UInt64),
     totalSupply: OffchainState.Field(UInt64),
   },
   { logTotalCapacity: 10, maxActionsPerProof: 5 }
 );
-class Oc20StateProof extends Oc20State.Proof {}
+export class Oc20StateProof extends Oc20State.Proof {}
 
 export async function buildOC20Contract(
   address: PublicKey,
@@ -45,6 +47,7 @@ export async function buildOC20Contract(
   symbol: string,
   decimals: number
 ): Promise<[SmartContract & IOC20]> {
+
   class Oc20Contract extends SmartContract implements IOC20 {
     @state(OffchainState.Commitments) offchainState = Oc20State.commitments();
 
