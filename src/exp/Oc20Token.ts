@@ -47,7 +47,6 @@ export async function buildOC20Contract(
   symbol: string,
   decimals: number
 ): Promise<[SmartContract & IOC20]> {
-
   class Oc20Contract extends SmartContract implements IOC20 {
     @state(OffchainState.Commitments) offchainState = Oc20State.commitments();
 

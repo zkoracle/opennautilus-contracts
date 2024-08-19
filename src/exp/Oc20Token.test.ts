@@ -105,57 +105,52 @@ describe('Setup OC20 Contract', () => {
 
       let supply = (await zkApp.totalSupply()).toBigInt();
       assert.strictEqual(supply, 1000n);
-
     });
   });
 
-    describe('Transfer Oc20', () => {
-      test('token contract can successfully send with sign and updates the balances in the ledger', async () => {
+  describe('Transfer Oc20', () => {
+    test('token contract can successfully send with sign and updates the balances in the ledger', async () => {
+      console.time('transfer');
+      await Mina.transaction(sendPubkey, async () => {
+        await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
+      })
+        .sign([sendPubkey.key])
+        .prove()
+        .send();
+      console.timeEnd('transfer');
 
-        console.time('transfer');
-        await Mina.transaction(sendPubkey, async () => {
-          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
-        })
-          .sign([sendPubkey.key])
-          .prove()
-          .send();
-        console.timeEnd('transfer');
+      await Mina.transaction(sendPubkey, async () => {
+        // more transfers that should fail
+        // (these are enough to need two proof steps during settlement)
+        await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(200));
+        await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(300));
+        await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(400));
 
+        // // create another account (should succeed)
+        // await zkApp.createAccount(other, UInt64.from(555));
 
-        await Mina.transaction(sendPubkey, async () => {
-          // more transfers that should fail
-          // (these are enough to need two proof steps during settlement)
-          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(200));
-          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(300));
-          await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(400));
+        // create existing account again (should fail)
+        await zkApp.createAccount(recvPubkey, UInt64.from(333));
+      })
+        .sign([sendPubkey.key])
+        .prove()
+        .send();
+      console.timeEnd('more transfers');
 
-          // // create another account (should succeed)
-          // await zkApp.createAccount(other, UInt64.from(555));
+      console.time('settlement proof 2');
+      let proof = await Oc20State.createSettlementProof();
+      console.timeEnd('settlement proof 2');
 
-          // create existing account again (should fail)
-          await zkApp.createAccount(recvPubkey, UInt64.from(333));
-        })
-          .sign([sendPubkey.key])
-          .prove()
-          .send();
-        console.timeEnd('more transfers');
+      console.time('settle 2');
+      await Mina.transaction(sendPubkey, () => zkApp.settle(proof))
+        .sign([sendPubkey.key])
+        .prove()
+        .send();
+      console.timeEnd('settle 2');
 
-
-        console.time('settlement proof 2');
-        let proof = await Oc20State.createSettlementProof();
-        console.timeEnd('settlement proof 2');
-
-        console.time('settle 2');
-        await Mina.transaction(sendPubkey, () => zkApp.settle(proof))
-          .sign([sendPubkey.key])
-          .prove()
-          .send();
-        console.timeEnd('settle 2');
-        //
-        // let supply = (await zkApp.getSupply()).toBigInt();
-        // assert.strictEqual(supply, expectedSupply);
-
-
-      });
+      //
+      // let supply = (await zkApp.getSupply()).toBigInt();
+      // assert.strictEqual(supply, expectedSupply);
     });
+  });
 });
