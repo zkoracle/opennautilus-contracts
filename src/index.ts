@@ -27,6 +27,7 @@ import {
   buildTransferAndCallTx,
 } from './zkapp/BasicRequestClient.js';
 import { OracleRequest } from './gen/oracle-request_pb.js';
+import { buildOC20Contract, IOC20, Oc20State } from './exp/Oc20Token.js';
 
 export {
   // Toolkit,
@@ -50,4 +51,7 @@ export {
   buildTransferAndCallTx,
   // buildBasicRequestClient,
   OracleRequest,
+  Oc20State,
+  IOC20,
+  buildOC20Contract,
 };

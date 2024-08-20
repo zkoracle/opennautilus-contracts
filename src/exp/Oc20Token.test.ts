@@ -25,6 +25,7 @@ const proofsEnabled = true;
 let zkPubkey: PublicKey;
 let sendPubkey: TestPublicKey;
 let recvPubkey: TestPublicKey;
+let otherPubkey: TestPublicKey;
 let zkApp: SmartContract & IOC20;
 
 async function setupLocalTest() {
@@ -36,6 +37,7 @@ async function setupLocalTest() {
   [zkApp] = await buildOC20Contract(contractAccount, tokenName, tokenSymbol, 9);
   sendPubkey = sender;
   recvPubkey = receiver;
+  otherPubkey = other;
   // deploy and create first account
 
   // console.time('deploy');
@@ -96,12 +98,12 @@ describe('Setup OC20 Contract', () => {
 
       let proof = await Oc20State.createSettlementProof();
 
-      console.time('settle 1');
+      // console.time('settle 1');
       await Mina.transaction(sendPubkey, () => zkApp.settle(proof))
         .sign([sendPubkey.key])
         .prove()
         .send();
-      console.timeEnd('settle 1');
+      // console.timeEnd('settle 1');
 
       let supply = (await zkApp.totalSupply()).toBigInt();
       assert.strictEqual(supply, 1000n);
@@ -110,14 +112,14 @@ describe('Setup OC20 Contract', () => {
 
   describe('Transfer Oc20', () => {
     test('token contract can successfully send with sign and updates the balances in the ledger', async () => {
-      console.time('transfer');
+      // console.time('transfer');
       await Mina.transaction(sendPubkey, async () => {
         await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(100));
       })
         .sign([sendPubkey.key])
         .prove()
         .send();
-      console.timeEnd('transfer');
+      // console.timeEnd('transfer');
 
       await Mina.transaction(sendPubkey, async () => {
         // more transfers that should fail
@@ -127,7 +129,7 @@ describe('Setup OC20 Contract', () => {
         await zkApp.transfer(sendPubkey, recvPubkey, UInt64.from(400));
 
         // // create another account (should succeed)
-        // await zkApp.createAccount(other, UInt64.from(555));
+        await zkApp.createAccount(otherPubkey, UInt64.from(555));
 
         // create existing account again (should fail)
         await zkApp.createAccount(recvPubkey, UInt64.from(333));
@@ -135,22 +137,24 @@ describe('Setup OC20 Contract', () => {
         .sign([sendPubkey.key])
         .prove()
         .send();
-      console.timeEnd('more transfers');
+      // console.timeEnd('more transfers');
 
-      console.time('settlement proof 2');
+      // console.time('settlement proof 2');
       let proof = await Oc20State.createSettlementProof();
-      console.timeEnd('settlement proof 2');
+      // console.timeEnd('settlement proof 2');
 
-      console.time('settle 2');
+      // console.time('settle 2');
       await Mina.transaction(sendPubkey, () => zkApp.settle(proof))
         .sign([sendPubkey.key])
         .prove()
         .send();
-      console.timeEnd('settle 2');
+      // console.timeEnd('settle 2');
 
-      //
-      // let supply = (await zkApp.getSupply()).toBigInt();
-      // assert.strictEqual(supply, expectedSupply);
+      let supply = (await zkApp.totalSupply()).toBigInt();
+      assert.strictEqual(supply, 1555n);
+
+      let balanceSender = (await zkApp.balanceOf(sendPubkey)).toBigInt();
+      assert.strictEqual(balanceSender, 900n);
     });
   });
 });
